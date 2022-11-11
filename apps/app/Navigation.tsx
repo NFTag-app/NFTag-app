@@ -9,8 +9,8 @@ import {
 import { RootStackParamList } from "./RootStackParams";
 
 import HomeScreen from "./Home";
-import CameraScreen from "./Camera";
-import RegCameraScreen from "./RegCamera";
+import TagCameraScreen from "./TagCameraScreen";
+import RegCameraScreen from "./RegCameraScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -27,7 +27,7 @@ export default function Navigation() {
         />
         <Stack.Screen
           name="Camera"
-          component={CameraScreen}
+          component={TagCameraScreen}
           options={{ title: "NFTag | Camera", headerShown: false }}
         />
         <Stack.Screen
