@@ -13,6 +13,8 @@ import { CreateGame, Game, JoinGame, ListGames, Player } from "./types";
 export const capturePayment = async () =>
   new Promise((resolve) => resolve(true));
 
+//#region Games
+
 export const createGame: CreateGame = async (name, owner) => {
   return new Promise((resolve, reject) => {
     const db = getDatabase();
@@ -117,3 +119,13 @@ export const listGames: ListGames = async (user) => {
       });
   });
 };
+
+//#endregion
+
+//#region Teams
+
+//#endregion
+
+//#region Tags
+
+//#endregion

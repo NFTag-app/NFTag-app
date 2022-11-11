@@ -21,6 +21,8 @@ const UserProvider: React.FC<{
     return onSnapshot(
       doc(collection(db, "customers"), user.uid),
       (snapshot) => {
+        if (!snapshot.exists()) return;
+
         const data = snapshot.data();
         console.log("data", data);
 
