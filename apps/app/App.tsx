@@ -1,28 +1,48 @@
-import { test } from "@nftag/client-sdk"
-import { StyleSheet, Text, View } from "react-native"
+import { test, UserProvider } from "client-sdk";
+import { StyleSheet } from "react-native";
 
-import { NavigationContainer, useNavigation } from "@react-navigation/native"
-import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-navigation/native-stack"
-import { RootStackParamList } from "./RootStackParams"
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { RootStackParamList } from "./RootStackParams";
 
-import HomeScreen from "./Home"
-import CameraScreen from "./Camera"
-import RegCameraScreen from "./RegCamera"
+import CameraScreen from "./Camera";
+import HomeScreen from "./Home";
+import RegCameraScreen from "./RegCamera";
 
-const Stack= createNativeStackNavigator<RootStackParamList>()
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-	const message = test()
+	const message = test();
 
 	return (
-		<NavigationContainer>
-			<Stack.Navigator initialRouteName='Home'>
-				<Stack.Screen name='Home' component={HomeScreen} options={{ title: 'NFTag | Home' }}/>
-				<Stack.Screen name='Camera' component={CameraScreen} options={{ title: 'NFTag | Camera', headerShown: false }}/>
-				<Stack.Screen name='RegCamera' component={RegCameraScreen} options={{ title: 'NFTag | RegCamera', headerShown: false }}/>
-			</Stack.Navigator>
-		</NavigationContainer>
-	)
+		<UserProvider>
+			<NavigationContainer>
+				<Stack.Navigator initialRouteName="Home">
+					<Stack.Screen
+						name="Home"
+						component={HomeScreen}
+						options={{ title: "NFTag | Home" }}
+					/>
+					<Stack.Screen
+						name="Camera"
+						component={CameraScreen}
+						options={{
+							title: "NFTag | Camera",
+							headerShown: false,
+						}}
+					/>
+					<Stack.Screen
+						name="RegCamera"
+						component={RegCameraScreen}
+						options={{
+							title: "NFTag | RegCamera",
+							headerShown: false,
+						}}
+					/>
+				</Stack.Navigator>
+			</NavigationContainer>
+		</UserProvider>
+	);
 }
 
 const styles = StyleSheet.create({
