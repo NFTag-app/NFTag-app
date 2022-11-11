@@ -41,7 +41,7 @@ export const createGame: CreateGame = async (name, owner) => {
   });
 };
 
-export const joinGame: JoinGame = async (id, user) => {
+export const joinGame: JoinGame = async (id, user, image) => {
   return new Promise((resolve, reject) => {
     if (!capturePayment()) reject(new Error("Payment failed"));
 
@@ -73,7 +73,7 @@ export const joinGame: JoinGame = async (id, user) => {
       const playersRef = ref(db, `games/${id}/players`);
       push(child(playersRef, user.uid), {
         name: user.displayName,
-        image: user.photoURL,
+        image,
         alive: true,
         target: "",
         tags: [],

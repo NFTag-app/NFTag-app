@@ -37,5 +37,9 @@ export interface UserData extends User {
 }
 
 export type CreateGame = (name: string, owner: UserData) => Promise<Game>;
-export type JoinGame = (id: string, user: UserData) => Promise<Game>;
+export type JoinGame = (
+  id: string,
+  user: UserData,
+  image: string
+) => Promise<Game>;
 export type ListGames = (user: UserData) => Promise<Game[]>;
