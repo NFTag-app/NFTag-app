@@ -49,6 +49,11 @@ const UserProvider: React.FC<{
   return <UserContext.Provider value={user}>{children}</UserContext.Provider>;
 };
 
+export const signOut = () => {
+  const auth = getAuth();
+  auth.signOut();
+};
+
 export default UserProvider;
 
 export const useUser = () => {
