@@ -1,6 +1,7 @@
 import { User } from "firebase/auth";
 
 export interface Game {
+  id: string;
   inProgress: boolean;
   name: string;
   owner: string;
