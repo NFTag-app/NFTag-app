@@ -1,5 +1,5 @@
 export type RootStackParamList = {
     Home: undefined,
-    Camera: undefined,
+    TagCamera: undefined,
     RegCamera: undefined,
 }

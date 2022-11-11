@@ -22,20 +22,19 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../RootStackParams";
 
-import { renderCaptureControls, renderTagOverlay, renderPreviewControls } from "./Overlay";
+import { renderCaptureControls, renderPreviewControls } from "./Overlay";
 
 const DEFAULT_WINDOW_SIZE = Dimensions.get('window')
 
-type CameraScreenProp = NativeStackNavigationProp<RootStackParamList, "Camera">;
-export const NftagCamera = ({type, callback, overlay}) => {
-  const navigation = useNavigation<CameraScreenProp>();
+export const NftagCamera = <T extends keyof RootStackParamList>({type, callback, overlay}) => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, T>>();
 
   const cameraRef = useRef<Camera>(null)
   const snapBoxRef = useRef<View>(null)
   
   const [screenSize, setScreenSize] = useState<{width: number, height: number}>({width: DEFAULT_WINDOW_SIZE.width, height: DEFAULT_WINDOW_SIZE.height})
 
-  const [cameraType, setCameraType] = useState(CameraType.back)
+  const [cameraType, setCameraType] = useState(type)
   const [cameraRatio,setCameraRatio] = useState('4:3') // Default. Only applicable to android
   const [camVertPadding, setCamVertPadding] = useState(0)
   const [camRatioPrepared, setCamRatioPrepared] = useState(false) // mark if the ratio has been prepared, at least initially
@@ -65,7 +64,8 @@ export const NftagCamera = ({type, callback, overlay}) => {
     const result = await captureRef(snapBoxRef, {
       result: 'tmpfile'
     })
-    console.log(result)
+
+    callback(result)
   }
 
   const prepareCamRatio = async () => {
@@ -84,7 +84,6 @@ export const NftagCamera = ({type, callback, overlay}) => {
           closestNumRatio = numRatio
           closestDistance = distance
         } else {
-          console.log(distance)
           if ((distance > -0.01) && distance < closestDistance) {
             closestRatio = ratios[i]
             closestNumRatio = numRatio
@@ -127,6 +126,8 @@ export const NftagCamera = ({type, callback, overlay}) => {
   )
 
   useEffect(() => {
+    console.log(type)
+    console.log(cameraType)
 	const ascSubscription = AppState.addEventListener('change', nextAppState => {
 	  // When user comes back into the app set the correct nav bar behavior
 	  if(nextAppState === 'active') {
@@ -153,16 +154,16 @@ export const NftagCamera = ({type, callback, overlay}) => {
   const updateScreen = async (e: LayoutChangeEvent) => {
     const {width, height} = e.nativeEvent.layout
     setScreenSize({width, height})
-    prepareCamRatio()
+    prepareCamRatio().catch(e => console.log(e))
     if(Platform.OS==='android') {
-      const behavior= await NavigationBar.getBehaviorAsync()
+      const behavior= await NavigationBar.getBehaviorAsync().catch(e => console.log(e))
       if(behavior!=='overlay-swipe') setNavigationBar()
     }
   }
 
   const cameraReady = async () => {
     if(!camRatioPrepared) {
-      await prepareCamRatio()
+      await prepareCamRatio().catch(e => console.log(e))
     }
     setIsCameraReady(true)
   }
@@ -220,12 +221,12 @@ export const NftagCamera = ({type, callback, overlay}) => {
 		  <View style={[styles.container, {backgroundColor: 'black'}]} ref={snapBoxRef}>
 			<Image source={{ uri: photoData.uri }} style={[styles.camera, {marginTop: camVertPadding, marginBottom: camVertPadding}]}/>
 		  </View>
-		  {isCameraReady && renderTagOverlay({styles, sdStyles})}
+		  {isCameraReady && overlay({styles, sdStyles})}
 		  {isCameraReady && renderPreviewControls({styles, sdStyles, saveTag, retakePicture})}
 		</> :
 		<>
-		  {isCameraReady && renderTagOverlay({styles, sdStyles})}
-		  {renderCaptureControls({styles, sdStyles, takePicture, cameraRef, isCameraReady, navigation, screenSize})}
+		  {isCameraReady && overlay({styles, sdStyles})}
+		  {isCameraReady && renderCaptureControls({styles, sdStyles, takePicture, cameraRef, isCameraReady, navigation, screenSize})}
 		</>
 	  }
 	  <StatusBar style="auto" hidden/>

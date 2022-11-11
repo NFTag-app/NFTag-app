@@ -26,9 +26,9 @@ export default function Navigation() {
           options={{ title: "NFTag | Home" }}
         />
         <Stack.Screen
-          name="Camera"
+          name="TagCamera"
           component={TagCameraScreen}
-          options={{ title: "NFTag | Camera", headerShown: false }}
+          options={{ title: "NFTag | TagCamera", headerShown: false }}
         />
         <Stack.Screen
           name="RegCamera"

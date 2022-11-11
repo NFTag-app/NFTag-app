@@ -14,9 +14,15 @@ const HomeScreen = () => {
             <Text style={{ color: '#333', fontSize: 20 }}>Welcome</Text>
             <TouchableOpacity
                 style={{backgroundColor:'#47f', width: 150, padding: 10, margin: 10, alignItems: 'center'}}
-                onPress={() => navigation.navigate('Camera')}
+                onPress={() => navigation.navigate('TagCamera')}
             >
-                <Text style={{ fontSize: 18, color: '#fff' }}>Camera</Text>
+                <Text style={{ fontSize: 18, color: '#fff' }}>Tag Camera</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={{backgroundColor:'#47f', width: 150, padding: 10, margin: 10, alignItems: 'center'}}
+                onPress={() => navigation.navigate('RegCamera')}
+            >
+                <Text style={{ fontSize: 18, color: '#fff' }}>Reg Camera</Text>
             </TouchableOpacity>
             <StatusBar style='auto' />
         </View>

@@ -6,6 +6,8 @@ export const renderTagOverlay = ({styles, sdStyles}) => (
 </View>
 )
 
+export const renderBlankOverlay = ({styles = null, sdStyles = null}) => (<View/>)
+
 export const renderPreviewControls = ({styles, sdStyles, saveTag, retakePicture}) => (
 <View style={styles.container}>
     <View style={styles.prevControls}>

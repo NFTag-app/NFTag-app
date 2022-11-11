@@ -6,7 +6,7 @@ import { renderTagOverlay } from "./components/camera/Overlay";
 const TagCameraScreen = () => {
 	return (
 		<View style={{...StyleSheet.absoluteFillObject}}>
-			<NftagCamera type={CameraType.back} callback={()=>{}} overlay={renderTagOverlay} />
+			<NftagCamera<"TagCamera"> type={CameraType.back} callback={(res)=>{console.log(res)}} overlay={renderTagOverlay}/>
 		</View>
 	)
 }
