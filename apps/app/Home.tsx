@@ -3,10 +3,9 @@ import { StatusBar } from "expo-status-bar";
 import { HomeButton } from "./components/buttons/HomeButton";
 
 const HomeScreen = () => {
-
   return (
     <View style={styles.container}>
-      <Text style={{ color: "#333", fontSize: 20 }}>Welcome</Text>
+      <Text style={styles.welcome}>Welcome</Text>
 
       <HomeButton caption="Reg Camera" navigateTo="RegCamera" />
       <HomeButton caption="Snag Camera" navigateTo="TagCamera" />
@@ -23,6 +22,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  welcome: { color: "#333", fontSize: 20 },
 });
 
 export default HomeScreen;
