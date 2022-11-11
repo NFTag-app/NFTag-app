@@ -12,15 +12,23 @@
 	},
 	"dependencies": {
 		"@nftag/client-sdk": "*",
+		"@nftag/tsconfig": "*",
 		"@types/react-native": "^0.70.6",
 		"expo": "~46.0.16",
 		"expo-status-bar": "~1.4.0",
 		"react": "18.0.0",
 		"react-native": "0.69.6",
-		"@nftag/tsconfig": "*"
+		"react-native-typescript-transformer": "^1.2.13"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.12.9"
 	},
+	"packagerOpts": {
+      "sourceExts": [
+        "ts",
+        "tsx"
+      ],
+      "transformer": "node_modules/react-native-typescript-transformer/index.js"
+    },
 	"private": true
 }

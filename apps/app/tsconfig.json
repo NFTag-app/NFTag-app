@@ -1,5 +1,4 @@
 {
-  "extends": "@nftag/tsconfig/base.json",
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "compilerOptions": {},
+  "extends": "expo/tsconfig.base"
 }
