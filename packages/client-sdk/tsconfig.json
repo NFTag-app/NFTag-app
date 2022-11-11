@@ -1,8 +1,9 @@
 {
   "extends": "@nftag/tsconfig/base.json",
   "compilerOptions": {
+    "jsx": "react",
     "outDir": "dist"
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist/**"]
 }
