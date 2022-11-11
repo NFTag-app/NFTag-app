@@ -3,18 +3,19 @@ import { StatusBar } from "expo-status-bar";
 import { HomeButton } from "./components/buttons/HomeButton";
 import { GoogleSignIn, useUser } from "client-sdk";
 import { LogoutButton } from "./components/buttons/LogoutButton";
+import { LoginButton } from "./components/buttons/LoginButton";
+import { UserData } from "client-sdk/dist/types";
 
 const HomeScreen = () => {
-  const user = useUser();
-
-  const login = user === null ? <GoogleSignIn /> : undefined;
+  const user: UserData = useUser();
 
   return (
     <View style={styles.container}>
       <Text style={styles.welcome}>Welcome</Text>
 
       <Text style={styles.welcome}>{user && user.displayName}</Text>
-      {login}
+
+      <LoginButton user={user} />
 
       <HomeButton caption="Reg Camera" navigateTo="RegCamera" />
       <HomeButton caption="Snag Camera" navigateTo="TagCamera" />
