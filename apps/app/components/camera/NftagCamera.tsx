@@ -20,14 +20,14 @@ import { Camera, CameraCapturedPicture, CameraType } from "expo-camera";
 
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "./RootStackParams";
+import { RootStackParamList } from "../../RootStackParams";
 
-import { renderCaptureControls, renderTagOverlay, renderPreviewControls } from "./components/camera/Overlay";
+import { renderCaptureControls, renderTagOverlay, renderPreviewControls } from "./Overlay";
 
 const DEFAULT_WINDOW_SIZE = Dimensions.get('window')
 
 type CameraScreenProp = NativeStackNavigationProp<RootStackParamList, "Camera">;
-const nftagCamera = () => {
+export const NftagCamera = ({type, callback, overlay}) => {
   const navigation = useNavigation<CameraScreenProp>();
 
   const cameraRef = useRef<Camera>(null)
@@ -262,5 +262,3 @@ const styles = StyleSheet.create({
 	marginTop: 'auto',
   },
 })
-
-export default nftagCamera;
