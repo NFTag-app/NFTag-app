@@ -14,9 +14,7 @@ export const LogoutButton = () => {
           margin: 10,
           alignItems: "center",
         }}
-        onPress={() => {
-          return signOut();
-        } }
+        onPress={() => signOut()}
       >
         <Text style={{ fontSize: 18, color: "#fff" }}>Logout</Text>
       </TouchableOpacity>
