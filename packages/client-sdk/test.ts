@@ -22,7 +22,6 @@ const shuffle = (ids: string[]): Map<string,string> => {
 		const selected: string = ids.splice(s_index, 1)[0]
 		map.set(current, selected || first)
 		current = selected
-		console.log(current)
 	}
 
 	return map

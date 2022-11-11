@@ -1,17 +1,27 @@
-import { ScrollView, View } from 'react-native'
-import { UserData } from 'client-sdk/dist/types';
-import { useUser } from 'client-sdk';
+import { FlatList, View, Text, StyleSheet } from 'react-native'
+import { Game } from 'client-sdk/dist/types';
+import { useGames } from 'client-sdk';
 
 export const GameList = () => {
-  const user: UserData = useUser();
+  const games: Game[] = useGames();
 
-  if(user) {
-    return (
-      <ScrollView>
+  const renderItem = ({item, index, separators}) => (
+    <View>
+      <Text>Key: {item.id} Name: {item.name}</Text>
+    </View>
+  )
 
-      </ScrollView>
-    )
-  }
-  return undefined;
-  
+  return (
+    <View style={styles.container}>
+      <FlatList data={games} renderItem={renderItem}/>
+    </View>
+  )
+
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'red'
+  }
+})
