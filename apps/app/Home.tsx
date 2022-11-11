@@ -1,18 +1,29 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { HomeButton } from "./components/buttons/HomeButton";
+import { GoogleSignIn, useUser } from "client-sdk";
+
+
 
 const HomeScreen = () => {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.welcome}>Welcome</Text>
 
-      <HomeButton caption="Reg Camera" navigateTo="RegCamera" />
-      <HomeButton caption="Snag Camera" navigateTo="TagCamera" />
-
-      <StatusBar style="auto" />
-    </View>
-  );
+  const user = useUser();
+  
+  if (user === null) {
+    return <GoogleSignIn />;
+  } else {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.welcome}>Welcome</Text>
+  
+  
+        <HomeButton caption="Reg Camera" navigateTo="RegCamera" />
+        <HomeButton caption="Snag Camera" navigateTo="TagCamera" />
+  
+        <StatusBar style="auto" />
+      </View>
+    );
+  }
 };
 
 const styles = StyleSheet.create({
