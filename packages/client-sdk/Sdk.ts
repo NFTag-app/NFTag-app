@@ -9,13 +9,17 @@ import {
 } from "firebase/firestore";
 import { uuid } from "uuidv4";
 import {
+  ApproveTag,
   CreateGame,
   Game,
   JoinGame,
   ListGames,
   PauseGame,
   Player,
+  RejectTag,
+  SetTagState,
   StartGame,
+  SubmitTag,
 } from "./types";
 
 export const capturePayment = async () =>
@@ -85,6 +89,7 @@ export const joinGame: JoinGame = async (id, user, image) => {
       // add player to game data
       const playersRef = ref(db, `games/${id}/players`);
       push(child(playersRef, user.uid), {
+        id: user.uid,
         name: user.displayName,
         image,
         active: false,
@@ -193,10 +198,62 @@ export const listGames: ListGames = async (user) => {
 
 //#endregion
 
-//#region Teams
-
-//#endregion
-
 //#region Tags
+export const submitTag: SubmitTag = async (game, user, target, image) => {
+  return new Promise((resolve, reject) => {
+    const db = getDatabase();
+    const tagRef = ref(db, `games/${game.id}/tags`);
+
+    const id = uuid();
+
+    push(child(tagRef, id), {
+      id,
+      timestamp: new Date().getTime(),
+      image,
+      player: user.uid,
+      target: target.id,
+      approved: {
+        approved: null,
+        timestamp: new Date().getTime(),
+      },
+    })
+      .then((ref) => {
+        get(ref)
+          .then((snapshot) => {
+            resolve(snapshot.val());
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      })
+      .catch((error) => {
+        console.log("error", error);
+        reject(error);
+      });
+  });
+};
+
+export const setTagState: SetTagState = async (game, user, tag, approved) => {
+  return new Promise((resolve, reject) => {
+    if (game.owner !== user.uid)
+      reject(new Error("Only the owner can approve tags"));
+
+    const db = getDatabase();
+    const tagRef = ref(db, `games/${game.id}/tags/${tag.id}`);
+
+    update(tagRef, {
+      approved: {
+        approved,
+        timestamp: new Date().getTime(),
+      },
+    });
+  });
+};
+
+export const approveTag: ApproveTag = async (game, user, tag) =>
+  setTagState(game, user, tag, true);
+
+export const rejectTag: RejectTag = async (game, user, tag) =>
+  setTagState(game, user, tag, false);
 
 //#endregion

@@ -26,7 +26,7 @@ export interface Tag {
 }
 
 export interface Player {
-  uid: string;
+  id: string;
   name: string;
   image: string;
   active: boolean;
@@ -53,3 +53,18 @@ export type StartGame = (
 ) => Promise<Game>;
 export type PauseGame = (id: string, user: UserData) => Promise<Game>;
 export type ListGames = (user: UserData) => Promise<Game[]>;
+
+export type SubmitTag = (
+  game: Game,
+  user: UserData,
+  target: Player,
+  image: string
+) => Promise<Tag>;
+export type SetTagState = (
+  game: Game,
+  user: UserData,
+  tag: Tag,
+  approved: boolean
+) => Promise<Tag>;
+export type ApproveTag = (game: Game, user: UserData, tag: Tag) => Promise<Tag>;
+export type RejectTag = (game: Game, user: UserData, tag: Tag) => Promise<Tag>;
