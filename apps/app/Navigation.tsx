@@ -12,6 +12,7 @@ import { HomeScreen } from "./Home";
 import TagCameraScreen from "./TagCameraScreen";
 import RegCameraScreen from "./RegCameraScreen";
 import { InGameScreen } from "./InGameScreen";
+import { GameListScreen } from "./GameListScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -39,7 +40,12 @@ export default function Navigation() {
         <Stack.Screen
           name="InGameScreen"
           component={InGameScreen}
-          options={{ title: "NFTag | Current Game", headerShown: false }}
+          options={{ title: "NFTag | Current Game" }}
+        />
+        <Stack.Screen
+          name="GameListScreen"
+          component={GameListScreen}
+          options={{ title: "NFTag | Game List" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
