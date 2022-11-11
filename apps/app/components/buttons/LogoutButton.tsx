@@ -1,4 +1,4 @@
-import { useUser } from "client-sdk";
+import { useUser, signOut } from "client-sdk";
 import { TouchableOpacity, Text } from "react-native";
 
 export const LogoutButton = () => {
@@ -24,7 +24,3 @@ export const LogoutButton = () => {
   }
   return undefined;
 };
-function signOut(): void {
-  throw new Error("Function not implemented.");
-}
-
