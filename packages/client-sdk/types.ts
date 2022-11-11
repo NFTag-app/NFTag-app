@@ -1,6 +1,7 @@
 import { User } from "firebase/auth";
 
 export interface Game {
+  id: string;
   inProgress: boolean;
   name: string;
   owner: string;
@@ -13,6 +14,7 @@ export interface Game {
 }
 
 export interface Tag {
+  id: string;
   timestamp: number;
   image: string;
   player: string;
@@ -24,6 +26,7 @@ export interface Tag {
 }
 
 export interface Player {
+  uid: string;
   name: string;
   image: string;
   active: boolean;

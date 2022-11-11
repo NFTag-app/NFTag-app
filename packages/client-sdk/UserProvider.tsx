@@ -1,7 +1,8 @@
 import { getAuth } from "firebase/auth";
 import { collection, doc, getFirestore, onSnapshot } from "firebase/firestore";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { UserData } from "./types";
+import { listGames } from "./Sdk";
+import { Game, UserData } from "./types";
 
 const UserContext = createContext<UserData | null>(null);
 
@@ -55,6 +56,19 @@ export const signOut = () => {
 };
 
 export default UserProvider;
+
+export const useGames = () => {
+  const user = useUser();
+  const [games, setGames] = useState<Game[]>([]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    listGames(user).then((games) => setGames(games));
+  }, [user]);
+
+  return games;
+};
 
 export const useUser = () => {
   const context = useContext(UserContext);

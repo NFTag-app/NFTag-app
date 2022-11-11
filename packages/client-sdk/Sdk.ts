@@ -27,7 +27,11 @@ export const createGame: CreateGame = async (name, owner) => {
   return new Promise((resolve, reject) => {
     const db = getDatabase();
     const gameRef = ref(db, `games`);
-    push(child(gameRef, uuid()), {
+
+    const id = uuid();
+
+    push(child(gameRef, id), {
+      id,
       name,
       inProgress: false,
       owner: owner.uid,
