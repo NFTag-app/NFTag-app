@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "app",
-    "slug": "app",
+    "name": "nftag",
+    "slug": "nftag",
+    "owner": "nftag",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
