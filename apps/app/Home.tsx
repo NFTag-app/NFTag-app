@@ -5,6 +5,7 @@ import { GoogleSignIn, useUser } from "client-sdk";
 import { LogoutButton } from "./components/buttons/LogoutButton";
 import { LoginButton } from "./components/buttons/LoginButton";
 import { UserData } from "client-sdk/dist/types";
+import { GameList } from "./components/game-list/GameList"
 
 const HomeScreen = () => {
   const user: UserData = useUser();
@@ -21,6 +22,8 @@ const HomeScreen = () => {
       <HomeButton caption="Snag Camera" navigateTo="TagCamera" />
       
       <LogoutButton />
+
+      <GameList/>
 
       <StatusBar style="auto" />
     </View>
