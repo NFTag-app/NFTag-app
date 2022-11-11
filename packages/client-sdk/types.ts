@@ -1,6 +1,7 @@
 import { User } from "firebase/auth";
 
 export interface Game {
+  inProgress: boolean;
   name: string;
   owner: string;
   players: {
@@ -25,7 +26,7 @@ export interface Tag {
 export interface Player {
   name: string;
   image: string;
-  alive: boolean;
+  active: boolean;
   target: string;
   tags: string[];
 }
@@ -37,5 +38,15 @@ export interface UserData extends User {
 }
 
 export type CreateGame = (name: string, owner: UserData) => Promise<Game>;
-export type JoinGame = (id: string, user: UserData) => Promise<Game>;
+export type JoinGame = (
+  id: string,
+  user: UserData,
+  image: string
+) => Promise<Game>;
+export type StartGame = (
+  id: string,
+  user: UserData,
+  activatePlayers?: boolean
+) => Promise<Game>;
+export type PauseGame = (id: string, user: UserData) => Promise<Game>;
 export type ListGames = (user: UserData) => Promise<Game[]>;

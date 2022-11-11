@@ -1,4 +1,4 @@
-import { child, get, getDatabase, push, ref } from "firebase/database";
+import { child, get, getDatabase, push, ref, update } from "firebase/database";
 import {
   doc,
   DocumentData,
@@ -8,7 +8,15 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { uuid } from "uuidv4";
-import { CreateGame, Game, JoinGame, ListGames, Player } from "./types";
+import {
+  CreateGame,
+  Game,
+  JoinGame,
+  ListGames,
+  PauseGame,
+  Player,
+  StartGame,
+} from "./types";
 
 export const capturePayment = async () =>
   new Promise((resolve) => resolve(true));
@@ -21,6 +29,7 @@ export const createGame: CreateGame = async (name, owner) => {
     const gameRef = ref(db, `games`);
     push(child(gameRef, uuid()), {
       name,
+      inProgress: false,
       owner: owner.uid,
       players: {},
       tags: {},
@@ -41,7 +50,7 @@ export const createGame: CreateGame = async (name, owner) => {
   });
 };
 
-export const joinGame: JoinGame = async (id, user) => {
+export const joinGame: JoinGame = async (id, user, image) => {
   return new Promise((resolve, reject) => {
     if (!capturePayment()) reject(new Error("Payment failed"));
 
@@ -73,8 +82,8 @@ export const joinGame: JoinGame = async (id, user) => {
       const playersRef = ref(db, `games/${id}/players`);
       push(child(playersRef, user.uid), {
         name: user.displayName,
-        image: user.photoURL,
-        alive: true,
+        image,
+        active: false,
         target: "",
         tags: [],
       } as Player).then((ref) => {
@@ -87,6 +96,64 @@ export const joinGame: JoinGame = async (id, user) => {
           });
       });
     });
+  });
+};
+
+export const startGame: StartGame = async (
+  id,
+  user,
+  activatePlayers = true
+) => {
+  return new Promise((resolve, reject) => {
+    const db = getDatabase();
+    const gameRef = ref(db, `games/${id}`);
+    get(gameRef)
+      .then((snapshot) => {
+        if (snapshot.val().owner !== user.uid)
+          reject(new Error("Only the owner can start the game"));
+        else {
+          update(gameRef, {
+            inProgress: true,
+          });
+
+          // set all players to active state
+          const playersRef = ref(db, `games/${id}/players`);
+          get(playersRef).then((snapshot) => {
+            const players = snapshot.val();
+            Object.keys(players).forEach((playerId) => {
+              update(ref(db, `games/${id}/players/${playerId}`), {
+                active: true,
+              });
+            });
+          });
+
+          resolve(snapshot.val());
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+export const pauseGame: PauseGame = async (id, user) => {
+  return new Promise((resolve, reject) => {
+    const db = getDatabase();
+    const gameRef = ref(db, `games/${id}`);
+    get(gameRef)
+      .then((snapshot) => {
+        if (snapshot.val().owner !== user.uid)
+          reject(new Error("Only the owner can pause the game"));
+        else {
+          update(gameRef, {
+            inProgress: false,
+          });
+          resolve(snapshot.val());
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
   });
 };
 

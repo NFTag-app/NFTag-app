@@ -1,6 +1,6 @@
 import GameProvider, { useGame } from "./GameProvider";
 import GoogleSignIn from "./GoogleSignin";
-import { createGame, joinGame, listGames } from "./Sdk";
+import { createGame, joinGame, listGames, pauseGame, startGame } from "./Sdk";
 import test from "./test";
 import UserProvider, { signOut, useUser } from "./UserProvider";
 
@@ -14,5 +14,7 @@ export {
   useGame,
   createGame,
   joinGame,
+  startGame,
+  pauseGame,
   listGames,
 };
