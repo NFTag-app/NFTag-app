@@ -22,10 +22,12 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./RootStackParams";
 
+import { renderCaptureControls, renderTagOverlay, renderPreviewControls } from "./components/camera/Overlay";
+
 const DEFAULT_WINDOW_SIZE = Dimensions.get('window')
 
 type CameraScreenProp = NativeStackNavigationProp<RootStackParamList, "Camera">;
-const RegCameraScreen = () => {
+const nftagCamera = () => {
   const navigation = useNavigation<CameraScreenProp>();
 
   const cameraRef = useRef<Camera>(null)
@@ -165,86 +167,38 @@ const RegCameraScreen = () => {
     setIsCameraReady(true)
   }
 
-  const getScreenDependentStyles = (screenSize: {width: number, height: number}) => StyleSheet.create({
-	dot: {
-	  backgroundColor: 'red',
-	  width: Math.floor(screenSize.width * 0.04),
-	  height: Math.floor(screenSize.width * 0.04),
-	  borderRadius: Math.floor(screenSize.width * 0.02),
-	  marginTop: 'auto',
-	  marginBottom: 'auto',
-	},
-	captureBtn: {
-	  backgroundColor: '#f5f5f5',
-	  width: Math.floor(screenSize.width * 0.2),
-	  height: Math.floor(screenSize.width * 0.2),
-	  borderRadius: Math.floor(screenSize.width * 0.1),
-	  margin: Math.floor(screenSize.width * 0.1),
-	},
-	prevBtn: {
-	  // backgroundColor: 'red',
-	  width: Math.floor(screenSize.width / 3),
-	  paddingVertical: Math.floor(screenSize.width / 12),
-	  alignItems: 'center',
-	},
-	prevBtnText: {
-	  fontSize: Math.floor(screenSize.width / 16),
-	  color: 'white',
-	  marginTop: 'auto',
-	  marginBottom: 'auto',
-	}
-  })
+  const getScreenDependentStyles = (screenSize: {width: number, height: number}) => { 
+    return StyleSheet.create({
+      dot: {
+        backgroundColor: 'red',
+        width: Math.floor(screenSize.width * 0.04),
+        height: Math.floor(screenSize.width * 0.04),
+        borderRadius: Math.floor(screenSize.width * 0.02),
+        marginTop: 'auto',
+        marginBottom: 'auto',
+      },
+      captureBtn: {
+        backgroundColor: '#f5f5f5',
+        width: Math.floor(screenSize.width * 0.2),
+        height: Math.floor(screenSize.width * 0.2),
+        borderRadius: Math.floor(screenSize.width * 0.1),
+        margin: Math.floor(screenSize.width * 0.1),
+      },
+      prevBtn: {
+        // backgroundColor: 'red',
+        width: Math.floor(screenSize.width / 3),
+        paddingVertical: Math.floor(screenSize.width / 12),
+        alignItems: 'center',
+      },
+      prevBtnText: {
+        fontSize: Math.floor(screenSize.width / 16),
+        color: 'white',
+        marginTop: 'auto',
+        marginBottom: 'auto',
+      }
+    })
+  }
   const sdStyles = getScreenDependentStyles(screenSize) // Styles depend on screen size
-
-  const renderOverlay = () => (
-	<View style={styles.overlay}>
-	  <View style={sdStyles.dot}/>
-	</View>
-  )
-
-  const renderPreviewControls = () => (
-	<View style={styles.container}>
-	  <View style={styles.prevControls}>
-		<TouchableOpacity
-		  style={sdStyles.prevBtn}
-		  onPress={retakePicture}
-		>
-		  <Text style={sdStyles.prevBtnText}>Retake</Text>
-		</TouchableOpacity>
-		<TouchableOpacity
-		  style={sdStyles.prevBtn}
-		  onPress={saveTag}
-		>
-		  <Text style={sdStyles.prevBtnText}>Save Snap</Text>
-		</TouchableOpacity>
-	  </View>
-	</View>
-  )
-
-  const renderCaptureControls = () => (
-	<View style={styles.captureControls}>
-	  <TouchableOpacity
-		activeOpacity={0.7}
-		disabled={!isCameraReady || !cameraRef.current}
-		onPress={takePicture}
-		style={sdStyles.captureBtn}
-	  />
-	  <TouchableOpacity onPress={() => navigation.goBack()} style={{
-		position: 'absolute',
-		bottom: Math.floor(screenSize.width * 0.1),
-		left: 0,
-		width: Math.floor(screenSize.width / 3),
-		paddingVertical: Math.floor(screenSize.width / 16),
-		alignItems: 'center',
-	  }}>
-		<Text style={{
-		  color: 'white',
-		  fontSize: Math.floor(screenSize.width / 16),
-		}}>Back</Text>
-	  </TouchableOpacity>
-	  {/* Other capture controls */}
-	</View>
-  )
 
   return (
 	<View style={styles.mainContainer} onLayout={updateScreen}>
@@ -266,20 +220,18 @@ const RegCameraScreen = () => {
 		  <View style={[styles.container, {backgroundColor: 'black'}]} ref={snapBoxRef}>
 			<Image source={{ uri: photoData.uri }} style={[styles.camera, {marginTop: camVertPadding, marginBottom: camVertPadding}]}/>
 		  </View>
-		  {renderOverlay()}
-		  {renderPreviewControls()}
+		  {renderTagOverlay({styles, sdStyles})}
+		  {renderPreviewControls({styles, sdStyles, saveTag, retakePicture})}
 		</> :
 		<>
-		  {isCameraReady && renderOverlay()}
-		  {renderCaptureControls()}
+		  {isCameraReady && renderTagOverlay({styles, sdStyles})}
+		  {renderCaptureControls({styles, sdStyles, takePicture, cameraRef, isCameraReady, navigation, screenSize})}
 		</>
 	  }
 	  <StatusBar style="auto" hidden/>
 	</View>
   )
 };
-
-export default RegCameraScreen;
 
 const styles = StyleSheet.create({
 	mainContainer: {
@@ -310,3 +262,5 @@ const styles = StyleSheet.create({
 	marginTop: 'auto',
   },
 })
+
+export default nftagCamera;
