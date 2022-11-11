@@ -2,7 +2,7 @@ import { getAuth } from "firebase/auth";
 import { collection, doc, getFirestore, onSnapshot } from "firebase/firestore";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { listGames } from "./Sdk";
-import { UserData } from "./types";
+import { Game, UserData } from "./types";
 
 const UserContext = createContext<UserData | null>(null);
 
@@ -59,7 +59,7 @@ export default UserProvider;
 
 export const useGames = () => {
   const user = useUser();
-  const [games, setGames] = useState<any[]>([]);
+  const [games, setGames] = useState<Game[]>([]);
 
   useEffect(() => {
     if (!user) return;
