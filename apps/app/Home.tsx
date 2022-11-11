@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { HomeButton } from "./components/buttons/HomeButton";
 import { GoogleSignIn, useUser } from "client-sdk";
+import { LogoutButton } from "./components/buttons/LogoutButton";
 
 const HomeScreen = () => {
   const user = useUser();
@@ -17,6 +18,8 @@ const HomeScreen = () => {
 
       <HomeButton caption="Reg Camera" navigateTo="RegCamera" />
       <HomeButton caption="Snag Camera" navigateTo="TagCamera" />
+      
+      <LogoutButton />
 
       <StatusBar style="auto" />
     </View>
