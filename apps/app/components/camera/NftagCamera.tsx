@@ -210,7 +210,7 @@ export const NftagCamera = ({type, callback, overlay}) => {
 		  ratio={cameraRatio}
 		  onCameraReady={cameraReady}
 		  onMountError={err => {
-			console.log('Camera Error: ', err)
+			  console.log('Camera Error: ', err)
 		  }}
 		/>
 	  }
@@ -220,8 +220,8 @@ export const NftagCamera = ({type, callback, overlay}) => {
 		  <View style={[styles.container, {backgroundColor: 'black'}]} ref={snapBoxRef}>
 			<Image source={{ uri: photoData.uri }} style={[styles.camera, {marginTop: camVertPadding, marginBottom: camVertPadding}]}/>
 		  </View>
-		  {renderTagOverlay({styles, sdStyles})}
-		  {renderPreviewControls({styles, sdStyles, saveTag, retakePicture})}
+		  {isCameraReady && renderTagOverlay({styles, sdStyles})}
+		  {isCameraReady && renderPreviewControls({styles, sdStyles, saveTag, retakePicture})}
 		</> :
 		<>
 		  {isCameraReady && renderTagOverlay({styles, sdStyles})}
