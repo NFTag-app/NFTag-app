@@ -13,22 +13,29 @@
 	"dependencies": {
 		"@nftag/client-sdk": "*",
 		"@nftag/tsconfig": "*",
+		"@react-navigation/native": "^6.0.13",
+		"@react-navigation/native-stack": "^6.9.1",
 		"@types/react-native": "^0.70.6",
 		"expo": "~46.0.16",
+		"expo-camera": "~12.3.0",
+		"expo-navigation-bar": "~1.3.0",
 		"expo-status-bar": "~1.4.0",
 		"react": "18.0.0",
 		"react-native": "0.69.6",
-		"react-native-typescript-transformer": "^1.2.13"
+		"react-native-safe-area-context": "4.3.1",
+		"react-native-screens": "~3.15.0",
+		"react-native-typescript-transformer": "^1.2.13",
+		"react-native-view-shot": "3.3.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.12.9"
 	},
 	"packagerOpts": {
-      "sourceExts": [
-        "ts",
-        "tsx"
-      ],
-      "transformer": "node_modules/react-native-typescript-transformer/index.js"
-    },
+		"sourceExts": [
+			"ts",
+			"tsx"
+		],
+		"transformer": "node_modules/react-native-typescript-transformer/index.js"
+	},
 	"private": true
 }

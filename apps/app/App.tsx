@@ -1,17 +1,26 @@
-import { test } from "@nftag/client-sdk";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { test } from "@nftag/client-sdk"
+import { StyleSheet, Text, View } from "react-native"
+
+import { NavigationContainer, useNavigation } from "@react-navigation/native"
+import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-navigation/native-stack"
+import { RootStackParamList } from "./RootStackParams"
+
+import HomeScreen from "./Home"
+import CameraScreen from "./Camera"
+
+const Stack= createNativeStackNavigator<RootStackParamList>()
 
 export default function App() {
-	const message = test();
+	const message = test()
 
 	return (
-		<View style={styles.container}>
-			<Text>Open up App.js to start working on your app!</Text>
-			<Text>{message}</Text>
-			<StatusBar style="auto" />
-		</View>
-	);
+		<NavigationContainer>
+			<Stack.Navigator initialRouteName='Home'>
+				<Stack.Screen name='Home' component={HomeScreen} options={{ title: 'NFTag | Home' }}/>
+				<Stack.Screen name='Camera' component={CameraScreen} options={{ title: 'NFTag | Camera', headerShown: false }}/>
+			</Stack.Navigator>
+		</NavigationContainer>
+	)
 }
 
 const styles = StyleSheet.create({
