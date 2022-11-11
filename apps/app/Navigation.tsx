@@ -8,9 +8,10 @@ import {
 } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./RootStackParams";
 
-import HomeScreen from "./Home";
+import { HomeScreen } from "./Home";
 import TagCameraScreen from "./TagCameraScreen";
 import RegCameraScreen from "./RegCameraScreen";
+import { InGameScreen } from "./InGameScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -34,6 +35,11 @@ export default function Navigation() {
           name="RegCamera"
           component={RegCameraScreen}
           options={{ title: "NFTag | RegCamera", headerShown: false }}
+        />
+        <Stack.Screen
+          name="InGameScreen"
+          component={InGameScreen}
+          options={{ title: "NFTag | Current Game", headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>
