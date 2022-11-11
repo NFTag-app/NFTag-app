@@ -8,48 +8,25 @@ import { RootStackParamList } from "./RootStackParams";
 import CameraScreen from "./Camera";
 import HomeScreen from "./Home";
 import RegCameraScreen from "./RegCamera";
+import Navigation from "./Navigation";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-	const message = test();
+  const message = test();
 
-	return (
-		<UserProvider>
-			<NavigationContainer>
-				<Stack.Navigator initialRouteName="Home">
-					<Stack.Screen
-						name="Home"
-						component={HomeScreen}
-						options={{ title: "NFTag | Home" }}
-					/>
-					<Stack.Screen
-						name="Camera"
-						component={CameraScreen}
-						options={{
-							title: "NFTag | Camera",
-							headerShown: false,
-						}}
-					/>
-					<Stack.Screen
-						name="RegCamera"
-						component={RegCameraScreen}
-						options={{
-							title: "NFTag | RegCamera",
-							headerShown: false,
-						}}
-					/>
-				</Stack.Navigator>
-			</NavigationContainer>
-		</UserProvider>
-	);
+  return (
+    <UserProvider>
+      <Navigation />
+    </UserProvider>
+  );
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#fff",
-		alignItems: "center",
-		justifyContent: "center",
-	},
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
