@@ -5,16 +5,20 @@ import { useRef } from "react";
 import { RootStackParamList } from "./RootStackParams";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { TagList } from './components/in-game-screen/tag-list';
-import { FloatingAction } from "react-native-floating-action";
+import { FloatingAction, IActionProps } from "react-native-floating-action";
+
+const icon = require('./assets/adaptive-icon.png');
 
 type Props = NativeStackScreenProps<RootStackParamList, 'InGameScreen'>;
 
 type Action = {
     text: string,
-    // icon: require("./images/ic_accessibility_white.png"),
+    icon: string,
     name: string,
+    buttonSize: number,
     position: number,
-    navigateTo: keyof RootStackParamList
+    navigateTo: keyof RootStackParamList,
+    margin: number
 }
 
 export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
@@ -32,81 +36,23 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
 
   const actions: Action[] = [
     {
-      text: "Tag a Target!!!",
+      text: "Tag!!!",
       // icon: require("./images/ic_accessibility_white.png"),
+      icon: icon,
       name: "bt_tag_target",
+      buttonSize: 75,
       position: 10,
-      navigateTo: 'TagCamera'
+      navigateTo: 'TagCamera',
+      margin: 0
     },
     {
-      text: "Yell at somebody!!!",
-      // icon: require("./images/ic_language_white.png"),
+      text: "Yell!!!",
+      icon: icon,
+      buttonSize: 75,
       name: "bt_yell",
       position: 0,
-      navigateTo: 'RegCamera'
-    },
-    {
-      text: "Yell at somebody!!!",
-      // icon: require("./images/ic_language_white.png"),
-      name: "bt_yell1",
-      position: 1,
-      navigateTo: 'RegCamera'
-    },
-    {
-      text: "Yell at somebody!!!",
-      // icon: require("./images/ic_language_white.png"),
-      name: "bt_yell2",
-      position: 2,
-      navigateTo: 'RegCamera'
-    },
-    {
-      text: "Yell at somebody!!!",
-      // icon: require("./images/ic_language_white.png"),
-      name: "bt_yell3",
-      position: 3,
-      navigateTo: 'RegCamera'
-    },
-    {
-      text: "Yell at somebody!!!",
-      // icon: require("./images/ic_language_white.png"),
-      name: "bt_yell4",
-      position: 4,
-      navigateTo: 'RegCamera'
-    },
-    {
-      text: "Yell at somebody!!!",
-      // icon: require("./images/ic_language_white.png"),
-      name: "bt_yell5",
-      position: 5,
-      navigateTo: 'RegCamera'
-    },
-    {
-      text: "Yell at somebody!!!",
-      // icon: require("./images/ic_language_white.png"),
-      name: "bt_yell6",
-      position: 6,
-      navigateTo: 'RegCamera'
-    },
-    {
-      text: "Yell at somebody!!!",
-      // icon: require("./images/ic_language_white.png"),
-      name: "bt_yell7",
-      position: 7,
-      navigateTo: 'RegCamera'
-    },
-    {
-      text: "Yell at somebody!!!",
-      // icon: require("./images/ic_language_white.png"),
-      name: "bt_yell8",
-      position: 8,
-      navigateTo: 'RegCamera'
-    },
-    {
-      text: "Yell at somebody!!!",
-      // icon: require("./images/ic_language_white.png"),
-      name: "bt_yell9",
-      position: 9,
-      navigateTo: 'RegCamera'
+      navigateTo: 'RegCamera',
+      margin: 0
     },
   ];
 
@@ -119,7 +65,7 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
   return (
     <GameProvider gameId={gameId}>
       <TagList />
-      <FloatingAction actions={actions} onPressItem={onPressItem} />
+      <FloatingAction actions={actions as unknown as IActionProps[]} onPressItem={onPressItem} position={'right'}/>
     </GameProvider>
   );
 };

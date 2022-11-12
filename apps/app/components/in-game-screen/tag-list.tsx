@@ -1,15 +1,24 @@
-import { FlatList, View, Text, StyleSheet } from "react-native";
-import { useGame, useTags } from "client-sdk/dist/GameProvider";
+import {
+  FlatList,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { useTags } from "client-sdk/dist/GameProvider";
 import { CommonStyles } from "../../styles/CommonStyles";
+import { Tag } from "client-sdk/dist/types";
+import { HomeButton } from "../buttons/HomeButton";
 
 export const TagList = () => {
   const tags = useTags();
   console.log("tags", tags);
 
-  const tagIds = tags ? [
-    ...tags.map(tag => tag),
-    'LASTITEM'
-  ] : ['NOITEMS']
+  const tagIds = tags
+    ? [...tags.map((tag) => tag.id), "LASTITEM"]
+    : ["NOITEMS"];
+
+  console.log(tagIds);
 
   const renderItem = ({ item, index, separators }) => {
     if (item === "LASTITEM") {
@@ -26,12 +35,32 @@ export const TagList = () => {
         </View>
       );
     }
-    const tag = tags[item];
+    const tag = tags.find((t) => t.id === item);
     if (tag) {
       const text = `Key: ${tag.id}; Player: ${tag.player}; Target: ${tag.target}; Approved?: ${tag.approved?.approved}`;
+
+      const ApprovalButton = () => {
+        if (!tag.approved?.approved) {
+          return (
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#47f",
+                padding: 10,
+                margin: 10,
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ fontSize: 18, color: "#fff" }}>Approve</Text>
+            </TouchableOpacity>
+          );
+        }
+        return undefined;
+      };
+
       return (
-        <View style={{ height: 200 }}>
+        <View>
           <Text>{text}</Text>
+          <ApprovalButton />
         </View>
       );
     }
@@ -39,11 +68,7 @@ export const TagList = () => {
   };
 
   return (
-    <FlatList
-      style={styles.container}
-      data={tagIds}
-      renderItem={renderItem}
-    />
+    <FlatList style={styles.container} data={tagIds} renderItem={renderItem} />
   );
 };
 
