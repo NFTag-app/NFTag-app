@@ -178,10 +178,7 @@ export const NftagCamera = <TParamList extends ParamListBase, T extends keyof TP
             >
               <Image
                 source={{ uri: photoData.uri }}
-                style={[
-                  cameraStyles.camera,
-                  { marginTop: camVertPadding, marginBottom: camVertPadding },
-                ]}
+                style={cameraStyles.camera}
               />
             </View>
             {isCameraReady && overlay({ screenSize: screenSize, vertPadding: camVertPadding })}

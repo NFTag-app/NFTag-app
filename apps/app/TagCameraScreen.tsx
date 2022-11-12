@@ -20,6 +20,7 @@ import { submitTag, useUser } from "client-sdk";
 //import { renderTagOverlay } from "./components/camera/Overlay";
 
 const logo = require("./assets/Icons/1x/Logo_Transparent.png");
+const crosshair = require("./assets/Icons/Crosshair/1x/crosshair.png")
 
 type Props = NativeStackScreenProps<InGameStackParamList, "TagCameraScreen">;
 export const TagCameraScreen = ({ navigation: { navigate } }) => {
@@ -80,19 +81,30 @@ export const TagCameraScreen = ({ navigation: { navigate } }) => {
         >
           {user?.uid || "Undefined ID"}
         </Text>
-          <Image
-            style={{
-              position: 'absolute',
-              left: 14,
-              top: 13 + vertPadding,
-              width: 100,
-              height: 50,
-            }}
-            resizeMode='cover'
-            source={logo}
-          />
+        <Image
+          style={{
+            position: "absolute",
+            left: 14,
+            top: 13 + vertPadding,
+            width: 100,
+            height: 50,
+          }}
+          resizeMode="cover"
+          source={logo}
+        />
 
-        <View style={sdStyles.dot} />
+        <Image
+          style={{
+            width: 64,
+            height: 64,
+            marginTop: 'auto',
+            marginBottom: 'auto',
+          }}
+          resizeMode="cover"
+          source={crosshair}
+        />
+
+        {/* <View style={sdStyles.dot} /> */}
       </View>
     );
   };
@@ -102,7 +114,7 @@ export const TagCameraScreen = ({ navigation: { navigate } }) => {
       <NftagCamera<InGameStackParamList, "TagCameraScreen">
         type={CameraType.back}
         callback={(res) => {
-          submitTag(game, user, target, res).catch(e => console.log(e));
+          submitTag(game, user, target, res).catch((e) => console.log(e));
         }}
         screenReady={!!date && !!user}
         overlay={renderOverlay}
