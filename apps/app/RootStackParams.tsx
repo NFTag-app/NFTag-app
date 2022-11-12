@@ -10,4 +10,5 @@ export type RootStackParamList = {
 export type InGameStackParamList = {
   InGameScreen: undefined;
   TagCameraScreen: undefined;
+  TargetScreen: undefined;
 };

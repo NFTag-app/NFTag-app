@@ -14,6 +14,7 @@ import { InGameScreen } from "./InGameScreen";
 import JoinGameScreen from "./JoinGameScreen";
 import RegCameraScreen from "./RegCameraScreen";
 import { TagCameraScreen } from "./TagCameraScreen";
+import TargetScreen from "./TargetScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const InGameStack = createStackNavigator<InGameStackParamList>();
@@ -45,6 +46,17 @@ const GameNavigator = () => {
         name="TagCameraScreen"
         component={TagCameraScreen}
         options={{ title: "Camera", headerShown: false }}
+      />
+      <InGameStack.Screen
+        name="TargetScreen"
+        component={TargetScreen}
+        options={{
+          title: "Target",
+          headerTintColor: "#695895",
+          headerStyle: {
+            backgroundColor: "#25262b",
+          },
+        }}
       />
     </InGameStack.Navigator>
   );

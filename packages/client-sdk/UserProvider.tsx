@@ -15,14 +15,19 @@ const UserProvider: React.FC<{
   const db = getFirestore();
 
   useEffect(() => {
-    if (!user || ready) return;
-
+    if (!user) return;
     setReady(true);
+  }, [user]);
+
+  useEffect(() => {
+    if (!ready) return;
 
     return onSnapshot(
-      doc(collection(db, "customers"), user.uid),
+      doc(collection(db, "customers"), user!.uid),
       (snapshot) => {
         if (!snapshot.exists()) return;
+
+        console.log("data", snapshot.data());
 
         const data = snapshot.data();
 
@@ -34,9 +39,10 @@ const UserProvider: React.FC<{
           ...user,
           ...data,
         } as UserData);
-      }
+      },
+      console.error
     );
-  }, [user]);
+  }, [ready]);
 
   useEffect(() => {
     return auth.onAuthStateChanged((user) => {

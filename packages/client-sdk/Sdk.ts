@@ -3,15 +3,7 @@ import {
   presentPaymentSheet,
 } from "@stripe/stripe-react-native";
 import { SetupParams } from "@stripe/stripe-react-native/lib/typescript/src/types/PaymentSheet";
-import {
-  child,
-  get,
-  getDatabase,
-  push,
-  ref,
-  set,
-  update,
-} from "firebase/database";
+import { child, get, getDatabase, ref, set, update } from "firebase/database";
 import {
   addDoc,
   collection,
@@ -73,11 +65,11 @@ export const capturePayment = async (uid: string) => {
             merchantCountryCode: "US",
           },
         } as SetupParams).then(({ error }) => {
-          if (error) reject(error);
+          if (error) return reject(error);
 
           presentPaymentSheet().then(({ error }) => {
-            if (error) reject(error);
-            resolve(true);
+            if (error) return reject(error);
+            return resolve(true);
           });
         });
       });
@@ -89,9 +81,26 @@ export const capturePayment = async (uid: string) => {
 
 export const createGame: CreateGame = async (name, owner) => {
   const db = getDatabase();
+  const firestore = getFirestore();
   const gameRef = ref(db, `games`);
 
   const id = Math.floor(100000 + Math.random() * 900000).toString();
+
+  // add game to user data
+  const userRef = doc(firestore, "customers", owner.uid);
+  getDoc(userRef)
+    .then((snapshot: DocumentSnapshot<DocumentData>) => {
+      setDoc(
+        userRef,
+        {
+          games: [...snapshot.data()?.games, id],
+        },
+        { merge: true }
+      );
+    })
+    .catch((error) => {
+      throw error;
+    });
 
   return set(child(gameRef, id), {
     id,
@@ -100,20 +109,22 @@ export const createGame: CreateGame = async (name, owner) => {
     owner: owner.uid,
     players: {},
     tags: {},
-  } as Game);
+  } as Game).then(() => {
+    return id;
+  });
 };
 
 export const joinGame: JoinGame = async (id, user, image) => {
   return new Promise(async (resolve, reject) => {
     if ((await capturePayment(user.uid)) !== true)
-      reject(new Error("Payment failed"));
+      return reject(new Error("Payment failed"));
 
     const db = getDatabase();
     const firestore = getFirestore();
 
     // ensure game exists
     get(ref(db, `games/${id}`)).then((snapshot) => {
-      if (!snapshot.exists()) reject(new Error("Game does not exist"));
+      if (!snapshot.exists()) return reject(new Error("Game does not exist"));
 
       // add game to user data
       const userRef = doc(firestore, "customers", user.uid);
@@ -128,27 +139,19 @@ export const joinGame: JoinGame = async (id, user, image) => {
           );
         })
         .catch((error) => {
-          reject(error);
+          return reject(error);
         });
 
       // add player to game data
       const playersRef = ref(db, `games/${id}/players`);
-      push(child(playersRef, user.uid), {
+      return set(child(playersRef, user.uid), {
         id: user.uid,
         name: user.displayName,
         image,
         active: false,
         target: "",
-        tags: [],
-      } as Player).then((ref) => {
-        get(ref)
-          .then((snapshot) => {
-            resolve(snapshot.val());
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
+        tags: 0,
+      } as Player);
     });
   });
 };
@@ -168,6 +171,7 @@ export const startGame: StartGame = async (
         else {
           await update(gameRef, {
             inProgress: true,
+            winner: null,
           });
 
           // set all players to active state
@@ -184,6 +188,7 @@ export const startGame: StartGame = async (
             targets.forEach((value, key) => {
               players[key].target = value;
               players[key].active = activatePlayers;
+              players[key].tags = 0;
             });
 
             await update(ref(db, `games/${id}/players`), players);
@@ -193,7 +198,7 @@ export const startGame: StartGame = async (
         }
       })
       .catch((error) => {
-        reject(error);
+        return reject(error);
       });
   });
 };
@@ -205,7 +210,7 @@ export const pauseGame: PauseGame = async (id, user) => {
     get(gameRef)
       .then((snapshot) => {
         if (snapshot.val().owner !== user.uid)
-          reject(new Error("Only the owner can pause the game"));
+          return reject(new Error("Only the owner can pause the game"));
         else {
           update(gameRef, {
             inProgress: false,
@@ -214,7 +219,7 @@ export const pauseGame: PauseGame = async (id, user) => {
         }
       })
       .catch((error) => {
-        reject(error);
+        return reject(error);
       });
   });
 };
@@ -228,7 +233,7 @@ export const listGames: ListGames = async (user) => {
     getDoc(userRef)
       .then((snapshot: DocumentSnapshot<DocumentData>) => {
         const games = snapshot.data()?.games;
-        if (!games) reject(new Error("No games found"));
+        if (!games) return reject(new Error("No games found"));
 
         const gamePromises = games.map((gameId: string) =>
           get(ref(db, `games/${gameId}`))
@@ -239,11 +244,11 @@ export const listGames: ListGames = async (user) => {
             resolve(games);
           })
           .catch((error) => {
-            reject(error);
+            return reject(error);
           });
       })
       .catch((error) => {
-        reject(error);
+        return reject(error);
       });
   });
 };
@@ -268,6 +273,31 @@ export const submitTag: SubmitTag = async (game, user, target, image) => {
         approved: true, // auto approve for now
         timestamp: new Date().getTime(), // auto approve for now
       },
+    }).then(() => {
+      update(ref(db, `games/${game.id}/players/${target}`), {
+        active: false,
+      }).then(() => {
+        update(ref(db, `games/${game.id}/players/${user.uid}`), {
+          tags: (game.players[user.uid].tags || 0) + 1,
+          target: Object.values(game.players).filter(
+            (player: Player) => player.active
+          )[0].id,
+        }).then(() => {
+          get(ref(db, `games/${game.id}/players`)).then((snapshot) => {
+            const players = snapshot
+              .val()
+              .filter((player: Player) => player.active);
+
+            if (players.length < 2) {
+              // game is over
+              update(ref(db, `games/${game.id}`), {
+                inProgress: false,
+                winner: user.uid,
+              });
+            }
+          });
+        });
+      });
     });
   });
 };
@@ -275,7 +305,7 @@ export const submitTag: SubmitTag = async (game, user, target, image) => {
 export const setTagState: SetTagState = async (game, user, tag, approved) => {
   return new Promise((resolve, reject) => {
     if (game.owner !== user.uid)
-      reject(new Error("Only the owner can approve tags"));
+      return reject(new Error("Only the owner can approve tags"));
 
     const db = getDatabase();
     const tagRef = ref(db, `games/${game.id}/tags/${tag.id}`);
