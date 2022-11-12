@@ -15,7 +15,7 @@ import {
   onSnapshot,
   setDoc,
 } from "firebase/firestore";
-import { v4 } from 'uuid';
+import { v4 } from "uuid";
 import { shuffle } from "./shuffle";
 import {
   ApproveTag,
@@ -277,8 +277,8 @@ export const submitTag: SubmitTag = async (game, user, target, image) => {
       player: user.uid,
       target: target.id,
       approved: {
-        approved: null,
-        timestamp: new Date().getTime(),
+        approved: true, // auto approve for now
+        timestamp: new Date().getTime(), // auto approve for now
       },
     })
       .then((ref) => {
