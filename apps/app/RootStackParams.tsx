@@ -2,6 +2,6 @@ export type RootStackParamList = {
     Home: undefined,
     TagCamera: undefined,
     RegCamera: undefined,
-    InGameScreen: undefined,
+    InGameScreen: { gameId: string } | undefined,
     GameListScreen: undefined,
 }
