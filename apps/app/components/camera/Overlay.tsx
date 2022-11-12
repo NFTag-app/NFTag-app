@@ -8,7 +8,7 @@ import { View, TouchableOpacity, Text } from "react-native"
 
 // export const renderBlankOverlay = ({styles = null, sdStyles = null}) => undefined
 
-export const renderPreviewControls = ({styles, sdStyles, saveTag, retakePicture}) => (
+export const renderPreviewControls = ({styles, sdStyles, saveTag, retakePicture, photoData}) => (
 <View style={styles.container}>
     <View style={styles.prevControls}>
     <TouchableOpacity
@@ -19,7 +19,7 @@ export const renderPreviewControls = ({styles, sdStyles, saveTag, retakePicture}
     </TouchableOpacity>
     <TouchableOpacity
         style={sdStyles.prevBtn}
-        onPress={saveTag}
+        onPress={() => saveTag(photoData)}
     >
         <Text style={sdStyles.prevBtnText}>Save Snap</Text>
     </TouchableOpacity>
