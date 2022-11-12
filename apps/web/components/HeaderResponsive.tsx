@@ -1,5 +1,6 @@
 import {
   Burger,
+  Button,
   Container,
   createStyles,
   Group,
@@ -118,7 +119,7 @@ export function HeaderResponsive({ links }: HeaderResponsiveProps) {
   ));
 
   return (
-    <Header height={HEADER_HEIGHT} mb={120} className={classes.root}>
+    <Header height={HEADER_HEIGHT} className={classes.root}>
       <Container className={classes.header}>
         {/* <MantineLogo size={28} /> */}
         <Group spacing={5} className={classes.links}>
@@ -131,6 +132,22 @@ export function HeaderResponsive({ links }: HeaderResponsiveProps) {
           className={classes.burger}
           size="sm"
         />
+
+        <Group>
+          <Button radius="xl" variant="outline">
+            Login
+          </Button>
+          <Button
+            radius="xl"
+            variant="gradient"
+            gradient={{
+              from: "violet.7",
+              to: "violet.9",
+            }}
+          >
+            Get Started
+          </Button>
+        </Group>
 
         <Transition transition="pop-top-right" duration={200} mounted={opened}>
           {(styles) => (
