@@ -5,14 +5,40 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  ImageSourcePropType
+  ImageSourcePropType,
+  useWindowDimensions
 } from "react-native";
-import { useTags } from "client-sdk/dist/GameProvider";
+import { usePlayers, useTags } from "client-sdk/dist/GameProvider";
 import { CommonStyles } from "../../styles/CommonStyles";
+
+
+const newSize = (screenHeight, screenWidth, imageHeight, imageWidth) => {
+  var maxWidth = screenWidth; // Max width for the image
+  var maxHeight = screenHeight; // Max height for the image
+  var ratio = 0;  // Used for aspect ratio
+
+  // Check if the current width is larger than the max
+  if (imageWidth > maxWidth){
+      ratio = maxWidth / imageWidth;   // get ratio for scaling image
+      return {
+        width: maxWidth,
+        height: imageHeight * ratio
+      }
+  } else {
+      ratio = maxHeight / imageHeight;
+      return {
+        width: imageWidth * ratio,
+        height: maxHeight
+      }
+  }
+}
 
 export const TagList = () => {
   const tags = useTags();
-  console.log("tags", tags.map(t => t.image && t.image.uri.split('x')[0]));
+  const dims = useWindowDimensions();
+  const players = usePlayers();
+
+  console.log("tags", tags.map(t => t.image?.uri?.split('x')[0] ?? ''));
 
   const tagIds = tags
     ? [...tags.map((tag) => tag.id), "LASTITEM"]
@@ -37,7 +63,7 @@ export const TagList = () => {
       );
     }
     const tag = tags.find((t) => t.id === item);
-    if (tag) {
+    if (tag?.image?.uri) {
       const text = `Key: ${tag.id}; Player: ${tag.player}; Target: ${tag.target}; Approved?: ${tag.approved?.approved}`;
 
       const ApprovalButton = () => {
@@ -58,17 +84,31 @@ export const TagList = () => {
         return undefined;
       };
 
-      const image = tag.image ? (
+      const size = newSize(dims.height, dims.width, tag.image.height, tag.image.width);
+
+      const image = (
         <Image 
-          source={{ uri: tag.image.uri }}
-          style={{ width: tag.image.width / 2, height: tag.image.height / 2, borderWidth: 3, borderColor: 'red', backgroundColor: 'green'}}
+          source={{ uri: tag.image.uri, scale: .2, height: size.height, width: size.width }}
+          style={{ borderWidth: 3, borderColor: 'red', backgroundColor: 'green'}}
         />
-      ) : undefined;
+      );
+
+      const targetName = players![tag.target].name;
+      const targetImage = players![tag.target].name;
 
       return (
         <View style={CommonStyles.container}>
-          {image}
-          <Text>{text}</Text>
+          <Text>{`${targetName} was TAGGED!?!`}</Text>
+          <View style={{
+            flexDirection: 'row',
+            flex: 1
+          }}>
+            {image}
+            <Image
+              source={{uri: targetImage, height: size.height, width: size.width }}
+              style={{ borderWidth: 3, borderColor: 'red', backgroundColor: 'green'}}
+              />
+          </View>
         </View>
       );
     }
