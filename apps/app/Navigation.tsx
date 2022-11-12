@@ -29,7 +29,7 @@ const GameNavigator = () => {
   return (
     <InGameStack.Navigator>
       <InGameStack.Screen name="InGameScreen" component={InGameScreen} />
-      <InGameStack.Screen name="TagCameraScreen" component={TagCameraScreen} />
+      <InGameStack.Screen name="TagCameraScreen" component={TagCameraScreen} options={{ title: "NFTag | Camera", headerShown: false }} />
     </InGameStack.Navigator>
   );
 };
@@ -46,7 +46,7 @@ export default function Navigation() {
         <Stack.Screen
           name="RegCamera"
           component={RegCameraScreen}
-          options={{ title: "NFTag | RegCamera", headerShown: false }}
+          options={{ title: "NFTag | Camera", headerShown: false }}
         />
 
         <Stack.Screen

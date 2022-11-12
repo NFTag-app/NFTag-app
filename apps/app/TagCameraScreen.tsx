@@ -38,7 +38,6 @@ export const TagCameraScreen = ({ navigation: { navigate } }) => {
 
   const target = useTarget();
   const self = usePlayer();
-  console.log(self);
 
   const renderOverlay = ({ screenSize, cameraDetails }) => {
     const sdStyles = getScreenDependentStyles(screenSize);
