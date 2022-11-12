@@ -1,6 +1,7 @@
 import { getDatabase, onValue, ref } from "firebase/database";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Game } from "./types";
+import { useUser } from "./UserProvider";
 
 const GameContext = createContext<Game | null>(null);
 
@@ -15,7 +16,6 @@ const GameProvider: React.FC<{
   useEffect(() => {
     return onValue(ref(db, `/${gameId}`), (snapshot) => {
       const data = snapshot.val();
-      console.log("data", data);
       setGame(data);
     });
   });
@@ -43,4 +43,13 @@ export const usePlayers = () => {
 export const useTags = () => {
   const game = useGame();
   return game?.tags;
+};
+
+export const useTarget = () => {
+  const user = useUser();
+  const game = useGame();
+
+  if (!user || !game) return null;
+
+  return game.players[game.players[user.uid].target];
 };

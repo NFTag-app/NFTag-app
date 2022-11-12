@@ -11,11 +11,9 @@ import {
   startGame,
   submitTag,
 } from "./Sdk";
-import test from "./test";
 import UserProvider, { signOut, useGames, useUser } from "./UserProvider";
 
 export {
-  test,
   GoogleSignIn,
   signOut,
   UserProvider,

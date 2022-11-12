@@ -16,6 +16,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { uuid } from "uuidv4";
+import { shuffle } from "./shuffle";
 import {
   ApproveTag,
   CreateGame,
@@ -50,8 +51,6 @@ export const capturePayment = async (uid: string) => {
 
         if (!customer || !ephemeralKeySecret || !paymentIntentClientSecret)
           return;
-
-        console.log(customer, ephemeralKeySecret, paymentIntentClientSecret);
 
         initPaymentSheet({
           merchantDisplayName: "NFTag App",
@@ -105,7 +104,6 @@ export const createGame: CreateGame = async (name, owner) => {
           });
       })
       .catch((error) => {
-        console.log("error", error);
         reject(error);
       });
   });
@@ -136,7 +134,6 @@ export const joinGame: JoinGame = async (id, user, image) => {
           );
         })
         .catch((error) => {
-          console.log("error", error);
           reject(error);
         });
 
@@ -183,11 +180,25 @@ export const startGame: StartGame = async (
           const playersRef = ref(db, `games/${id}/players`);
           get(playersRef).then((snapshot) => {
             const players = snapshot.val();
-            Object.keys(players).forEach((playerId) => {
-              update(ref(db, `games/${id}/players/${playerId}`), {
-                active: true,
-              });
+
+            console.log("players", players);
+
+            const playerIds = Object.keys(players);
+            const targets = shuffle(playerIds);
+
+            // assign each player their target from the targets map
+            targets.forEach((value, key) => {
+              players[key].target = value;
             });
+
+            // only activate the players if told to
+            if (activatePlayers) {
+              Object.keys(players).forEach((playerId) => {
+                update(ref(db, `games/${id}/players/${playerId}`), {
+                  active: true,
+                });
+              });
+            }
           });
 
           resolve(snapshot.val());
@@ -244,7 +255,6 @@ export const listGames: ListGames = async (user) => {
           });
       })
       .catch((error) => {
-        console.log("error", error);
         reject(error);
       });
   });
@@ -281,7 +291,6 @@ export const submitTag: SubmitTag = async (game, user, target, image) => {
           });
       })
       .catch((error) => {
-        console.log("error", error);
         reject(error);
       });
   });
