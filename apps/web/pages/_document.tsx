@@ -9,7 +9,9 @@ export default class _Document extends Document {
   render() {
     return (
       <Html>
-        <Head />
+        <Head>
+          <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+        </Head>
         <body>
           <Main />
           <NextScript />

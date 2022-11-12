@@ -39,6 +39,15 @@ export const useGame = () => {
   return context;
 };
 
+export const usePlayer = () => {
+  const game = useGame();
+  const user = useUser();
+
+  if (!game || !user) return null;
+
+  return game.players[user.uid];
+};
+
 export const usePlayers = () => {
   const game = useGame();
   return game?.players;
@@ -57,8 +66,9 @@ export const useTags = (approvedOnly: boolean = true) => {
 export const useTarget = () => {
   const user = useUser();
   const game = useGame();
+  const player = usePlayer();
 
-  if (!user || !game) return null;
+  if (!user || !game || !player) return null;
 
-  return game.players[game.players[user.uid].target];
+  return game.players[player.target];
 };

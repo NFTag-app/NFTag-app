@@ -8,7 +8,14 @@ const Layout: React.FC<{
   return (
     <>
       <HeaderResponsive links={[{ label: "Home", link: "/" }]} />
-      <Container p={0} m={0} fluid>
+      <Container
+        p={0}
+        m={0}
+        fluid
+        sx={{
+          overflow: "hidden",
+        }}
+      >
         {children}
       </Container>
     </>

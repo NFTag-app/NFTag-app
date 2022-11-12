@@ -1,4 +1,4 @@
-import GameProvider, { useGame } from "./GameProvider";
+import GameProvider, { useGame, usePlayer } from "./GameProvider";
 import GoogleSignIn from "./GoogleSignin";
 import {
   approveTag,
@@ -26,6 +26,7 @@ export {
   startGame,
   pauseGame,
   listGames,
+  usePlayer,
   submitTag,
   setTagState,
   approveTag,

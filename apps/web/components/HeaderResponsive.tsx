@@ -1,11 +1,11 @@
 import {
-  Burger,
   Button,
   Container,
   createStyles,
   Group,
   Header,
   Paper,
+  Title,
   Transition,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -124,16 +124,7 @@ export function HeaderResponsive({ links }: HeaderResponsiveProps) {
     <Header height={HEADER_HEIGHT} className={classes.root}>
       <Container className={classes.header}>
         {/* <MantineLogo size={28} /> */}
-        <Group spacing={5} className={classes.links}>
-          {items}
-        </Group>
-
-        <Burger
-          opened={opened}
-          onClick={toggle}
-          className={classes.burger}
-          size="sm"
-        />
+        <Title>NFTag</Title>
 
         <Group>
           <Button radius="xl" variant="outline">
