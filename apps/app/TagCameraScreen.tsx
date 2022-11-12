@@ -5,14 +5,31 @@ import {
   getScreenDependentStyles,
   cameraStyles,
 } from "./components/camera/NftagCamera";
-import { useTarget } from "client-sdk/dist/GameProvider";
-import { useEffect, useState } from "react";
+import GameProvider, {
+  useTarget,
+  usePlayer,
+  useGame,
+} from "client-sdk/dist/GameProvider";
+import { useState } from "react";
 import { useInterval } from "./hooks/useInterval";
 import moment from "moment";
-import Constants from 'expo-constants'
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { InGameStackParamList, RootStackParamList } from "./RootStackParams";
+import { CommonStyles } from "./styles/CommonStyles";
 //import { renderTagOverlay } from "./components/camera/Overlay";
 
-const TagCameraScreen = () => {
+type Props = NativeStackScreenProps<InGameStackParamList, "TagCameraScreen">;
+export const TagCameraScreen = ({ navigation: { navigate } }) => {
+  const game = useGame();
+
+  if (!game.id) {
+    return (
+      <View style={CommonStyles.container}>
+        <Text>MISSING GAME ID</Text>
+      </View>
+    );
+  }
+
   const [date, setDate] = useState("");
 
   useInterval(() => {
@@ -20,6 +37,8 @@ const TagCameraScreen = () => {
   }, 10);
 
   const target = useTarget();
+  const self = usePlayer();
+  console.log(self);
 
   const renderOverlay = ({ screenSize, cameraDetails }) => {
     const sdStyles = getScreenDependentStyles(screenSize);
@@ -46,7 +65,7 @@ const TagCameraScreen = () => {
             left: 20,
           }}
         >
-          {Constants.deviceId}
+          {self?.id || "Undefined ID"}
         </Text>
         <Text
           style={{
@@ -69,16 +88,14 @@ const TagCameraScreen = () => {
 
   return (
     <View style={{ ...StyleSheet.absoluteFillObject }}>
-      <NftagCamera<"TagCamera">
+      <NftagCamera<InGameStackParamList, "TagCameraScreen">
         type={CameraType.back}
         callback={(res) => {
           console.log(res);
         }}
-        screenReady={!!date}
+        screenReady={!!date && !!self}
         overlay={renderOverlay}
       />
     </View>
   );
 };
-
-export default TagCameraScreen;

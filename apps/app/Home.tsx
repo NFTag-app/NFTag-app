@@ -19,9 +19,6 @@ export const HomeScreen = () => {
 
       <LoginButton user={user} />
 
-      <HomeButton caption="Reg Camera" navigateTo="RegCamera" />
-      <HomeButton caption="Snag Camera" navigateTo="TagCamera" />
-      <HomeButton caption="Current Game" navigateTo="InGameScreen" />
       <HomeButton caption="Game List" navigateTo="GameListScreen" />
 
       <LogoutButton />

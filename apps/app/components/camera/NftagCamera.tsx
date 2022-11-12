@@ -18,7 +18,7 @@ import { StatusBar } from "expo-status-bar";
 import * as NavigationBar from "expo-navigation-bar";
 import { Camera, CameraCapturedPicture, CameraType } from "expo-camera";
 
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useNavigation, useFocusEffect, ParamListBase } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../RootStackParams";
 
@@ -26,14 +26,14 @@ import { renderCaptureControls, renderPreviewControls } from "./Overlay";
 
 const DEFAULT_WINDOW_SIZE = Dimensions.get("window");
 
-export const NftagCamera = <T extends keyof RootStackParamList>({
+export const NftagCamera = <TParamList extends ParamListBase, T extends keyof TParamList>({
   type,
   callback,
   screenReady=true,
   overlay,
 }) => {
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList, T>>();
+    useNavigation<NativeStackNavigationProp<TParamList, T>>();
 
   const cameraRef = useRef<Camera>(null);
   const snapBoxRef = useRef<View>(null);

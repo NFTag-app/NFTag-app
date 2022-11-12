@@ -2,15 +2,37 @@ import { StyleSheet } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { RootStackParamList } from "./RootStackParams";
+import { createStackNavigator } from "@react-navigation/stack";
+
+import { InGameStackParamList, RootStackParamList } from "./RootStackParams";
 
 import { HomeScreen } from "./Home";
-import TagCameraScreen from "./TagCameraScreen";
+import { TagCameraScreen } from "./TagCameraScreen";
 import RegCameraScreen from "./RegCameraScreen";
 import { InGameScreen } from "./InGameScreen";
 import { GameListScreen } from "./GameListScreen";
+import { GameProvider } from "client-sdk";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const InGameStack = createStackNavigator<InGameStackParamList>();
+
+const GameNavigatorScreen = ({ route }) => {
+  const gameId = route.params?.gameId;
+  return (
+    <GameProvider gameId={gameId}>
+      <GameNavigator />
+    </GameProvider>
+  );
+};
+
+const GameNavigator = () => {
+  return (
+    <InGameStack.Navigator>
+      <InGameStack.Screen name="InGameScreen" component={InGameScreen} />
+      <InGameStack.Screen name="TagCameraScreen" component={TagCameraScreen} />
+    </InGameStack.Navigator>
+  );
+};
 
 export default function Navigation() {
   return (
@@ -22,19 +44,15 @@ export default function Navigation() {
           options={{ title: "NFTag | Home" }}
         />
         <Stack.Screen
-          name="TagCamera"
-          component={TagCameraScreen}
-          options={{ title: "NFTag | TagCamera", headerShown: false }}
-        />
-        <Stack.Screen
           name="RegCamera"
           component={RegCameraScreen}
           options={{ title: "NFTag | RegCamera", headerShown: false }}
         />
+
         <Stack.Screen
-          name="InGameScreen"
-          component={InGameScreen}
-          options={{ title: "NFTag | Current Game" }}
+          name="GameNavigatorScreen"
+          component={GameNavigatorScreen}
+          options={{ title: "NFTag | Current Game", headerShown: false }}
         />
         <Stack.Screen
           name="GameListScreen"

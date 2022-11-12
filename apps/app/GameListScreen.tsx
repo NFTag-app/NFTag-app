@@ -15,7 +15,7 @@ export const GameListScreen = ({ navigation: { navigate } }) => {
   const renderItem = ({ item, index, separators }) => (
     <View>
       <TouchableOpacity
-        onPress={() => navigate("InGameScreen", { gameId: item.id })}
+        onPress={() => navigate("GameNavigatorScreen", { gameId: item.id })}
         style={{ backgroundColor: "green", padding: 20 }}
       >
         <Text style={CommonStyles.text}>

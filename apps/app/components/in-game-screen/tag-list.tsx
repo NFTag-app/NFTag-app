@@ -7,8 +7,6 @@ import {
 } from "react-native";
 import { useTags } from "client-sdk/dist/GameProvider";
 import { CommonStyles } from "../../styles/CommonStyles";
-import { Tag } from "client-sdk/dist/types";
-import { HomeButton } from "../buttons/HomeButton";
 
 export const TagList = () => {
   const tags = useTags();
@@ -18,9 +16,10 @@ export const TagList = () => {
     ? [...tags.map((tag) => tag.id), "LASTITEM"]
     : ["NOITEMS"];
 
-  console.log(tagIds);
+  console.log("xxxxxxxxxxxxxxxxxxxxxx", tagIds);
 
   const renderItem = ({ item, index, separators }) => {
+    console.log("renderItem", item);
     if (item === "LASTITEM") {
       return (
         <View style={CommonStyles.container}>
@@ -58,13 +57,16 @@ export const TagList = () => {
       };
 
       return (
-        <View>
+        <View style={CommonStyles.container}>
           <Text>{text}</Text>
-          <ApprovalButton />
         </View>
       );
     }
-    return undefined;
+    return (
+      <View style={CommonStyles.container}>
+        <Text>Error</Text>
+      </View>
+    );
   };
 
   return (
