@@ -168,17 +168,17 @@ export const startGame: StartGame = async (
     const db = getDatabase();
     const gameRef = ref(db, `games/${id}`);
     get(gameRef)
-      .then((snapshot) => {
+      .then(async (snapshot) => {
         if (snapshot.val().owner !== user.uid)
-          reject(new Error("Only the owner can start the game"));
+          return reject(new Error("Only the owner can start the game"));
         else {
-          update(gameRef, {
+          await update(gameRef, {
             inProgress: true,
           });
 
           // set all players to active state
           const playersRef = ref(db, `games/${id}/players`);
-          get(playersRef).then((snapshot) => {
+          await get(playersRef).then(async (snapshot) => {
             const players = snapshot.val();
 
             console.log("players", players);
@@ -189,19 +189,13 @@ export const startGame: StartGame = async (
             // assign each player their target from the targets map
             targets.forEach((value, key) => {
               players[key].target = value;
+              players[key].active = activatePlayers;
             });
 
-            // only activate the players if told to
-            if (activatePlayers) {
-              Object.keys(players).forEach((playerId) => {
-                update(ref(db, `games/${id}/players/${playerId}`), {
-                  active: true,
-                });
-              });
-            }
+            await update(ref(db, `games/${id}/players`), players);
           });
 
-          resolve(snapshot.val());
+          return resolve(snapshot.val());
         }
       })
       .catch((error) => {
