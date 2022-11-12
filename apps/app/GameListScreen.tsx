@@ -1,12 +1,12 @@
+import { useGames } from "client-sdk";
+import { Game } from "client-sdk/dist/types";
 import {
   FlatList,
-  View,
-  Text,
   StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from "react-native";
-import { Game } from "client-sdk/dist/types";
-import { useGames } from "client-sdk";
 import { CommonStyles } from "./styles/CommonStyles";
 
 export const GameListScreen = ({ navigation: { navigate } }) => {
@@ -26,7 +26,11 @@ export const GameListScreen = ({ navigation: { navigate } }) => {
   );
 
   return (
-    <FlatList style={styles.container} data={games} renderItem={renderItem} />
+    <FlatList
+      style={{ ...styles.container, backgroundColor: "#001220" }}
+      data={games}
+      renderItem={renderItem}
+    />
   );
 };
 

@@ -1,52 +1,76 @@
-import { View, Text, LayoutChangeEvent, TouchableOpacity } from "react-native";
-import { StatusBar } from "expo-status-bar";
-import { HomeButton } from "./components/buttons/HomeButton";
-import { signOut, useUser } from "client-sdk";
-import { LogoutButton } from "./components/buttons/LogoutButton";
-import { LoginButton } from "./components/buttons/LoginButton";
+import { GoogleSignIn, useUser } from "client-sdk";
 import { UserData } from "client-sdk/dist/types";
+import { StatusBar } from "expo-status-bar";
+import {
+  Image,
+  ImageBackground,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { CommonStyles } from "./styles/CommonStyles";
-import { GoogleSignIn } from "client-sdk";
 
 export const HomeScreen = () => {
   const user: UserData = useUser();
+  const dims = useWindowDimensions();
 
-  if (!user) {
-    return (
-      <View style={CommonStyles.container}>
-        <Text style={CommonStyles.text}>NFTag</Text>
-
-        <GoogleSignIn />
-
-        <StatusBar style="auto" />
-      </View>
-    );
-  }
   return (
-    <View style={CommonStyles.container}>
-      <Text style={CommonStyles.text}>Welcome</Text>
-
-      <Text style={CommonStyles.text}>{user && user.displayName}</Text>
-
-      <HomeButton caption="Game List" navigateTo="GameListScreen" />
-
-      <HomeButton caption="Join Game" navigateTo="JoinGameScreen" />
-
-      <TouchableOpacity
+    <View style={{ ...CommonStyles.container }}>
+      <ImageBackground
+        source={require("./assets/Icons/1x/loginbg.png")}
+        resizeMode="cover"
         style={{
-          backgroundColor: "#47f",
-          width: 150,
-          padding: 10,
-          margin: 10,
+          flex: 1,
+          justifyContent: "center",
+          width: dims.width,
           alignItems: "center",
         }}
-        onPress={() => signOut()}
       >
-        <Text style={{ fontSize: 18, color: "#fff" }}>Logout</Text>
-      </TouchableOpacity>
+        <View
+          style={{
+            marginTop: -50,
+            borderRadius: 8,
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            width: dims.width * 0.8,
+            height: dims.height * 0.35,
+            backgroundColor: "#25262b",
+          }}
+        >
+          <Image
+            source={require("./assets/Icons/1x/Logo_Transparent.png")}
+            style={{ width: 200, height: 200, marginTop: -20 }}
+          />
+          <GoogleSignIn />
+        </View>
+      </ImageBackground>
 
       <StatusBar style="auto" />
     </View>
   );
-  return undefined;
+
+  // return (
+  //   <View style={CommonStyles.container}>
+  //     <Text style={CommonStyles.text}>Welcome</Text>
+
+  //     <Text style={CommonStyles.text}>{user && user.displayName}</Text>
+
+  //     <HomeButton caption="Game List" navigateTo="GameListScreen" />
+
+  //     <TouchableOpacity
+  //       style={{
+  //         backgroundColor: "#47f",
+  //         width: 150,
+  //         padding: 10,
+  //         margin: 10,
+  //         alignItems: "center",
+  //       }}
+  //       onPress={() => signOut()}
+  //     >
+  //       <Text style={{ fontSize: 18, color: "#fff" }}>Logout</Text>
+  //     </TouchableOpacity>
+
+  //     <StatusBar style="auto" />
+  //   </View>
+  // );
 };
