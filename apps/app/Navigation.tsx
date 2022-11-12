@@ -1,11 +1,7 @@
-import { test } from "client-sdk";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
-import {
-  createNativeStackNavigator,
-  NativeStackNavigationProp,
-} from "@react-navigation/native-stack";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./RootStackParams";
 
 import { HomeScreen } from "./Home";
@@ -17,8 +13,6 @@ import { GameListScreen } from "./GameListScreen";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Navigation() {
-  const message = test();
-
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">

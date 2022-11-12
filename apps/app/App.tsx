@@ -5,9 +5,7 @@ import Navigation from "./Navigation";
 export default function App() {
   return (
     <UserProvider>
-      <GameProvider gameId="ABCDEF">
-        <Navigation />
-      </GameProvider>
+      <Navigation />
     </UserProvider>
   );
 }
