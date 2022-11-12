@@ -50,7 +50,7 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
     buttonSize: 75,
     position: 10,
     margin: 0,
-    action: () => navigate('TagCameraScreen'),
+    action: async () => navigate('TagCameraScreen'),
     condition: () => !userIsGameAdmin && gameIsActive
   };
 
@@ -62,7 +62,7 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
     buttonSize: 75,
     position: 10,
     margin: 0,
-    action: () => startGame(game.id, user, true).catch(err => console.error(err)),
+    action: async () => startGame(game.id, user, true).catch(err => console.warn(err)),
     condition: () => userIsGameAdmin && !gameIsActive
   };
 
@@ -73,7 +73,7 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
     name: "bt_yell",
     position: 0,
     margin: 0,
-    action: () => alert('YELL'),
+    action: async () => alert('YELL'),
     condition: () => true
   };
 
@@ -87,7 +87,7 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
     const action = actions.find((x) => x.name === item);
     console.log("pressed item", action);
     if (action.condition()) {
-      return action.action().catch(err => console.error(err));
+      return action.action().catch(err => console.warn(err));
     }
   };
 
