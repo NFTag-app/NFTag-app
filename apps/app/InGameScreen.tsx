@@ -9,6 +9,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { FloatingAction, IActionProps } from "react-native-floating-action";
+import { TagList } from "./components/in-game-screen/tag-list";
 import { InGameStackParamList } from "./RootStackParams";
 
 const icon = require("./assets/adaptive-icon.png");
@@ -173,6 +174,7 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
         alignItems: "center",
       }}
     >
+      <TagList/>
       <FloatingAction
         floatingIcon={
           <Image

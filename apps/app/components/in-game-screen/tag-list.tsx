@@ -78,15 +78,15 @@ export const TagList = () => {
     const size = newSize(
       290,
       dims.width * 0.9,
-      tag.image.height,
-      tag.image.width
+      tag?.image.height,
+      tag?.image.width
     );
 
     const size2 = newSize(
       dims.height,
       dims.width,
-      tag.image.height,
-      tag.image.width
+      tag?.image.height,
+      tag?.image.width
     );
 
     const ImageFullscreen: React.FC<{
@@ -99,7 +99,7 @@ export const TagList = () => {
           <TouchableOpacity onPress={() => setFullscreen(true)}>
             <Image
               source={{
-                uri: uri ?? tag.image.uri,
+                uri: uri ?? tag?.image.uri,
                 scale: 0.2,
                 height: size.height,
                 width: size.width,
@@ -127,7 +127,7 @@ export const TagList = () => {
               <Image
                 resizeMode="contain"
                 source={{
-                  uri: tag.image.uri,
+                  uri: tag?.image.uri,
                   scale: 0.2,
                   height: size2.height,
                   width: size2.width,
@@ -378,6 +378,8 @@ export const TagList = () => {
       </View>
     );
   };
+
+  console.log(tagIds)
 
   return (
     <FlatList

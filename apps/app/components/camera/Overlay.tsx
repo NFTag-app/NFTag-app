@@ -21,7 +21,7 @@ export const renderPreviewControls = ({styles, sdStyles, saveTag, retakePicture,
         style={sdStyles.prevBtn}
         onPress={() => saveTag(photoData)}
     >
-        <Text style={sdStyles.prevBtnText}>Save Snap</Text>
+        <Text style={sdStyles.prevBtnText}>Save</Text>
     </TouchableOpacity>
     </View>
 </View>
