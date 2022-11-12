@@ -1,4 +1,5 @@
 import * as functions from "firebase-functions";
+import { nft } from "./nft";
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
@@ -13,4 +14,7 @@ exports.createNFT = functions.database
   .onCreate((snapshot, context) => {
     const data = snapshot.val();
     const base64 = data.image.uri;
+    
   });
+
+  
