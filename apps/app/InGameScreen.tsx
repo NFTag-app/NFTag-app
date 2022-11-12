@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import { CommonStyles } from "./styles/CommonStyles";
-import { GameProvider, useGame } from "client-sdk";
+import { GameProvider, startGame, useGame, useUser } from "client-sdk";
 import { useRef } from "react";
 import { InGameStackParamList, RootStackParamList } from "./RootStackParams";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -17,13 +17,15 @@ type Action = {
   name: string;
   buttonSize: number;
   position: number;
-  navigateTo: keyof InGameStackParamList;
   margin: number;
+  condition: () => boolean;
+  action: () => Promise<void>;
 };
 
 export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
   const target = useRef(null);
   const game = useGame();
+  const user = useUser();
 
   if (!game?.id) {
     return (
@@ -35,32 +37,58 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
 
   console.log("rendering gameid", game.id);
 
-  const actions: Action[] = [
-    {
-      text: "Tag!!!",
-      // icon: require("./images/ic_accessibility_white.png"),
-      icon: icon,
-      name: "bt_tag_target",
-      buttonSize: 75,
-      position: 10,
-      navigateTo: "TagCameraScreen",
-      margin: 0,
-    },
-    {
-      text: "Yell!!!",
-      icon: icon,
-      buttonSize: 75,
-      name: "bt_yell",
-      position: 0,
-      navigateTo: "TagCameraScreen",
-      margin: 0,
-    },
-  ];
+  const userIsGameAdmin = game.owner === user.uid;
+  const gameIsActive = game.inProgress;
+  console.log('userIsGameAdmin', userIsGameAdmin);
+  console.log('gameIsActive', gameIsActive);
 
-  const onPressItem = (item) => {
+  const tagAction = {
+    text: "Tag!!!",
+    // icon: require("./images/ic_accessibility_white.png"),
+    icon: icon,
+    name: "bt_tag_target",
+    buttonSize: 75,
+    position: 10,
+    margin: 0,
+    action: () => navigate('TagCameraScreen'),
+    condition: () => !userIsGameAdmin && gameIsActive
+  };
+
+  const startGameAction = {
+    text: "Start Game!!!",
+    // icon: require("./images/ic_accessibility_white.png"),
+    icon: icon,
+    name: "bt_tag_start",
+    buttonSize: 75,
+    position: 10,
+    margin: 0,
+    action: () => startGame(game.id, user, true).catch(err => console.error(err)),
+    condition: () => userIsGameAdmin && !gameIsActive
+  };
+
+  const yellAction = {
+    text: "Yell!!!",
+    icon: icon,
+    buttonSize: 75,
+    name: "bt_yell",
+    position: 0,
+    margin: 0,
+    action: () => alert('YELL'),
+    condition: () => true
+  };
+
+  const actions = ([
+    tagAction.condition() ? tagAction : undefined,
+    startGameAction.condition() ? startGameAction : undefined,
+    yellAction.condition() ? yellAction : undefined
+  ]).filter(f => f) as Action[];
+
+  const onPressItem = (item: string) => {
     const action = actions.find((x) => x.name === item);
     console.log("pressed item", action);
-    navigate(action.navigateTo);
+    if (action.condition()) {
+      return action.action().catch(err => console.error(err));
+    }
   };
 
   return (
