@@ -1,5 +1,5 @@
 import { getDatabase, onValue, ref } from "firebase/database";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { Game } from "./types";
 import { useUser } from "./UserProvider";
 
@@ -13,11 +13,9 @@ const GameProvider: React.FC<{
 
   const db = getDatabase();
 
-  useEffect(() => {
-    return onValue(ref(db, `games/${gameId}`), (snapshot) => {
-      const data = snapshot.val();
-      setGame(data);
-    });
+  onValue(ref(db, `games/${gameId}`), (snapshot) => {
+    const data = snapshot.val();
+    setGame(data);
   });
 
   return <GameContext.Provider value={game}>{children}</GameContext.Provider>;
