@@ -3,7 +3,15 @@ import {
   presentPaymentSheet,
 } from "@stripe/stripe-react-native";
 import { SetupParams } from "@stripe/stripe-react-native/lib/typescript/src/types/PaymentSheet";
-import { child, get, getDatabase, push, ref, update } from "firebase/database";
+import {
+  child,
+  get,
+  getDatabase,
+  push,
+  ref,
+  set,
+  update,
+} from "firebase/database";
 import {
   addDoc,
   collection,
@@ -80,33 +88,19 @@ export const capturePayment = async (uid: string) => {
 //#region Games
 
 export const createGame: CreateGame = async (name, owner) => {
-  return new Promise((resolve, reject) => {
-    const db = getDatabase();
-    const gameRef = ref(db, `games`);
+  const db = getDatabase();
+  const gameRef = ref(db, `games`);
 
-    const id = v4();
+  const id = v4();
 
-    push(child(gameRef, id), {
-      id,
-      name,
-      inProgress: false,
-      owner: owner.uid,
-      players: {},
-      tags: {},
-    } as Game)
-      .then((ref) => {
-        get(ref)
-          .then((snapshot) => {
-            resolve(snapshot.val());
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
+  return set(child(gameRef, id), {
+    id,
+    name,
+    inProgress: false,
+    owner: owner.uid,
+    players: {},
+    tags: {},
+  } as Game);
 };
 
 export const joinGame: JoinGame = async (id, user, image) => {
@@ -168,17 +162,17 @@ export const startGame: StartGame = async (
     const db = getDatabase();
     const gameRef = ref(db, `games/${id}`);
     get(gameRef)
-      .then((snapshot) => {
+      .then(async (snapshot) => {
         if (snapshot.val().owner !== user.uid)
-          reject(new Error("Only the owner can start the game"));
+          return reject(new Error("Only the owner can start the game"));
         else {
-          update(gameRef, {
+          await update(gameRef, {
             inProgress: true,
           });
 
           // set all players to active state
           const playersRef = ref(db, `games/${id}/players`);
-          get(playersRef).then((snapshot) => {
+          await get(playersRef).then(async (snapshot) => {
             const players = snapshot.val();
 
             console.log("players", players);
@@ -189,19 +183,13 @@ export const startGame: StartGame = async (
             // assign each player their target from the targets map
             targets.forEach((value, key) => {
               players[key].target = value;
+              players[key].active = activatePlayers;
             });
 
-            // only activate the players if told to
-            if (activatePlayers) {
-              Object.keys(players).forEach((playerId) => {
-                update(ref(db, `games/${id}/players/${playerId}`), {
-                  active: true,
-                });
-              });
-            }
+            await update(ref(db, `games/${id}/players`), players);
           });
 
-          resolve(snapshot.val());
+          return resolve(snapshot.val());
         }
       })
       .catch((error) => {
@@ -270,7 +258,7 @@ export const submitTag: SubmitTag = async (game, user, target, image) => {
 
     const id = v4();
 
-    push(child(tagRef, id), {
+    set(child(tagRef, id), {
       id,
       timestamp: new Date().getTime(),
       image,
@@ -280,19 +268,7 @@ export const submitTag: SubmitTag = async (game, user, target, image) => {
         approved: true, // auto approve for now
         timestamp: new Date().getTime(), // auto approve for now
       },
-    })
-      .then((ref) => {
-        get(ref)
-          .then((snapshot) => {
-            resolve(snapshot.val());
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      })
-      .catch((error) => {
-        reject(error);
-      });
+    });
   });
 };
 
