@@ -56,15 +56,13 @@ export const NftagCamera = <
   const [photoData, setPhotoData] = useState<CameraCapturedPicture | null>(
     null
   );
-  const [photoDims, setPhotoDims] = useState({width: 0,height: 0})
 
   const [camPermissions, requestCamPermissions] = Camera.useCameraPermissions();
 
   const takePicture = async () => {
     if (!cameraRef.current) return;
-    const data = await cameraRef.current.takePictureAsync();
+    const data = await cameraRef.current.takePictureAsync({quality: 0.25});
     setPhotoData(data);
-    setPhotoDims(data);
     cameraRef.current.pausePreview();
   };
 
@@ -74,15 +72,25 @@ export const NftagCamera = <
     cameraRef.current.resumePreview();
   };
 
-  const saveTag = async () => {
+  const saveTag = async (photoData: CameraCapturedPicture) => {
     if (cameraRef.current) {
       cameraRef.current.resumePreview();
     }
-    const result = await captureRef(snapBoxRef, {
-      result: "data-uri",
-    });
-    setPhotoData(null);
-    callback({result, photoDims});
+    if (snapBoxRef.current) {
+      const result = await captureRef(snapBoxRef, {
+        result: "data-uri",
+        quality: 0.5,
+      });
+      callback(
+        result,
+        photoData.width,
+        photoData.height,
+      );
+      setPhotoData(null);
+    } else {
+      console.log("Snap box is not current")
+    }
+
   };
 
   const prepareCamRatio = async () => {
@@ -101,7 +109,7 @@ export const NftagCamera = <
           closestNumRatio = numRatio;
           closestDistance = distance;
         } else {
-          if (distance > -0.01 && distance < closestDistance) {
+          if (distance > 0 && distance < closestDistance) {
             closestRatio = ratios[i];
             closestNumRatio = numRatio;
             closestDistance = distance;
@@ -205,8 +213,8 @@ export const NftagCamera = <
                 styles: cameraStyles,
                 sdStyles,
                 saveTag,
-
                 retakePicture,
+                photoData,
               })}
           </>
         ) : (
