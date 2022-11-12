@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Image } from "react-native";
 import { CameraType } from "expo-camera";
 import { NftagCamera } from "./components/camera/NftagCamera";
 import {
@@ -19,6 +19,8 @@ import { CommonStyles } from "./styles/CommonStyles";
 import { submitTag, useUser } from "client-sdk";
 //import { renderTagOverlay } from "./components/camera/Overlay";
 
+const logo = require('./assets/Icons/1x/Logo_Transparent.png')
+
 type Props = NativeStackScreenProps<InGameStackParamList, "TagCameraScreen">;
 export const TagCameraScreen = ({ navigation: { navigate } }) => {
   const game = useGame();
@@ -35,7 +37,7 @@ export const TagCameraScreen = ({ navigation: { navigate } }) => {
 
   useInterval(() => {
     setDate(moment().format("MM-DD-YYYY:x"));
-  }, 10);
+  }, 73);
 
   const target = useTarget();
   const user = useUser();
@@ -78,6 +80,12 @@ export const TagCameraScreen = ({ navigation: { navigate } }) => {
         >
           {user?.uid || "Undefined ID"}
         </Text>
+        <Image 
+          style={{
+
+          }}
+          source={logo}
+        />
 
         <View style={sdStyles.dot} />
       </View>
