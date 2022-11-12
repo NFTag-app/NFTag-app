@@ -8,8 +8,6 @@ import {
   StyleSheet,
   Dimensions,
   Alert,
-  AppState,
-  LayoutChangeEvent,
   Platform,
 } from "react-native";
 import { captureRef } from "react-native-view-shot";
@@ -20,7 +18,6 @@ import { Camera, CameraCapturedPicture, CameraType } from "expo-camera";
 
 import {
   useNavigation,
-  useFocusEffect,
   ParamListBase,
 } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -42,11 +39,6 @@ export const NftagCamera = <
 
   const cameraRef = useRef<Camera>(null);
   const snapBoxRef = useRef<View>(null);
-
-  const [screenSize, setScreenSize] = useState<{
-    width: number;
-    height: number;
-  }>({ width: DEFAULT_WINDOW_SIZE.width, height: DEFAULT_WINDOW_SIZE.height });
 
   const [cameraType, setCameraType] = useState(type);
   const [cameraRatio, setCameraRatio] = useState("4:3"); // Default. Only applicable to android
@@ -103,7 +95,7 @@ export const NftagCamera = <
       for (let i = 0; i < ratios.length; ++i) {
         const parts = ratios[i].split(":");
         const numRatio = parseInt(parts[0]) / parseInt(parts[1]);
-        const distance = screenSize.height / screenSize.width - numRatio;
+        const distance = DEFAULT_WINDOW_SIZE.height / DEFAULT_WINDOW_SIZE.width - numRatio;
         if (closestDistance == null) {
           closestRatio = ratios[i];
           closestNumRatio = numRatio;
@@ -117,7 +109,7 @@ export const NftagCamera = <
         }
       }
       const remainder = Math.round(
-        screenSize.height - closestNumRatio * screenSize.width
+        DEFAULT_WINDOW_SIZE.height - closestNumRatio * DEFAULT_WINDOW_SIZE.width
       );
 
       // console.log(screenSize)
@@ -147,9 +139,7 @@ export const NftagCamera = <
     });
   }, []);
 
-  const updateScreen = async (e: LayoutChangeEvent) => {
-    const { width, height } = e.nativeEvent.layout;
-    await setScreenSize({ width, height });
+  const updateScreen = async () => {
     await prepareCamRatio().catch((e) => console.log(e));
   };
 
@@ -160,7 +150,7 @@ export const NftagCamera = <
     setIsCameraReady(true);
   };
 
-  const sdStyles = getScreenDependentStyles(screenSize); // Styles depend on screen size
+  const sdStyles = getScreenDependentStyles(DEFAULT_WINDOW_SIZE); // Styles depend on screen size
 
   if (screenReady) {
     return (
@@ -204,7 +194,7 @@ export const NftagCamera = <
               />
               {isCameraReady &&
                 overlay({
-                  screenSize: screenSize,
+                  screenSize: DEFAULT_WINDOW_SIZE,
                   vertPadding: camVertPadding,
                 })}
             </View>
@@ -220,7 +210,7 @@ export const NftagCamera = <
         ) : (
           <>
             {isCameraReady &&
-              overlay({ screenSize: screenSize, vertPadding: camVertPadding })}
+              overlay({ screenSize: DEFAULT_WINDOW_SIZE, vertPadding: camVertPadding })}
             {isCameraReady &&
               renderCaptureControls({
                 styles: cameraStyles,
@@ -229,7 +219,7 @@ export const NftagCamera = <
                 cameraRef,
                 isCameraReady,
                 navigation,
-                screenSize,
+                screenSize: DEFAULT_WINDOW_SIZE,
               })}
           </>
         )}
