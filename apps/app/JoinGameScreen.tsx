@@ -57,6 +57,7 @@ const JoinGameScreen = ({navigation: {navigate}}) => {
   };
 
   const join = async (image) => {
+    await navigate('GameListScreen')
     try {
       const game = await joinGame(gameId, user, image);
       await navigate('InGameScreen', {params: {game: game.id}})

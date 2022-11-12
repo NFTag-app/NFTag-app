@@ -8,45 +8,54 @@ import {
   Image,
   Text,
   TouchableOpacity,
-  Share
+  Share,
 } from "react-native";
 import { CommonStyles } from "./styles/CommonStyles"; //https://www.nftag.app/invite.html?from=owner&game=000000
 
-const CreateGameScreen = ({navigation: {navigate}}) => {
-  const owner = useUser()
+const CreateGameScreen = ({ navigation: { navigate } }) => {
+  const owner = useUser();
   const dims = useWindowDimensions();
-  const [gameId, setGameId] = useState('')
+  const [gameId, setGameId] = useState("");
 
   useEffect(() => {
     (async () => {
-      if(!gameId) {
-        const id = await createGame(owner + "'s Game", owner)
-        await setGameId(id)
+      if (!gameId) {
+        const id = await createGame(owner + "'s Game", owner);
+        await setGameId(id);
       }
-    })()
-  }, [])
+    })();
+  }, []);
 
   const share = async () => {
-    console.log(0)
+    console.log(0);
     try {
       const res = await Share.share({
-        message: 'Join my NFTag game and have fun with crypto!\nhttps://www.nftag.app/invite.html?from=' + owner.displayName.split(' ')[0] + '&game=' + gameId
-      })
-      if(res.action === Share.sharedAction) {
-        if(res.activityType) {
-          console.log(1)
+        message:
+          "Join my NFTag game and have fun with crypto!\nhttps://www.nftag.app/invite.html?from=" +
+          owner.displayName.split(" ")[0] +
+          "&game=" +
+          gameId,
+      });
+      if (res.action === Share.sharedAction) {
+        if (res.activityType) {
+          console.log(1);
           // shared with activity type of res.activityType
         } else {
-          console.log(2)
+          console.log(2);
           // shared
         }
       } else if (res.action === Share.dismissedAction) {
-        console.log(3)
+        console.log(3);
         // dismissed
       }
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
+  };
+  
+  const goToGame = async () => {
+    if(!gameId) return
+    await navigate('GameListScreen', {params: {game: gameId }})
   }
 
   return (
@@ -63,7 +72,8 @@ const CreateGameScreen = ({navigation: {navigate}}) => {
       >
         <View
           style={{
-            marginTop: -50,
+            marginTop: -30,
+            marginBottom: 20,
             borderRadius: 8,
             flexDirection: "column",
             alignItems: "center",
@@ -84,7 +94,7 @@ const CreateGameScreen = ({navigation: {navigate}}) => {
               fontSize: Math.floor(dims.width / 10),
             }}
           >
-            {gameId || '000000'}
+            {gameId || "000000"}
           </Text>
           <TouchableOpacity
             onPress={share}
@@ -105,6 +115,26 @@ const CreateGameScreen = ({navigation: {navigate}}) => {
             </Text>
           </TouchableOpacity>
         </View>
+        <TouchableOpacity
+          onPress={goToGame}
+          style={{
+            backgroundColor: "#4a368a",
+            paddingVertical: 15,
+            width: dims.width * 0.8,
+            borderRadius: 20,
+          }}
+        >
+            <Text
+            style={{
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              color: "white",
+              fontSize: Math.floor(dims.width / 16),
+            }}
+          >
+            Back to List
+          </Text>
+        </TouchableOpacity>
       </ImageBackground>
     </View>
   );
