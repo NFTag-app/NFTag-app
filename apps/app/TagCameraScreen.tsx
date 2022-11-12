@@ -9,18 +9,11 @@ import { useTarget } from "client-sdk/dist/GameProvider";
 import { useEffect, useState } from "react";
 import { useInterval } from "./hooks/useInterval";
 import moment from "moment";
-import { getUniqueId } from "react-native-device-info";
+import Constants from 'expo-constants'
 //import { renderTagOverlay } from "./components/camera/Overlay";
 
 const TagCameraScreen = () => {
   const [date, setDate] = useState("");
-  const [deviceId, setDeviceId] = useState("");
-
-  useEffect(() => {
-    getUniqueId()
-      .then((id) => setDeviceId(id))
-      .catch((e) => console.error(e));
-  }, []);
 
   useInterval(() => {
     setDate(moment().format("MM-DD-YYYY:x"));
@@ -53,7 +46,7 @@ const TagCameraScreen = () => {
             left: 20,
           }}
         >
-          {deviceId}
+          {Constants.deviceId}
         </Text>
         <Text
           style={{
@@ -81,7 +74,7 @@ const TagCameraScreen = () => {
         callback={(res) => {
           console.log(res);
         }}
-        screenReady={!!deviceId && !!date}
+        screenReady={!!date}
         overlay={renderOverlay}
       />
     </View>
