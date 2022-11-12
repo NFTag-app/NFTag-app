@@ -273,31 +273,6 @@ export const submitTag: SubmitTag = async (game, user, target, image) => {
         approved: true, // auto approve for now
         timestamp: new Date().getTime(), // auto approve for now
       },
-    }).then(() => {
-      update(ref(db, `games/${game.id}/players/${target.id}`), {
-        active: false,
-      }).then(() => {
-        update(ref(db, `games/${game.id}/players/${user.uid}`), {
-          tags: (game.players[user.uid].tags || 0) + 1,
-          target: Object.values(game.players).filter(
-            (player: Player) => player.active
-          )[0].id,
-        }).then(() => {
-          get(ref(db, `games/${game.id}/players`)).then((snapshot) => {
-            const players = snapshot
-              .val()
-              .filter((player: Player) => player.active);
-
-            if (players.length < 2) {
-              // game is over
-              update(ref(db, `games/${game.id}`), {
-                inProgress: false,
-                winner: user.uid,
-              });
-            }
-          });
-        });
-      });
     });
   });
 };
