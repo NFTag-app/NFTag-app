@@ -138,7 +138,7 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
         }}
       />
     ),
-    name: "bt_tag_target",
+    name: "bt_target",
     color: "#25262b",
     buttonSize: 65,
     position: 10,
