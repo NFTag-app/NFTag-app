@@ -87,6 +87,7 @@ export default function Navigation() {
           options={{
             title: "NFTag | Join Game",
             headerTintColor: "#695895",
+            headerShown: false,
             headerStyle: {
               backgroundColor: "#25262b",
             },
