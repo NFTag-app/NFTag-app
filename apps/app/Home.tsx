@@ -30,6 +30,8 @@ export const HomeScreen = () => {
 
       <HomeButton caption="Game List" navigateTo="GameListScreen" />
 
+      <HomeButton caption="Join Game" navigateTo="JoinGameScreen" />
+
       <TouchableOpacity
         style={{
           backgroundColor: "#47f",
@@ -46,4 +48,5 @@ export const HomeScreen = () => {
       <StatusBar style="auto" />
     </View>
   );
+  return undefined;
 };
