@@ -274,7 +274,7 @@ export const submitTag: SubmitTag = async (game, user, target, image) => {
         timestamp: new Date().getTime(), // auto approve for now
       },
     }).then(() => {
-      update(ref(db, `games/${game.id}/players/${target}`), {
+      update(ref(db, `games/${game.id}/players/${target.id}`), {
         active: false,
       }).then(() => {
         update(ref(db, `games/${game.id}/players/${user.uid}`), {
