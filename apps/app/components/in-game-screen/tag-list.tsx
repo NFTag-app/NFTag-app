@@ -7,7 +7,7 @@ export const TagList = () => {
   console.log("tags", tags);
 
   const tagIds = tags ? [
-    ...Object.keys(tags),
+    ...tags.map(tag => tag),
     'LASTITEM'
   ] : ['NOITEMS']
 
