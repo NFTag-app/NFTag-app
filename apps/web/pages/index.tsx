@@ -1,4 +1,5 @@
-import { Container, Stack } from "@mantine/core";
+import { Center, Container, Group, Stack, Title } from "@mantine/core";
+import MobileStoreButton from "react-mobile-store-button";
 import HeroWaves from "../hero-waves.svg";
 
 export default function Web() {
@@ -15,15 +16,45 @@ export default function Web() {
           backgroundPosition: "50% 100%",
         }}
         fluid
-      ></Container>
+      >
+        <Container>
+          <Group>
+            <Title></Title>
+          </Group>
+        </Container>
+      </Container>
       <Container
         fluid
         p={0}
         m={0}
         sx={{
           backgroundColor: "#2e2555",
-          height: 350,
+          height: 150,
         }}
+      >
+        <Center>
+          <Stack>
+            <Title>Get The App!</Title>
+            <Group align="center" position="center">
+              <MobileStoreButton store="ios" width={150} />
+              <MobileStoreButton store="android" width={150} />
+            </Group>
+          </Stack>
+        </Center>
+      </Container>
+      <Container
+        p={0}
+        m={0}
+        mt={-1}
+        sx={{
+          aspectRatio: "16 / 9",
+          backgroundImage: `url(${HeroWaves.src})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          backgroundPosition: "50% 100%",
+          rotate: "180deg",
+        }}
+        fluid
       ></Container>
     </Stack>
   );
