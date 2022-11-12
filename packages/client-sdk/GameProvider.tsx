@@ -44,9 +44,14 @@ export const usePlayers = () => {
   return game?.players;
 };
 
-export const useTags = () => {
+export const useTags = (approvedOnly: boolean = true) => {
   const game = useGame();
-  return game?.tags;
+
+  if (!game) return;
+
+  return Object.values(game.tags).filter((tag) => {
+    tag.approved?.approved || !approvedOnly;
+  });
 };
 
 export const useTarget = () => {

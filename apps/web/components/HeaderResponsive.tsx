@@ -17,6 +17,8 @@ const useStyles = createStyles((theme) => ({
   root: {
     position: "relative",
     zIndex: 1,
+    // borderBottom: `solid 1px ${theme.colors["violet"][9]}`,
+    boxShadow: `0 0 10px ${theme.colors["violet"][9]}`,
   },
 
   dropdown: {
