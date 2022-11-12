@@ -18,21 +18,27 @@ import { StatusBar } from "expo-status-bar";
 
 import { Camera, CameraCapturedPicture, CameraType } from "expo-camera";
 
-import { useNavigation, useFocusEffect, ParamListBase } from "@react-navigation/native";
+import {
+  useNavigation,
+  useFocusEffect,
+  ParamListBase,
+} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { renderCaptureControls, renderPreviewControls } from "./Overlay";
 
 const DEFAULT_WINDOW_SIZE = Dimensions.get("window");
 
-export const NftagCamera = <TParamList extends ParamListBase, T extends keyof TParamList>({
+export const NftagCamera = <
+  TParamList extends ParamListBase,
+  T extends keyof TParamList
+>({
   type,
   callback,
-  screenReady=true,
+  screenReady = true,
   overlay,
 }) => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<TParamList, T>>();
+  const navigation = useNavigation<NativeStackNavigationProp<TParamList, T>>();
 
   const cameraRef = useRef<Camera>(null);
   const snapBoxRef = useRef<View>(null);
@@ -56,8 +62,8 @@ export const NftagCamera = <TParamList extends ParamListBase, T extends keyof TP
   const takePicture = async () => {
     if (!cameraRef.current) return;
     const data = await cameraRef.current.takePictureAsync();
-    setPhotoData(data);
     cameraRef.current.pausePreview();
+    setPhotoData(data);
   };
 
   const retakePicture = () => {
@@ -173,26 +179,39 @@ export const NftagCamera = <TParamList extends ParamListBase, T extends keyof TP
         {photoData ? (
           <>
             <View
-              style={[cameraStyles.container, { backgroundColor: "black", marginTop: camVertPadding, marginBottom: camVertPadding }]}
+              style={[
+                cameraStyles.container,
+                {
+                  backgroundColor: "black",
+                  marginTop: camVertPadding,
+                  marginBottom: camVertPadding,
+                },
+              ]}
               ref={snapBoxRef}
             >
               <Image
                 source={{ uri: photoData.uri }}
                 style={cameraStyles.camera}
               />
+              {isCameraReady &&
+                overlay({
+                  screenSize: screenSize,
+                  vertPadding: camVertPadding,
+                })}
+              {isCameraReady &&
+                renderPreviewControls({
+                  styles: cameraStyles,
+                  sdStyles,
+                  saveTag,
+                  
+                  retakePicture,
+                })}
             </View>
-            {isCameraReady && overlay({ screenSize: screenSize, vertPadding: camVertPadding })}
-            {isCameraReady &&
-              renderPreviewControls({
-                styles: cameraStyles,
-                sdStyles,
-                saveTag,
-                retakePicture,
-              })}
           </>
         ) : (
           <>
-            {isCameraReady && overlay({ screenSize: screenSize, vertPadding: camVertPadding })}
+            {isCameraReady &&
+              overlay({ screenSize: screenSize, vertPadding: camVertPadding })}
             {isCameraReady &&
               renderCaptureControls({
                 styles: cameraStyles,
