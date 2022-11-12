@@ -41,7 +41,7 @@ export const TagList = () => {
   console.log("tags", tags.map(t => t.image?.uri?.split('x')[0] ?? ''));
 
   const tagIds = tags
-    ? [...tags.map((tag) => tag.id), "LASTITEM"]
+    ? [...tags.map((tag) => tag.id).reverse(), "LASTITEM"]
     : ["NOITEMS"];
 
   console.log("xxxxxxxxxxxxxxxxxxxxxx", tagIds);
