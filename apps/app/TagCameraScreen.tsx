@@ -113,8 +113,8 @@ export const TagCameraScreen = ({ navigation: { navigate } }) => {
     <View style={{ ...StyleSheet.absoluteFillObject }}>
       <NftagCamera<InGameStackParamList, "TagCameraScreen">
         type={CameraType.back}
-        callback={(res) => {
-          submitTag(game, user, target, res).catch((e) => console.log(e));
+        callback={(uri, dim) => {
+          submitTag(game, user, target, {uri: uri, width: dim.width, height: dim.height}).catch((e) => console.log(e));
         }}
         screenReady={!!date && !!user}
         overlay={renderOverlay}

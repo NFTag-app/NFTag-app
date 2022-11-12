@@ -1,3 +1,4 @@
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
 import { getApps, initializeApp } from "firebase/app";
@@ -7,7 +8,7 @@ import {
   signInWithCredential,
 } from "firebase/auth";
 import * as React from "react";
-import { Button } from "react-native";
+import { useWindowDimensions } from "react-native";
 import { firebaseConfig } from "./firebase-config";
 
 if (getApps().length < 1) {
@@ -17,6 +18,8 @@ if (getApps().length < 1) {
 WebBrowser.maybeCompleteAuthSession();
 
 const GoogleSignIn = () => {
+  const dims = useWindowDimensions();
+
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId:
       "661572892323-1inpo2hpgniru8kmmr5jh9u6psc8mnhb.apps.googleusercontent.com",
@@ -37,15 +40,21 @@ const GoogleSignIn = () => {
   }, [response]);
 
   return (
-    <Button
-      disabled={!request}
-      title="Sign in with Google"
-      onPress={() => {
+    <FontAwesome.Button
+      name="google"
+      size={40}
+      backgroundColor="#6741d9"
+      style={{
+        fontFamily: "Roboto",
+      }}
+      onPress={() =>
         promptAsync({
           useProxy: true,
-        });
-      }}
-    />
+        })
+      }
+    >
+      Sign In with Google
+    </FontAwesome.Button>
   );
 };
 

@@ -16,7 +16,11 @@ export interface Game {
 export interface Tag {
   id: string;
   timestamp: number;
-  image: string;
+  image: {
+    uri: string;
+    width: number;
+    height: number;
+  };
   player: string;
   target: string;
   approved: {
@@ -58,7 +62,11 @@ export type SubmitTag = (
   game: Game,
   user: UserData,
   target: Player,
-  image: string
+  image: {
+    uri: string;
+    width: number;
+    height: number;
+  }
 ) => Promise<Tag>;
 export type SetTagState = (
   game: Game,

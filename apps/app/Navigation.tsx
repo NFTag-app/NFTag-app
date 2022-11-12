@@ -6,12 +6,12 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import { InGameStackParamList, RootStackParamList } from "./RootStackParams";
 
-import { HomeScreen } from "./Home";
-import { TagCameraScreen } from "./TagCameraScreen";
-import RegCameraScreen from "./RegCameraScreen";
-import { InGameScreen } from "./InGameScreen";
+import { GameProvider, useUser } from "client-sdk";
 import { GameListScreen } from "./GameListScreen";
-import { GameProvider } from "client-sdk";
+import { HomeScreen } from "./Home";
+import { InGameScreen } from "./InGameScreen";
+import RegCameraScreen from "./RegCameraScreen";
+import { TagCameraScreen } from "./TagCameraScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const InGameStack = createStackNavigator<InGameStackParamList>();
@@ -29,20 +29,23 @@ const GameNavigator = () => {
   return (
     <InGameStack.Navigator>
       <InGameStack.Screen name="InGameScreen" component={InGameScreen} />
-      <InGameStack.Screen name="TagCameraScreen" component={TagCameraScreen} options={{ title: "NFTag | Camera", headerShown: false }} />
+      <InGameStack.Screen
+        name="TagCameraScreen"
+        component={TagCameraScreen}
+        options={{ title: "NFTag | Camera", headerShown: false }}
+      />
     </InGameStack.Navigator>
   );
 };
 
 export default function Navigation() {
+  const user = useUser();
+
+  if (!user) return <HomeScreen />;
+
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{ title: "NFTag | Home" }}
-        />
+      <Stack.Navigator initialRouteName="GameListScreen">
         <Stack.Screen
           name="RegCamera"
           component={RegCameraScreen}
@@ -57,7 +60,9 @@ export default function Navigation() {
         <Stack.Screen
           name="GameListScreen"
           component={GameListScreen}
-          options={{ title: "NFTag | Game List" }}
+          options={{
+            title: "NFTag | Game List",
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
