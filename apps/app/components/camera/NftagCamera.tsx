@@ -56,14 +56,16 @@ export const NftagCamera = <
   const [photoData, setPhotoData] = useState<CameraCapturedPicture | null>(
     null
   );
+  const [photoDims, setPhotoDims] = useState({width: 0,height: 0})
 
   const [camPermissions, requestCamPermissions] = Camera.useCameraPermissions();
 
   const takePicture = async () => {
     if (!cameraRef.current) return;
     const data = await cameraRef.current.takePictureAsync();
-    cameraRef.current.pausePreview();
     setPhotoData(data);
+    setPhotoDims(data);
+    cameraRef.current.pausePreview();
   };
 
   const retakePicture = () => {
@@ -73,15 +75,14 @@ export const NftagCamera = <
   };
 
   const saveTag = async () => {
-    setPhotoData(null);
     if (cameraRef.current) {
       cameraRef.current.resumePreview();
     }
     const result = await captureRef(snapBoxRef, {
       result: "data-uri",
     });
-
-    callback(result);
+    setPhotoData(null);
+    callback({result, photoDims});
   };
 
   const prepareCamRatio = async () => {
@@ -198,15 +199,15 @@ export const NftagCamera = <
                   screenSize: screenSize,
                   vertPadding: camVertPadding,
                 })}
-              {isCameraReady &&
-                renderPreviewControls({
-                  styles: cameraStyles,
-                  sdStyles,
-                  saveTag,
-                  
-                  retakePicture,
-                })}
             </View>
+            {isCameraReady &&
+              renderPreviewControls({
+                styles: cameraStyles,
+                sdStyles,
+                saveTag,
+
+                retakePicture,
+              })}
           </>
         ) : (
           <>
