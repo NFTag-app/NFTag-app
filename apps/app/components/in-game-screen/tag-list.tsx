@@ -12,7 +12,7 @@ import { CommonStyles } from "../../styles/CommonStyles";
 
 export const TagList = () => {
   const tags = useTags();
-  console.log("tags", tags.map(t => t.image && t.image.split('x')[0]));
+  console.log("tags", tags.map(t => t.image && t.image.uri.split('x')[0]));
 
   const tagIds = tags
     ? [...tags.map((tag) => tag.id), "LASTITEM"]
@@ -60,8 +60,8 @@ export const TagList = () => {
 
       const image = tag.image ? (
         <Image 
-          source={{ uri: tag.image }}
-          style={{ width: 400, height: 600, borderWidth: 3, borderColor: 'red', backgroundColor: 'green'}}
+          source={{ uri: tag.image.uri }}
+          style={{ width: tag.image.width / 2, height: tag.image.height / 2, borderWidth: 3, borderColor: 'red', backgroundColor: 'green'}}
         />
       ) : undefined;
 
