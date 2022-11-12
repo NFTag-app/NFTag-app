@@ -100,8 +100,8 @@ export const TagList = () => {
       };
 
       const size = newSize(
-        dims.height,
-        dims.width,
+        290,
+        dims.width * 0.9,
         tag.image.height,
         tag.image.width
       );
@@ -114,11 +114,8 @@ export const TagList = () => {
             height: size.height,
             width: size.width,
           }}
-          style={{
-            borderWidth: 3,
-            borderColor: "red",
-            backgroundColor: "green",
-          }}
+          resizeMode="center"
+          style={{}}
         />
       );
 
@@ -135,29 +132,62 @@ export const TagList = () => {
             borderColor: "#1a1b1e",
             borderWidth: 1,
             borderRadius: 10,
+            justifyContent: "flex-start",
           }}
         >
-          <View style={{ flex: 1, flexDirection: "row" }}>
-            <Text
-              style={{
-                color: "#C1C2C5",
-                fontWeight: "600",
-              }}
-            >
-              {players[tag.player].name}
-            </Text>
-          </View>
-          {/* <Text
-            style={{ fontSize: 30 }}
-          >{`${targetName} was TAGGED!?! asdfas fasd fasdf asdf asd f `}</Text>
           <View
             style={{
               flexDirection: "row",
-              flex: 1,
+              borderBottomWidth: 1,
+              width: dims.width * 0.9,
+              height: 60,
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingHorizontal: 15,
+              borderBottomColor: "#7d7d7d",
             }}
           >
-            {image}
-          </View> */}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-start",
+              }}
+            >
+              <Image
+                source={{
+                  uri: players[tag.player].image.uri,
+                }}
+                style={{
+                  width: 40,
+                  height: 40,
+                  marginRight: 10,
+                  borderRadius: 20,
+                  borderWidth: 1,
+                  borderColor: "#7d7d7d",
+                }}
+              />
+              <Text
+                style={{
+                  color: "#C1C2C5",
+                  fontWeight: "600",
+                  fontSize: 18,
+                  paddingVertical: 20,
+                }}
+              >
+                {players[tag.player].name}
+              </Text>
+            </View>
+            <Text
+              style={{
+                fontSize: 10,
+                color: "#7d7d7d",
+              }}
+            >
+              {new Date(tag.timestamp).toLocaleString()}
+            </Text>
+          </View>
+          {image}
         </View>
       );
     }
@@ -172,7 +202,7 @@ export const TagList = () => {
     <FlatList
       style={{ ...styles.container, paddingVertical: 20 }}
       data={tagIds}
-      ItemSeparatorComponent={<View style={{ height: 15 }} />}
+      ItemSeparatorComponent={() => <View style={{ height: 15 }} />}
       renderItem={renderItem}
     />
   );

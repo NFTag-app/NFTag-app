@@ -32,7 +32,11 @@ export interface Tag {
 export interface Player {
   id: string;
   name: string;
-  image: string;
+  image: {
+    uri: string;
+    width: number;
+    height: number;
+  };
   active: boolean;
   target: string;
   tags: string[];
@@ -44,7 +48,7 @@ export interface UserData extends User {
   games: string[];
 }
 
-export type CreateGame = (name: string, owner: UserData) => Promise<void>;
+export type CreateGame = (name: string, owner: UserData) => Promise<string>;
 export type JoinGame = (
   id: string,
   user: UserData,

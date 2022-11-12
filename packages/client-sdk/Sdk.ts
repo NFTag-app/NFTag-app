@@ -100,7 +100,9 @@ export const createGame: CreateGame = async (name, owner) => {
     owner: owner.uid,
     players: {},
     tags: {},
-  } as Game);
+  } as Game).then(() => {
+    return id;
+  });
 };
 
 export const joinGame: JoinGame = async (id, user, image) => {
