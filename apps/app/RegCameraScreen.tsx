@@ -6,7 +6,7 @@ import { InGameStackParamList } from "./RootStackParams";
 
 const RegCameraScreen = () => {
 
-	const renderOverlay = ({ screenSize, cameraDetails }) => {
+	const renderOverlay = ({ screenSize, vertPadding, cameraDetails }) => {
 		return undefined
 	};
 

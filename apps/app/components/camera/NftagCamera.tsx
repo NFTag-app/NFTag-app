@@ -15,12 +15,11 @@ import {
 import { captureRef } from "react-native-view-shot";
 
 import { StatusBar } from "expo-status-bar";
-import * as NavigationBar from "expo-navigation-bar";
+
 import { Camera, CameraCapturedPicture, CameraType } from "expo-camera";
 
 import { useNavigation, useFocusEffect, ParamListBase } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../RootStackParams";
 
 import { renderCaptureControls, renderPreviewControls } from "./Overlay";
 
@@ -116,39 +115,7 @@ export const NftagCamera = <TParamList extends ParamListBase, T extends keyof TP
     }
   };
 
-  const setNavigationBar = () => {
-    if (!(Platform.OS === "android")) return;
-    NavigationBar.setBehaviorAsync("overlay-swipe");
-    NavigationBar.setVisibilityAsync("hidden");
-  };
-  const setDefaultNavigationBar = () => {
-    if (!(Platform.OS === "android")) return;
-    NavigationBar.setBehaviorAsync("inset-touch");
-    NavigationBar.setVisibilityAsync("visible");
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      setNavigationBar();
-      return () => {
-        setDefaultNavigationBar();
-      };
-    }, [])
-  );
-
   useEffect(() => {
-    console.log(type);
-    console.log(cameraType);
-    const ascSubscription = AppState.addEventListener(
-      "change",
-      (nextAppState) => {
-        // When user comes back into the app set the correct nav bar behavior
-        if (nextAppState === "active") {
-          setNavigationBar();
-        }
-      }
-    );
-
     requestCamPermissions().then((res) => {
       if (!res.granted) {
         Alert.alert(
@@ -163,22 +130,12 @@ export const NftagCamera = <TParamList extends ParamListBase, T extends keyof TP
         );
       }
     });
-
-    return () => {
-      ascSubscription.remove();
-    };
   }, []);
 
   const updateScreen = async (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
-    setScreenSize({ width, height });
-    prepareCamRatio().catch((e) => console.log(e));
-    if (Platform.OS === "android") {
-      const behavior = await NavigationBar.getBehaviorAsync().catch((e) =>
-        console.log(e)
-      );
-      if (behavior !== "overlay-swipe") setNavigationBar();
-    }
+    await setScreenSize({ width, height });
+    await prepareCamRatio().catch((e) => console.log(e));
   };
 
   const cameraReady = async () => {
@@ -216,7 +173,7 @@ export const NftagCamera = <TParamList extends ParamListBase, T extends keyof TP
         {photoData ? (
           <>
             <View
-              style={[cameraStyles.container, { backgroundColor: "black" }]}
+              style={[cameraStyles.container, { backgroundColor: "black", marginTop: camVertPadding, marginBottom: camVertPadding }]}
               ref={snapBoxRef}
             >
               <Image
@@ -227,7 +184,7 @@ export const NftagCamera = <TParamList extends ParamListBase, T extends keyof TP
                 ]}
               />
             </View>
-            {isCameraReady && overlay({ screenSize, cameraStyles, sdStyles })}
+            {isCameraReady && overlay({ screenSize: screenSize, vertPadding: camVertPadding })}
             {isCameraReady &&
               renderPreviewControls({
                 styles: cameraStyles,
@@ -238,7 +195,7 @@ export const NftagCamera = <TParamList extends ParamListBase, T extends keyof TP
           </>
         ) : (
           <>
-            {isCameraReady && overlay({ screenSize, cameraStyles, sdStyles })}
+            {isCameraReady && overlay({ screenSize: screenSize, vertPadding: camVertPadding })}
             {isCameraReady &&
               renderCaptureControls({
                 styles: cameraStyles,

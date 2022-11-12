@@ -14,8 +14,9 @@ import { useState } from "react";
 import { useInterval } from "./hooks/useInterval";
 import moment from "moment";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { InGameStackParamList, RootStackParamList } from "./RootStackParams";
+import { InGameStackParamList } from "./RootStackParams";
 import { CommonStyles } from "./styles/CommonStyles";
+import { submitTag, useUser } from "client-sdk";
 //import { renderTagOverlay } from "./components/camera/Overlay";
 
 type Props = NativeStackScreenProps<InGameStackParamList, "TagCameraScreen">;
@@ -37,9 +38,9 @@ export const TagCameraScreen = ({ navigation: { navigate } }) => {
   }, 10);
 
   const target = useTarget();
-  const self = usePlayer();
+  const user = useUser();
 
-  const renderOverlay = ({ screenSize, cameraDetails }) => {
+  const renderOverlay = ({ screenSize, vertPadding }) => {
     const sdStyles = getScreenDependentStyles(screenSize);
 
     return (
@@ -49,37 +50,35 @@ export const TagCameraScreen = ({ navigation: { navigate } }) => {
             position: "absolute",
             color: "white",
             fontSize: 15,
-            top: 20,
-            left: 20,
+            top: 20 + vertPadding,
+            right: 20,
           }}
         >
           {target?.name || "Undefined Target"}
         </Text>
         <Text
           style={{
-            position: "absolute",
             color: "white",
             fontSize: 15,
-            top: 50,
-            left: 20,
-          }}
-        >
-          {self?.id || "Undefined ID"}
-        </Text>
-        <Text
-          style={{
-            color: "white",
-            fontSize: 10,
             position: "absolute",
-            bottom: 15,
-            right: 15,
+            top: 50 + vertPadding,
+            right: 20,
           }}
         >
           {date}
         </Text>
-        {/* <View style={{display: 'flex', bottom: '0', alignItems: 'center', justifyContent: 'center'}}>
-          
-        </View> */}
+        <Text
+          style={{
+            position: "absolute",
+            color: "white",
+            fontSize: 15,
+            top: 80 + vertPadding,
+            right: 20,
+          }}
+        >
+          {user?.uid || "Undefined ID"}
+        </Text>
+
         <View style={sdStyles.dot} />
       </View>
     );
@@ -90,9 +89,9 @@ export const TagCameraScreen = ({ navigation: { navigate } }) => {
       <NftagCamera<InGameStackParamList, "TagCameraScreen">
         type={CameraType.back}
         callback={(res) => {
-          console.log(res);
+          submitTag(game, user, target, res);
         }}
-        screenReady={!!date && !!self}
+        screenReady={!!date && !!user}
         overlay={renderOverlay}
       />
     </View>
