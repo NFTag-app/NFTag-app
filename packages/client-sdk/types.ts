@@ -4,6 +4,7 @@ export interface Game {
   id: string;
   inProgress: boolean;
   name: string;
+  winner: string;
   owner: string;
   players: {
     [playerId: string]: Player;
@@ -39,7 +40,7 @@ export interface Player {
   };
   active: boolean;
   target: string;
-  tags: string[];
+  tags: number;
 }
 
 export interface UserData extends User {

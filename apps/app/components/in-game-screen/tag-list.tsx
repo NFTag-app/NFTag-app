@@ -1,5 +1,5 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { usePlayers, useTags } from "client-sdk/dist/GameProvider";
+import { useGame, usePlayers, useTags } from "client-sdk/dist/GameProvider";
 import { useState } from "react";
 import {
   FlatList,
@@ -61,12 +61,176 @@ export const TagList = () => {
   const tags = useTags();
   const dims = useWindowDimensions();
   const players = usePlayers();
+  const game = useGame();
 
-  const tagIds = tags
+  let tagIds = tags
     ? [...tags.map((tag) => tag.id).reverse(), "LASTITEM"]
     : ["NOITEMS"];
 
+  if (game.winner) {
+    tagIds.reverse();
+    tagIds.push("WINNER");
+    tagIds.reverse();
+  }
+
   const RenderItem = ({ item, index, separators }) => {
+    const tag = tags.find((t) => t.id === item);
+    const size = newSize(
+      290,
+      dims.width * 0.9,
+      tag.image.height,
+      tag.image.width
+    );
+
+    const size2 = newSize(
+      dims.height,
+      dims.width,
+      tag.image.height,
+      tag.image.width
+    );
+
+    const ImageFullscreen: React.FC<{
+      uri?: string;
+    }> = ({ uri }) => {
+      const [fullscreen, setFullscreen] = useState(false);
+
+      return (
+        <>
+          <TouchableOpacity onPress={() => setFullscreen(true)}>
+            <Image
+              source={{
+                uri: uri ?? tag.image.uri,
+                scale: 0.2,
+                height: size.height,
+                width: size.width,
+              }}
+            />
+          </TouchableOpacity>
+          <Modal
+            visible={fullscreen}
+            transparent={true}
+            onRequestClose={() => setFullscreen(false)}
+            onDismiss={() => setFullscreen(false)}
+            presentationStyle="fullScreen"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                flex: 1,
+              }}
+              onPress={() => setFullscreen(false)}
+            >
+              <Image
+                resizeMode="contain"
+                source={{
+                  uri: tag.image.uri,
+                  scale: 0.2,
+                  height: size2.height,
+                  width: size2.width,
+                }}
+                style={{
+                  flex: 1,
+                  padding: 50,
+                }}
+              />
+            </TouchableOpacity>
+          </Modal>
+        </>
+      );
+    };
+
+    if (item === "WINNER") {
+      return (
+        <View
+          style={{
+            ...CommonStyles.container,
+            width: dims.width * 0.9,
+            height: 350,
+            backgroundColor: "#25262b",
+            borderColor: "#1a1b1e",
+            borderWidth: 1,
+            borderRadius: 10,
+            justifyContent: "flex-start",
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              borderBottomWidth: 1,
+              width: dims.width * 0.9,
+              height: 60,
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingHorizontal: 15,
+              borderBottomColor: "#7d7d7d",
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-start",
+              }}
+            >
+              <Image
+                source={{
+                  uri: players[game.winner].image.uri,
+                }}
+                style={{
+                  width: 40,
+                  height: 40,
+                  marginRight: 10,
+                  borderRadius: 20,
+                  borderWidth: 1,
+                  borderColor: "#7d7d7d",
+                }}
+              />
+              <Text
+                style={{
+                  color: "#C1C2C5",
+                  fontWeight: "600",
+                  fontSize: 18,
+                  paddingVertical: 20,
+                }}
+              >
+                {players[game.winner].name} won the game!
+              </Text>
+            </View>
+          </View>
+          <View
+            style={{
+              width: dims.width * 0.9,
+              height: 240,
+              overflow: "hidden",
+            }}
+          >
+            <ImageFullscreen uri={players[game.winner].image.uri} />
+          </View>
+          <View
+            style={{
+              height: 50,
+              width: dims.width * 0.9,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "flex-start",
+            }}
+          >
+            <LikeButton />
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-end",
+              }}
+            ></View>
+          </View>
+        </View>
+      );
+    }
     if (item === "NOITEMS" || item === "LASTITEM") {
       return (
         <SafeAreaView
@@ -102,75 +266,9 @@ export const TagList = () => {
         </SafeAreaView>
       );
     }
-    const tag = tags.find((t) => t.id === item);
+
     if (tag?.image?.uri) {
       const text = `Key: ${tag.id}; Player: ${tag.player}; Target: ${tag.target}; Approved?: ${tag.approved?.approved}`;
-
-      const size = newSize(
-        290,
-        dims.width * 0.9,
-        tag.image.height,
-        tag.image.width
-      );
-
-      const size2 = newSize(
-        dims.height,
-        dims.width,
-        tag.image.height,
-        tag.image.width
-      );
-
-      const ImageFullscreen = () => {
-        const [fullscreen, setFullscreen] = useState(false);
-
-        return (
-          <>
-            <TouchableOpacity onPress={() => setFullscreen(true)}>
-              <Image
-                source={{
-                  uri: tag.image.uri,
-                  scale: 0.2,
-                  height: size.height,
-                  width: size.width,
-                }}
-              />
-            </TouchableOpacity>
-            <Modal
-              visible={fullscreen}
-              transparent={true}
-              onRequestClose={() => setFullscreen(false)}
-              onDismiss={() => setFullscreen(false)}
-              presentationStyle="fullScreen"
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <TouchableOpacity
-                style={{
-                  flex: 1,
-                }}
-                onPress={() => setFullscreen(false)}
-              >
-                <Image
-                  resizeMode="contain"
-                  source={{
-                    uri: tag.image.uri,
-                    scale: 0.2,
-                    height: size2.height,
-                    width: size2.width,
-                  }}
-                  style={{
-                    flex: 1,
-                    padding: 50,
-                  }}
-                />
-              </TouchableOpacity>
-            </Modal>
-          </>
-        );
-      };
 
       const targetName = players![tag.target].name;
       const targetImage = players![tag.target].name;

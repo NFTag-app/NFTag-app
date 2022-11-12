@@ -158,7 +158,7 @@ export const joinGame: JoinGame = async (id, user, image) => {
         image,
         active: false,
         target: "",
-        tags: [],
+        tags: 0,
       } as Player).then((ref) => {
         get(ref)
           .then((snapshot) => {
@@ -187,6 +187,7 @@ export const startGame: StartGame = async (
         else {
           await update(gameRef, {
             inProgress: true,
+            winner: null,
           });
 
           // set all players to active state
@@ -203,6 +204,7 @@ export const startGame: StartGame = async (
             targets.forEach((value, key) => {
               players[key].target = value;
               players[key].active = activatePlayers;
+              players[key].tags = 0;
             });
 
             await update(ref(db, `games/${id}/players`), players);
@@ -287,6 +289,31 @@ export const submitTag: SubmitTag = async (game, user, target, image) => {
         approved: true, // auto approve for now
         timestamp: new Date().getTime(), // auto approve for now
       },
+    }).then(() => {
+      update(ref(db, `games/${game.id}/players/${target}`), {
+        active: false,
+      }).then(() => {
+        update(ref(db, `games/${game.id}/players/${user.uid}`), {
+          tags: (game.players[user.uid].tags || 0) + 1,
+          target: Object.values(game.players).filter(
+            (player: Player) => player.active
+          )[0].id,
+        }).then(() => {
+          get(ref(db, `games/${game.id}/players`)).then((snapshot) => {
+            const players = snapshot
+              .val()
+              .filter((player: Player) => player.active);
+
+            if (players.length < 2) {
+              // game is over
+              update(ref(db, `games/${game.id}`), {
+                inProgress: false,
+                winner: user.uid,
+              });
+            }
+          });
+        });
+      });
     });
   });
 };

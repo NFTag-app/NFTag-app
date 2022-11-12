@@ -4,11 +4,11 @@ import { useRef, useState } from "react";
 import {
   Image,
   ImageBackground,
+  Share,
   StyleSheet,
   useWindowDimensions,
 } from "react-native";
 import { FloatingAction, IActionProps } from "react-native-floating-action";
-import { TagList } from "./components/in-game-screen/tag-list";
 import { InGameStackParamList } from "./RootStackParams";
 
 const icon = require("./assets/adaptive-icon.png");
@@ -98,9 +98,60 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
     condition: () => userIsGameAdmin && !gameIsActive,
   };
 
+  const shareGameAction = {
+    text: "Share Game",
+    icon: (
+      <Image
+        source={require("./assets/Icons/1x/plus.png")}
+        style={{
+          width: 50,
+          height: 50,
+          transform: [{ rotate: "45deg" }],
+        }}
+      />
+    ),
+    name: "bt_tag_share",
+    color: "#25262b",
+    buttonSize: 65,
+    position: 10,
+    margin: 0,
+    action: async () =>
+      Share.share({
+        message:
+          "Join my NFTag game and have fun with crypto!\nhttps://www.nftag.app/invite.html?from=" +
+          user.displayName.split(" ")[0] +
+          "&game=" +
+          game.id,
+      }),
+    condition: () => userIsGameAdmin && !gameIsActive,
+  };
+
+  const targetAction = {
+    text: "View Target",
+    icon: (
+      <Image
+        source={require("./assets/Icons/1x/plus.png")}
+        style={{
+          width: 50,
+          height: 50,
+          transform: [{ rotate: "45deg" }],
+        }}
+      />
+    ),
+    name: "bt_tag_target",
+    color: "#25262b",
+    buttonSize: 65,
+    position: 10,
+    margin: 0,
+    action: async () => navigate("TargetScreen"),
+    condition: () => !userIsGameAdmin && gameIsActive,
+  };
+
   const actions: IActionPropsExtended[] = [
     tagAction.condition() ? tagAction : undefined,
+    shareGameAction.condition() ? shareGameAction : undefined,
     startGameAction.condition() ? startGameAction : undefined,
+    targetAction.condition() ? targetAction : undefined,
   ].filter((f) => f) as IActionPropsExtended[];
 
   const onPressItem = (item: string) => {
@@ -122,7 +173,6 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
         alignItems: "center",
       }}
     >
-      <TagList />
       <FloatingAction
         floatingIcon={
           <Image
