@@ -1,31 +1,47 @@
 import { FlatList, View, Text, StyleSheet } from "react-native";
-import { useTags } from "client-sdk/dist/GameProvider";
+import { useGame, useTags } from "client-sdk/dist/GameProvider";
+import { CommonStyles } from "../../styles/CommonStyles";
 
 export const TagList = () => {
   const tags = useTags();
+  console.log("tags", tags);
+
+  const tagIds = tags ? [
+    ...Object.keys(tags),
+    'LASTITEM'
+  ] : ['NOITEMS']
 
   const renderItem = ({ item, index, separators }) => {
-    const tag = tags[item];
-    if (tag) {
+    if (item === "LASTITEM") {
       return (
-        <View style={{ height: 200 }}>
-          <Text>
-            Key: {item.id} Name: {item.name}
-          </Text>
+        <View style={CommonStyles.container}>
+          <Text>Go get a tag!!!</Text>
         </View>
       );
     }
-    return (
-      <View style={{ height: 200 }}>
-        <Text>No Tags captured yet. Get tagging!</Text>
-      </View>
-    );
+    if (item === "NOITEMS") {
+      return (
+        <View style={CommonStyles.container}>
+          <Text>NO TAGS YET!!!</Text>
+        </View>
+      );
+    }
+    const tag = tags[item];
+    if (tag) {
+      const text = `Key: ${tag.id}; Player: ${tag.player}; Target: ${tag.target}; Approved?: ${tag.approved?.approved}`;
+      return (
+        <View style={{ height: 200 }}>
+          <Text>{text}</Text>
+        </View>
+      );
+    }
+    return undefined;
   };
 
   return (
     <FlatList
       style={styles.container}
-      data={Object.keys(tags)}
+      data={tagIds}
       renderItem={renderItem}
     />
   );
