@@ -62,6 +62,10 @@ export default function Navigation() {
           component={GameListScreen}
           options={{
             title: "NFTag | Game List",
+            headerTintColor: "#695895",
+            headerStyle: {
+              backgroundColor: "#25262b",
+            },
           }}
         />
       </Stack.Navigator>

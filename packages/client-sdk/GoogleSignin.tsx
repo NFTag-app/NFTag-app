@@ -44,9 +44,11 @@ const GoogleSignIn = () => {
       name="google"
       size={40}
       backgroundColor="#6741d9"
-      style={{
-        fontFamily: "Roboto",
-      }}
+      style={
+        {
+          // fontFamily: "Roboto",
+        }
+      }
       onPress={() =>
         promptAsync({
           useProxy: true,

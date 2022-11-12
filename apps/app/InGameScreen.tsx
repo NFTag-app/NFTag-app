@@ -1,11 +1,11 @@
-import { View, Text, StyleSheet } from "react-native";
-import { CommonStyles } from "./styles/CommonStyles";
-import { GameProvider, startGame, useGame, useUser } from "client-sdk";
-import { useRef } from "react";
-import { InGameStackParamList, RootStackParamList } from "./RootStackParams";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { TagList } from "./components/in-game-screen/tag-list";
+import { startGame, useGame, useUser } from "client-sdk";
+import { useRef } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { FloatingAction, IActionProps } from "react-native-floating-action";
+import { TagList } from "./components/in-game-screen/tag-list";
+import { InGameStackParamList } from "./RootStackParams";
+import { CommonStyles } from "./styles/CommonStyles";
 
 const icon = require("./assets/adaptive-icon.png");
 
@@ -39,8 +39,8 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
 
   const userIsGameAdmin = game.owner === user.uid;
   const gameIsActive = game.inProgress;
-  console.log('userIsGameAdmin', userIsGameAdmin);
-  console.log('gameIsActive', gameIsActive);
+  console.log("userIsGameAdmin", userIsGameAdmin);
+  console.log("gameIsActive", gameIsActive);
 
   const tagAction = {
     text: "Tag!!!",
@@ -50,8 +50,8 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
     buttonSize: 75,
     position: 10,
     margin: 0,
-    action: async () => navigate('TagCameraScreen'),
-    condition: () => !userIsGameAdmin && gameIsActive
+    action: async () => navigate("TagCameraScreen"),
+    condition: () => !userIsGameAdmin && gameIsActive,
   };
 
   const startGameAction = {
@@ -62,8 +62,9 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
     buttonSize: 75,
     position: 10,
     margin: 0,
-    action: async () => startGame(game.id, user, true).catch(err => console.warn(err)),
-    condition: () => userIsGameAdmin && !gameIsActive
+    action: async () =>
+      startGame(game.id, user, true).catch((err) => console.warn(err)),
+    condition: () => userIsGameAdmin && !gameIsActive,
   };
 
   const yellAction = {
@@ -73,21 +74,21 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
     name: "bt_yell",
     position: 0,
     margin: 0,
-    action: async () => alert('YELL'),
-    condition: () => true
+    action: async () => alert("YELL"),
+    condition: () => true,
   };
 
-  const actions = ([
+  const actions = [
     tagAction.condition() ? tagAction : undefined,
     startGameAction.condition() ? startGameAction : undefined,
-    yellAction.condition() ? yellAction : undefined
-  ]).filter(f => f) as Action[];
+    yellAction.condition() ? yellAction : undefined,
+  ].filter((f) => f) as Action[];
 
   const onPressItem = (item: string) => {
     const action = actions.find((x) => x.name === item);
     console.log("pressed item", action);
     if (action.condition()) {
-      return action.action().catch(err => console.warn(err));
+      return action.action().catch((err) => console.warn(err));
     }
   };
 
