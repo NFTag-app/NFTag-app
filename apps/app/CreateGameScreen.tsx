@@ -20,7 +20,7 @@ const CreateGameScreen = ({ navigation: { navigate } }) => {
   useEffect(() => {
     (async () => {
       if (!gameId) {
-        const id = await createGame(owner + "'s Game", owner);
+        const id = await createGame(owner.displayName.split(' ')[0] + "'s Game", owner);
         await setGameId(id);
       }
     })();
@@ -55,7 +55,7 @@ const CreateGameScreen = ({ navigation: { navigate } }) => {
   
   const goToGame = async () => {
     if(!gameId) return
-    await navigate('GameListScreen', {params: {game: gameId }})
+    await navigate('GameListScreen')
   }
 
   return (
