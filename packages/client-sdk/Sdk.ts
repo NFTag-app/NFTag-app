@@ -15,7 +15,7 @@ import {
   onSnapshot,
   setDoc,
 } from "firebase/firestore";
-import { uuid } from "uuidv4";
+import { v4 } from 'uuid';
 import { shuffle } from "./shuffle";
 import {
   ApproveTag,
@@ -84,7 +84,7 @@ export const createGame: CreateGame = async (name, owner) => {
     const db = getDatabase();
     const gameRef = ref(db, `games`);
 
-    const id = uuid();
+    const id = v4();
 
     push(child(gameRef, id), {
       id,
@@ -268,7 +268,7 @@ export const submitTag: SubmitTag = async (game, user, target, image) => {
     const db = getDatabase();
     const tagRef = ref(db, `games/${game.id}/tags`);
 
-    const id = uuid();
+    const id = v4();
 
     push(child(tagRef, id), {
       id,
