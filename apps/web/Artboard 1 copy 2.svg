@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 256 256">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#linear-gradient-4);
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5 {
+        stroke: #231f20;
+        stroke-miterlimit: 10;
+        stroke-width: 3px;
+      }
+
+      .cls-2 {
+        fill: url(#linear-gradient);
+      }
+
+      .cls-3 {
+        fill: url(#linear-gradient-5);
+      }
+
+      .cls-4 {
+        fill: url(#linear-gradient-2);
+      }
+
+      .cls-5 {
+        fill: url(#linear-gradient-3);
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="112" y1="112" x2="144" y2="112" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#665aa7"/>
+      <stop offset="1" stop-color="#5f4ea1"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" y1="80" y2="80" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-3" y1="48" y2="48" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-4" y1="144" y2="144" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-5" x1="112" y1="208" x2="144" y2="208" xlink:href="#linear-gradient"/>
+  </defs>
+  <rect class="cls-2" x="112" y="96" width="32" height="32"/>
+  <rect class="cls-4" x="112" y="64" width="32" height="32"/>
+  <rect class="cls-5" x="112" y="32" width="32" height="32"/>
+  <rect class="cls-1" x="112" y="128" width="32" height="32"/>
+  <rect class="cls-3" x="112" y="192" width="32" height="32"/>
+</svg>

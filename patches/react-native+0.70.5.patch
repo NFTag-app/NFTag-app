@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native/scripts/find-node-for-xcode.sh b/node_modules/react-native/scripts/find-node-for-xcode.sh
+index 0a49e25..71e4ef1 100644
+--- a/node_modules/react-native/scripts/find-node-for-xcode.sh
++++ b/node_modules/react-native/scripts/find-node-for-xcode.sh
+@@ -4,6 +4,8 @@
+ # This source code is licensed under the MIT license found in the
+ # LICENSE file in the root directory of this source tree.
+ 
++unset npm_config_prefix
++
+ set -e
+ 
+ # WHY WE NEED THIS:

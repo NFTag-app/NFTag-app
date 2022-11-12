@@ -4,12 +4,13 @@ import {
   createStyles,
   Group,
   Header,
+  Image,
   Paper,
-  Title,
   Transition,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
+import Logo from "../Artboard 1.svg";
 
 const HEADER_HEIGHT = 60;
 
@@ -124,7 +125,8 @@ export function HeaderResponsive({ links }: HeaderResponsiveProps) {
     <Header height={HEADER_HEIGHT} className={classes.root}>
       <Container className={classes.header}>
         {/* <MantineLogo size={28} /> */}
-        <Title>NFTag</Title>
+        {/* <Title>NFTag</Title> */}
+        <Image height={50} width={130} src={Logo.src} alt="NFTag" />
 
         <Group>
           <Button radius="xl" variant="outline">
