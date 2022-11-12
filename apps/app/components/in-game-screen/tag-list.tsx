@@ -1,7 +1,10 @@
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { usePlayers, useTags } from "client-sdk/dist/GameProvider";
+import { useState } from "react";
 import {
   FlatList,
   Image,
+  Modal,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -32,6 +35,28 @@ const newSize = (screenHeight, screenWidth, imageHeight, imageWidth) => {
   }
 };
 
+const LikeButton = () => {
+  const [liked, setLiked] = useState(false);
+
+  return (
+    <TouchableOpacity
+      onPress={() => setLiked(!liked)}
+      style={{
+        backgroundColor: liked ? "#1a1b1e" : "#25262b",
+        borderRadius: 8,
+        padding: 10,
+        marginLeft: 5,
+      }}
+    >
+      <FontAwesome
+        name="heart"
+        size={24}
+        color={liked ? "#ff0000" : "#7d7d7d"}
+      />
+    </TouchableOpacity>
+  );
+};
+
 export const TagList = () => {
   const tags = useTags();
   const dims = useWindowDimensions();
@@ -41,7 +66,7 @@ export const TagList = () => {
     ? [...tags.map((tag) => tag.id).reverse(), "LASTITEM"]
     : ["NOITEMS"];
 
-  const renderItem = ({ item, index, separators }) => {
+  const RenderItem = ({ item, index, separators }) => {
     if (item === "NOITEMS" || item === "LASTITEM") {
       return (
         <SafeAreaView
@@ -81,24 +106,6 @@ export const TagList = () => {
     if (tag?.image?.uri) {
       const text = `Key: ${tag.id}; Player: ${tag.player}; Target: ${tag.target}; Approved?: ${tag.approved?.approved}`;
 
-      const ApprovalButton = () => {
-        if (!tag.approved?.approved) {
-          return (
-            <TouchableOpacity
-              style={{
-                backgroundColor: "#47f",
-                padding: 10,
-                margin: 10,
-                alignItems: "center",
-              }}
-            >
-              <Text style={{ fontSize: 18, color: "#fff" }}>Approve</Text>
-            </TouchableOpacity>
-          );
-        }
-        return undefined;
-      };
-
       const size = newSize(
         290,
         dims.width * 0.9,
@@ -106,18 +113,64 @@ export const TagList = () => {
         tag.image.width
       );
 
-      const image = (
-        <Image
-          source={{
-            uri: tag.image.uri,
-            scale: 0.2,
-            height: size.height,
-            width: size.width,
-          }}
-          resizeMode="center"
-          style={{}}
-        />
+      const size2 = newSize(
+        dims.height,
+        dims.width,
+        tag.image.height,
+        tag.image.width
       );
+
+      const ImageFullscreen = () => {
+        const [fullscreen, setFullscreen] = useState(false);
+
+        return (
+          <>
+            <TouchableOpacity onPress={() => setFullscreen(true)}>
+              <Image
+                source={{
+                  uri: tag.image.uri,
+                  scale: 0.2,
+                  height: size.height,
+                  width: size.width,
+                }}
+              />
+            </TouchableOpacity>
+            <Modal
+              visible={fullscreen}
+              transparent={true}
+              onRequestClose={() => setFullscreen(false)}
+              onDismiss={() => setFullscreen(false)}
+              presentationStyle="fullScreen"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  flex: 1,
+                }}
+                onPress={() => setFullscreen(false)}
+              >
+                <Image
+                  resizeMode="contain"
+                  source={{
+                    uri: tag.image.uri,
+                    scale: 0.2,
+                    height: size2.height,
+                    width: size2.width,
+                  }}
+                  style={{
+                    flex: 1,
+                    padding: 50,
+                  }}
+                />
+              </TouchableOpacity>
+            </Modal>
+          </>
+        );
+      };
 
       const targetName = players![tag.target].name;
       const targetImage = players![tag.target].name;
@@ -187,7 +240,37 @@ export const TagList = () => {
               {new Date(tag.timestamp).toLocaleString()}
             </Text>
           </View>
-          {image}
+          <View
+            style={{
+              width: dims.width * 0.9,
+              height: 240,
+              overflow: "hidden",
+            }}
+          >
+            <ImageFullscreen />
+          </View>
+          <View
+            style={{
+              height: 50,
+              width: dims.width * 0.9,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "flex-start",
+            }}
+          >
+            <LikeButton />
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-end",
+              }}
+            >
+              {/* <ApprovalButton />
+              <ApprovalButton /> */}
+              {/* <RejectionButton /> */}
+            </View>
+          </View>
         </View>
       );
     }
@@ -203,7 +286,7 @@ export const TagList = () => {
       style={{ ...styles.container, paddingVertical: 20 }}
       data={tagIds}
       ItemSeparatorComponent={() => <View style={{ height: 15 }} />}
-      renderItem={renderItem}
+      renderItem={RenderItem}
     />
   );
 };
