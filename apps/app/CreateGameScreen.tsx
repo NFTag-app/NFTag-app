@@ -53,7 +53,7 @@ const CreateGameScreen = ({ navigation: { navigate } }) => {
     }
   };
   
-  const goToGame = async () => {
+  const backToList = async () => {
     if(!gameId) return
     await navigate('GameListScreen')
   }
@@ -116,7 +116,7 @@ const CreateGameScreen = ({ navigation: { navigate } }) => {
           </TouchableOpacity>
         </View>
         <TouchableOpacity
-          onPress={goToGame}
+          onPress={backToList}
           style={{
             backgroundColor: "#4a368a",
             paddingVertical: 15,
