@@ -14,7 +14,7 @@ const GameProvider: React.FC<{
   const db = getDatabase();
 
   useEffect(() => {
-    return onValue(ref(db, `/${gameId}`), (snapshot) => {
+    return onValue(ref(db, `games/${gameId}`), (snapshot) => {
       const data = snapshot.val();
       setGame(data);
     });

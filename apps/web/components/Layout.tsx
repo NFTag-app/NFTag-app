@@ -7,8 +7,10 @@ const Layout: React.FC<{
 }> = ({ children }) => {
   return (
     <>
-      <HeaderResponsive links={[{ label: "Home", href: "/" }]} />
-      <Container>{children}</Container>
+      <HeaderResponsive links={[{ label: "Home", link: "/" }]} />
+      <Container p={0} m={0} fluid>
+        {children}
+      </Container>
     </>
   );
 };
