@@ -41,7 +41,7 @@ export const GameListScreen = ({ navigation: { navigate } }) => {
           {item.name}
         </Text>
         <Text style={{ ...CommonStyles.text, color: "#7d7d7d", fontSize: 15 }}>
-          {Object.keys(item.players).length} Players
+          {item?.players && Object.keys(item.players).length} Players
         </Text>
       </TouchableOpacity>
     </View>
