@@ -89,9 +89,26 @@ export const capturePayment = async (uid: string) => {
 
 export const createGame: CreateGame = async (name, owner) => {
   const db = getDatabase();
+  const firestore = getFirestore();
   const gameRef = ref(db, `games`);
 
   const id = Math.floor(100000 + Math.random() * 900000).toString();
+
+  // add game to user data
+  const userRef = doc(firestore, "customers", owner.uid);
+  getDoc(userRef)
+    .then((snapshot: DocumentSnapshot<DocumentData>) => {
+      setDoc(
+        userRef,
+        {
+          games: [...snapshot.data()?.games, id],
+        },
+        { merge: true }
+      );
+    })
+    .catch((error) => {
+      throw error;
+    });
 
   return set(child(gameRef, id), {
     id,
