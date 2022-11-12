@@ -1,10 +1,18 @@
+import {
+  initPaymentSheet,
+  presentPaymentSheet,
+} from "@stripe/stripe-react-native";
+import { SetupParams } from "@stripe/stripe-react-native/lib/typescript/src/types/PaymentSheet";
 import { child, get, getDatabase, push, ref, update } from "firebase/database";
 import {
+  addDoc,
+  collection,
   doc,
   DocumentData,
   DocumentSnapshot,
   getDoc,
   getFirestore,
+  onSnapshot,
   setDoc,
 } from "firebase/firestore";
 import { uuid } from "uuidv4";
@@ -22,8 +30,53 @@ import {
   SubmitTag,
 } from "./types";
 
-export const capturePayment = async () =>
-  new Promise((resolve) => resolve(true));
+export const capturePayment = async (uid: string) => {
+  // return new Promise((resolve) => resolve(true));
+  // add checkout session to customers checkout_sessions sub-collection
+
+  return new Promise((resolve, reject) => {
+    const db = getFirestore();
+    const docRef = collection(db, "customers", uid, "checkout_sessions");
+
+    addDoc(docRef, {
+      client: "mobile",
+      mode: "payment",
+      amount: 499,
+      currency: "usd",
+    }).then((docRef) => {
+      onSnapshot(docRef, async (doc) => {
+        const { customer, ephemeralKeySecret, paymentIntentClientSecret } =
+          doc.data() as any;
+
+        if (!customer || !ephemeralKeySecret || !paymentIntentClientSecret)
+          return;
+
+        console.log(customer, ephemeralKeySecret, paymentIntentClientSecret);
+
+        initPaymentSheet({
+          merchantDisplayName: "NFTag App",
+          customerId: customer,
+          testEnv: true,
+          customerEphemeralKeySecret: ephemeralKeySecret,
+          paymentIntentClientSecret: paymentIntentClientSecret,
+          applePay: {
+            merchantCountryCode: "US",
+          },
+          googlePay: {
+            merchantCountryCode: "US",
+          },
+        } as SetupParams).then(({ error }) => {
+          if (error) reject(error);
+
+          presentPaymentSheet().then(({ error }) => {
+            if (error) reject(error);
+            resolve(true);
+          });
+        });
+      });
+    });
+  });
+};
 
 //#region Games
 
@@ -59,8 +112,9 @@ export const createGame: CreateGame = async (name, owner) => {
 };
 
 export const joinGame: JoinGame = async (id, user, image) => {
-  return new Promise((resolve, reject) => {
-    if (!capturePayment()) reject(new Error("Payment failed"));
+  return new Promise(async (resolve, reject) => {
+    if ((await capturePayment(user.uid)) !== true)
+      reject(new Error("Payment failed"));
 
     const db = getDatabase();
     const firestore = getFirestore();
