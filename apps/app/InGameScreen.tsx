@@ -19,6 +19,8 @@ export const InGameScreen = ({ route }: Props) => {
     </View>
   }
 
+  console.log('rendering gameid', gameId);
+
   return (
     <GameProvider gameId={gameId}>
       <TagList />
