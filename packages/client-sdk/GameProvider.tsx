@@ -50,7 +50,7 @@ export const useTags = (approvedOnly: boolean = true) => {
   if (!game) return;
 
   return Object.values(game.tags).filter((tag) => {
-    tag.approved?.approved || !approvedOnly;
+    return tag.approved?.approved || !approvedOnly;
   });
 };
 
