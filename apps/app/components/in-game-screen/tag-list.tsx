@@ -1,65 +1,80 @@
+import { usePlayers, useTags } from "client-sdk/dist/GameProvider";
 import {
   FlatList,
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
   Image,
-  ImageSourcePropType,
-  useWindowDimensions
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
 } from "react-native";
-import { usePlayers, useTags } from "client-sdk/dist/GameProvider";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { CommonStyles } from "../../styles/CommonStyles";
-
 
 const newSize = (screenHeight, screenWidth, imageHeight, imageWidth) => {
   var maxWidth = screenWidth; // Max width for the image
   var maxHeight = screenHeight; // Max height for the image
-  var ratio = 0;  // Used for aspect ratio
+  var ratio = 0; // Used for aspect ratio
 
   // Check if the current width is larger than the max
-  if (imageWidth > maxWidth){
-      ratio = maxWidth / imageWidth;   // get ratio for scaling image
-      return {
-        width: maxWidth,
-        height: imageHeight * ratio
-      }
+  if (imageWidth > maxWidth) {
+    ratio = maxWidth / imageWidth; // get ratio for scaling image
+    return {
+      width: maxWidth,
+      height: imageHeight * ratio,
+    };
   } else {
-      ratio = maxHeight / imageHeight;
-      return {
-        width: imageWidth * ratio,
-        height: maxHeight
-      }
+    ratio = maxHeight / imageHeight;
+    return {
+      width: imageWidth * ratio,
+      height: maxHeight,
+    };
   }
-}
+};
 
 export const TagList = () => {
   const tags = useTags();
   const dims = useWindowDimensions();
   const players = usePlayers();
 
-  console.log("tags", tags.map(t => t.image?.uri?.split('x')[0] ?? ''));
-
   const tagIds = tags
     ? [...tags.map((tag) => tag.id).reverse(), "LASTITEM"]
     : ["NOITEMS"];
 
-  console.log("xxxxxxxxxxxxxxxxxxxxxx", tagIds);
-
   const renderItem = ({ item, index, separators }) => {
-    console.log("renderItem", item);
-    if (item === "LASTITEM") {
+    if (item === "NOITEMS" || item === "LASTITEM") {
       return (
-        <View style={CommonStyles.container}>
-          <Text>Go get a tag!!!</Text>
-        </View>
-      );
-    }
-    if (item === "NOITEMS") {
-      return (
-        <View style={CommonStyles.container}>
-          <Text>NO TAGS YET!!!</Text>
-        </View>
+        <SafeAreaView
+          style={{
+            backgroundColor: "transparent",
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "column",
+          }}
+        >
+          <Text
+            style={{
+              color: "white",
+              fontSize: 20,
+              fontWeight: "500",
+            }}
+          >
+            {item === "NOITEMS"
+              ? "Nothing here yet..."
+              : "You've reached the end..."}
+          </Text>
+          <Image
+            resizeMode="center"
+            source={require("../../assets/Icons/1x/searching.png")}
+            style={{
+              width: 250,
+              height: 250,
+              alignSelf: "center",
+              backgroundColor: "rgba(0,0,0,0)",
+            }}
+          />
+        </SafeAreaView>
       );
     }
     const tag = tags.find((t) => t.id === item);
@@ -84,12 +99,26 @@ export const TagList = () => {
         return undefined;
       };
 
-      const size = newSize(dims.height, dims.width, tag.image.height, tag.image.width);
+      const size = newSize(
+        dims.height,
+        dims.width,
+        tag.image.height,
+        tag.image.width
+      );
 
       const image = (
-        <Image 
-          source={{ uri: tag.image.uri, scale: .2, height: size.height, width: size.width }}
-          style={{ borderWidth: 3, borderColor: 'red', backgroundColor: 'green'}}
+        <Image
+          source={{
+            uri: tag.image.uri,
+            scale: 0.2,
+            height: size.height,
+            width: size.width,
+          }}
+          style={{
+            borderWidth: 3,
+            borderColor: "red",
+            backgroundColor: "green",
+          }}
         />
       );
 
@@ -97,18 +126,38 @@ export const TagList = () => {
       const targetImage = players![tag.target].name;
 
       return (
-        <View style={CommonStyles.container}>
-          <Text style={{ fontSize: 30 }}>{`${targetName} was TAGGED!?! asdfas fasd fasdf asdf asd f `}</Text>
-          <View style={{
-            flexDirection: 'row',
-            flex: 1
-          }}>
-            {image}
-            {/* <Image
-              source={{uri: targetImage, height: size.height, width: size.width }}
-              style={{ borderWidth: 3, borderColor: 'red', backgroundColor: 'green'}}
-              /> */}
+        <View
+          style={{
+            ...CommonStyles.container,
+            width: dims.width * 0.9,
+            height: 350,
+            backgroundColor: "#25262b",
+            borderColor: "#1a1b1e",
+            borderWidth: 1,
+            borderRadius: 10,
+          }}
+        >
+          <View style={{ flex: 1, flexDirection: "row" }}>
+            <Text
+              style={{
+                color: "#C1C2C5",
+                fontWeight: "600",
+              }}
+            >
+              {players[tag.player].name}
+            </Text>
           </View>
+          {/* <Text
+            style={{ fontSize: 30 }}
+          >{`${targetName} was TAGGED!?! asdfas fasd fasdf asdf asd f `}</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              flex: 1,
+            }}
+          >
+            {image}
+          </View> */}
         </View>
       );
     }
@@ -120,13 +169,17 @@ export const TagList = () => {
   };
 
   return (
-    <FlatList style={styles.container} data={tagIds} renderItem={renderItem} />
+    <FlatList
+      style={{ ...styles.container, paddingVertical: 20 }}
+      data={tagIds}
+      ItemSeparatorComponent={<View style={{ height: 15 }} />}
+      renderItem={renderItem}
+    />
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "red",
   },
 });

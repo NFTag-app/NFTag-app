@@ -30,11 +30,21 @@ const GameNavigatorScreen = ({ route }) => {
 const GameNavigator = () => {
   return (
     <InGameStack.Navigator>
-      <InGameStack.Screen name="InGameScreen" component={InGameScreen} />
+      <InGameStack.Screen
+        name="InGameScreen"
+        component={InGameScreen}
+        options={{
+          title: "Feed",
+          headerTintColor: "#695895",
+          headerStyle: {
+            backgroundColor: "#25262b",
+          },
+        }}
+      />
       <InGameStack.Screen
         name="TagCameraScreen"
         component={TagCameraScreen}
-        options={{ title: "NFTag | Camera", headerShown: false }}
+        options={{ title: "Camera", headerShown: false }}
       />
     </InGameStack.Navigator>
   );
@@ -51,19 +61,20 @@ export default function Navigation() {
         <Stack.Screen
           name="RegCamera"
           component={RegCameraScreen}
-          options={{ title: "NFTag | Camera", headerShown: false }}
+          options={{ title: "Camera", headerShown: false }}
         />
 
         <Stack.Screen
           name="GameNavigatorScreen"
           component={GameNavigatorScreen}
-          options={{ title: "NFTag | Current Game", headerShown: false }}
+          options={{ title: "Current Game", headerShown: false }}
         />
         <Stack.Screen
           name="GameListScreen"
           component={GameListScreen}
           options={{
-            title: "NFTag | Game List",
+            headerShadowVisible: true,
+            title: "Games",
             headerTintColor: "#695895",
             headerStyle: {
               backgroundColor: "#25262b",
@@ -74,7 +85,7 @@ export default function Navigation() {
           name="CreateGameScreen"
           component={CreateGameScreen}
           options={{
-            title: "NFTag | Join Game",
+            title: "Create Game",
             headerTintColor: "#695895",
             headerStyle: {
               backgroundColor: "#25262b",
@@ -85,7 +96,7 @@ export default function Navigation() {
           name="JoinGameScreen"
           component={JoinGameScreen}
           options={{
-            title: "NFTag | Join Game",
+            title: "Join Game",
             headerTintColor: "#695895",
             headerShown: false,
             headerStyle: {

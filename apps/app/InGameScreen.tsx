@@ -1,11 +1,15 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { startGame, useGame, useUser } from "client-sdk";
-import { useRef } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useRef, useState } from "react";
+import {
+  Image,
+  ImageBackground,
+  StyleSheet,
+  useWindowDimensions,
+} from "react-native";
 import { FloatingAction, IActionProps } from "react-native-floating-action";
 import { TagList } from "./components/in-game-screen/tag-list";
 import { InGameStackParamList } from "./RootStackParams";
-import { CommonStyles } from "./styles/CommonStyles";
 
 const icon = require("./assets/adaptive-icon.png");
 
@@ -26,28 +30,47 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
   const target = useRef(null);
   const game = useGame();
   const user = useUser();
+  const dims = useWindowDimensions();
+  const [open, setOpen] = useState(false);
 
   if (!game?.id) {
     return (
-      <View style={CommonStyles.container}>
-        <Text>MISSING GAME ID</Text>
-      </View>
+      <ImageBackground
+        source={require("./assets/Icons/1x/loginbg.png")}
+        resizeMode="cover"
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          width: dims.width,
+          alignItems: "center",
+        }}
+      ></ImageBackground>
     );
   }
 
-  console.log("rendering gameid", game.id);
-
   const userIsGameAdmin = game.owner === user.uid;
   const gameIsActive = game.inProgress;
-  console.log("userIsGameAdmin", userIsGameAdmin);
-  console.log("gameIsActive", gameIsActive);
+  interface IActionPropsExtended extends IActionProps {
+    condition: () => boolean;
+    action: () => Promise<void>;
+    buttonSize: number;
+    position: number;
+  }
 
-  const tagAction = {
-    text: "Tag!!!",
-    // icon: require("./images/ic_accessibility_white.png"),
-    icon: icon,
+  const tagAction: IActionPropsExtended = {
+    text: "Submit Tag",
+    color: "#25262b",
+    icon: (
+      <Image
+        source={require("./assets/Icons/1x/exclaim.png")}
+        style={{
+          width: 50,
+          height: 50,
+        }}
+      />
+    ),
     name: "bt_tag_target",
-    buttonSize: 75,
+    buttonSize: 65,
     position: 10,
     margin: 0,
     action: async () => navigate("TagCameraScreen"),
@@ -55,11 +78,19 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
   };
 
   const startGameAction = {
-    text: "Start Game!!!",
-    // icon: require("./images/ic_accessibility_white.png"),
-    icon: icon,
+    text: "Start Game",
+    icon: (
+      <Image
+        source={require("./assets/Icons/1x/plus.png")}
+        style={{
+          width: 50,
+          height: 50,
+        }}
+      />
+    ),
     name: "bt_tag_start",
-    buttonSize: 75,
+    color: "#25262b",
+    buttonSize: 65,
     position: 10,
     margin: 0,
     action: async () =>
@@ -67,22 +98,10 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
     condition: () => userIsGameAdmin && !gameIsActive,
   };
 
-  const yellAction = {
-    text: "Yell!!!",
-    icon: icon,
-    buttonSize: 75,
-    name: "bt_yell",
-    position: 0,
-    margin: 0,
-    action: async () => alert("YELL"),
-    condition: () => true,
-  };
-
-  const actions = [
+  const actions: IActionPropsExtended[] = [
     tagAction.condition() ? tagAction : undefined,
     startGameAction.condition() ? startGameAction : undefined,
-    yellAction.condition() ? yellAction : undefined,
-  ].filter((f) => f) as Action[];
+  ].filter((f) => f) as IActionPropsExtended[];
 
   const onPressItem = (item: string) => {
     const action = actions.find((x) => x.name === item);
@@ -93,14 +112,39 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
   };
 
   return (
-    <View style={CommonStyles.container}>
+    <ImageBackground
+      source={require("./assets/Icons/1x/loginbg.png")}
+      resizeMode="cover"
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        width: dims.width,
+        alignItems: "center",
+      }}
+    >
       <TagList />
       <FloatingAction
+        floatingIcon={
+          <Image
+            source={require("./assets/Icons/1x/plus.png")}
+            style={{
+              width: 50,
+              height: 50,
+              transform: [{ rotate: open ? "45deg" : "0deg" }],
+            }}
+          />
+        }
+        animated={true}
+        color="#25262b"
+        buttonSize={75}
+        visible={actions.length > 0}
         actions={actions as unknown as IActionProps[]}
         onPressItem={onPressItem}
+        onOpen={() => setOpen(true)}
+        onClose={() => setOpen(false)}
         position={"right"}
       />
-    </View>
+    </ImageBackground>
   );
 };
 
