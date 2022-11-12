@@ -91,7 +91,7 @@ export const createGame: CreateGame = async (name, owner) => {
   const db = getDatabase();
   const gameRef = ref(db, `games`);
 
-  const id = v4();
+  const id = Math.floor(100000 + Math.random() * 900000).toString();
 
   return set(child(gameRef, id), {
     id,
