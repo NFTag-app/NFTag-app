@@ -40,7 +40,7 @@ export interface UserData extends User {
   games: string[];
 }
 
-export type CreateGame = (name: string, owner: UserData) => Promise<Game>;
+export type CreateGame = (name: string, owner: UserData) => Promise<void>;
 export type JoinGame = (
   id: string,
   user: UserData,
