@@ -98,16 +98,16 @@ export const TagList = () => {
 
       return (
         <View style={CommonStyles.container}>
-          <Text>{`${targetName} was TAGGED!?!`}</Text>
+          <Text style={{ fontSize: 30 }}>{`${targetName} was TAGGED!?! asdfas fasd fasdf asdf asd f `}</Text>
           <View style={{
             flexDirection: 'row',
             flex: 1
           }}>
             {image}
-            <Image
+            {/* <Image
               source={{uri: targetImage, height: size.height, width: size.width }}
               style={{ borderWidth: 3, borderColor: 'red', backgroundColor: 'green'}}
-              />
+              /> */}
           </View>
         </View>
       );
