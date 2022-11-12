@@ -25,7 +25,6 @@ const UserProvider: React.FC<{
         if (!snapshot.exists()) return;
 
         const data = snapshot.data();
-        console.log("data", data);
 
         if (!("games" in data!)) {
           data!["games"] = [];
@@ -41,8 +40,6 @@ const UserProvider: React.FC<{
 
   useEffect(() => {
     return auth.onAuthStateChanged((user) => {
-      console.log("authstate", user?.displayName);
-
       setUser(user as UserData);
     });
   }, []);
@@ -76,8 +73,6 @@ export const useUser = () => {
   if (context === undefined) {
     throw new Error("useUser must be used within a UserProvider");
   }
-
-  console.log("context", context?.displayName);
 
   return context;
 };

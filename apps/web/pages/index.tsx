@@ -1,12 +1,7 @@
-import { test } from "client-sdk";
-
 export default function Web() {
-	const message = test();
-
-	return (
-		<div>
-			<h1>Web</h1>
-			<p>{message}</p>
-		</div>
-	);
+  return (
+    <div>
+      <h1>Web</h1>
+    </div>
+  );
 }

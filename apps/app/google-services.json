@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "661572892323",
+    "project_id": "nftag-app",
+    "storage_bucket": "nftag-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:661572892323:android:abbcc31513d33a926c7116",
+        "android_client_info": {
+          "package_name": "app.nftag.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "661572892323-1inpo2hpgniru8kmmr5jh9u6psc8mnhb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOLL3KMnw_KNhhO2ZmC6IcSlA6tIMNSIU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "661572892323-1inpo2hpgniru8kmmr5jh9u6psc8mnhb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
