@@ -52,7 +52,11 @@ export type CreateGame = (name: string, owner: UserData) => Promise<string>;
 export type JoinGame = (
   id: string,
   user: UserData,
-  image: string
+  image: {
+    uri: string;
+    width: number;
+    height: number;
+  }
 ) => Promise<Game>;
 export type StartGame = (
   id: string,
