@@ -4,13 +4,15 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  Image,
+  ImageSourcePropType
 } from "react-native";
 import { useTags } from "client-sdk/dist/GameProvider";
 import { CommonStyles } from "../../styles/CommonStyles";
 
 export const TagList = () => {
   const tags = useTags();
-  console.log("tags", tags);
+  console.log("tags", tags.map(t => t.image && t.image.split('x')[0]));
 
   const tagIds = tags
     ? [...tags.map((tag) => tag.id), "LASTITEM"]
@@ -56,8 +58,16 @@ export const TagList = () => {
         return undefined;
       };
 
+      const image = tag.image ? (
+        <Image 
+          source={{ uri: tag.image }}
+          style={{ width: 400, height: 600, borderWidth: 3, borderColor: 'red', backgroundColor: 'green'}}
+        />
+      ) : undefined;
+
       return (
         <View style={CommonStyles.container}>
+          {image}
           <Text>{text}</Text>
         </View>
       );
