@@ -60,9 +60,9 @@ export const useTags = (approvedOnly: boolean = true) => {
 
   if (!game) return;
 
-  return Object.values(game.tags).filter((tag) => {
+  return game.tags ? Object.values(game.tags).filter((tag) => {
     return tag.approved?.approved || !approvedOnly;
-  });
+  }) : undefined;
 };
 
 export const useTarget = () => {
