@@ -7,9 +7,11 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { InGameStackParamList, RootStackParamList } from "./RootStackParams";
 
 import { GameProvider, useUser } from "client-sdk";
+import CreateGameScreen from "./CreateGameScreen";
 import { GameListScreen } from "./GameListScreen";
 import { HomeScreen } from "./Home";
 import { InGameScreen } from "./InGameScreen";
+import JoinGameScreen from "./JoinGameScreen";
 import RegCameraScreen from "./RegCameraScreen";
 import { TagCameraScreen } from "./TagCameraScreen";
 
@@ -62,6 +64,28 @@ export default function Navigation() {
           component={GameListScreen}
           options={{
             title: "NFTag | Game List",
+            headerTintColor: "#695895",
+            headerStyle: {
+              backgroundColor: "#25262b",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="CreateGameScreen"
+          component={CreateGameScreen}
+          options={{
+            title: "NFTag | Join Game",
+            headerTintColor: "#695895",
+            headerStyle: {
+              backgroundColor: "#25262b",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="JoinGameScreen"
+          component={JoinGameScreen}
+          options={{
+            title: "NFTag | Join Game",
             headerTintColor: "#695895",
             headerStyle: {
               backgroundColor: "#25262b",
