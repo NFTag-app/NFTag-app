@@ -3,15 +3,7 @@ import {
   presentPaymentSheet,
 } from "@stripe/stripe-react-native";
 import { SetupParams } from "@stripe/stripe-react-native/lib/typescript/src/types/PaymentSheet";
-import {
-  child,
-  get,
-  getDatabase,
-  push,
-  ref,
-  set,
-  update,
-} from "firebase/database";
+import { child, get, getDatabase, ref, set, update } from "firebase/database";
 import {
   addDoc,
   collection,
@@ -152,22 +144,14 @@ export const joinGame: JoinGame = async (id, user, image) => {
 
       // add player to game data
       const playersRef = ref(db, `games/${id}/players`);
-      push(child(playersRef, user.uid), {
+      return set(child(playersRef, user.uid), {
         id: user.uid,
         name: user.displayName,
         image,
         active: false,
         target: "",
         tags: 0,
-      } as Player).then((ref) => {
-        get(ref)
-          .then((snapshot) => {
-            return resolve(snapshot.val());
-          })
-          .catch((error) => {
-            return reject(error);
-          });
-      });
+      } as Player);
     });
   });
 };
