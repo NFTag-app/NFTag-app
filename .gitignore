@@ -48,3 +48,4 @@ web-build/
 # macOS
 .DS_Store
 apps/app/local.properties
+yarn.lock
