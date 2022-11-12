@@ -56,10 +56,10 @@ const JoinGameScreen = ({navigation: {navigate}}) => {
     );
   };
 
-  const join = async (image) => {
+  const join = async (image, width, height) => {
     await navigate('GameListScreen')
     try {
-      const game = await joinGame(gameId, user, image);
+      const game = await joinGame(gameId, user, {uri:image, width, height});
       await navigate('InGameScreen', {params: {game: game.id}})
     } catch (e) {
       alert('Oops, something went wrong! Try again.')
