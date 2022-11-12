@@ -24,242 +24,301 @@ import { RootStackParamList } from "../../RootStackParams";
 
 import { renderCaptureControls, renderPreviewControls } from "./Overlay";
 
-const DEFAULT_WINDOW_SIZE = Dimensions.get('window')
+const DEFAULT_WINDOW_SIZE = Dimensions.get("window");
 
-export const NftagCamera = <T extends keyof RootStackParamList>({type, callback, overlay}) => {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, T>>();
+export const NftagCamera = <T extends keyof RootStackParamList>({
+  type,
+  callback,
+  screenReady=true,
+  overlay,
+}) => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList, T>>();
 
-  const cameraRef = useRef<Camera>(null)
-  const snapBoxRef = useRef<View>(null)
-  
-  const [screenSize, setScreenSize] = useState<{width: number, height: number}>({width: DEFAULT_WINDOW_SIZE.width, height: DEFAULT_WINDOW_SIZE.height})
+  const cameraRef = useRef<Camera>(null);
+  const snapBoxRef = useRef<View>(null);
 
-  const [cameraType, setCameraType] = useState(type)
-  const [cameraRatio,setCameraRatio] = useState('4:3') // Default. Only applicable to android
-  const [camVertPadding, setCamVertPadding] = useState(0)
-  const [camRatioPrepared, setCamRatioPrepared] = useState(false) // mark if the ratio has been prepared, at least initially
-  const [isCameraReady, setIsCameraReady] = useState(false)
-  const [photoData, setPhotoData] = useState<CameraCapturedPicture | null>(null)
+  const [screenSize, setScreenSize] = useState<{
+    width: number;
+    height: number;
+  }>({ width: DEFAULT_WINDOW_SIZE.width, height: DEFAULT_WINDOW_SIZE.height });
 
-  const [camPermissions, requestCamPermissions] = Camera.useCameraPermissions()
+  const [cameraType, setCameraType] = useState(type);
+  const [cameraRatio, setCameraRatio] = useState("4:3"); // Default. Only applicable to android
+  const [camVertPadding, setCamVertPadding] = useState(0);
+  const [camRatioPrepared, setCamRatioPrepared] = useState(false); // mark if the ratio has been prepared, at least initially
+  const [isCameraReady, setIsCameraReady] = useState(false);
+  const [photoData, setPhotoData] = useState<CameraCapturedPicture | null>(
+    null
+  );
+
+  const [camPermissions, requestCamPermissions] = Camera.useCameraPermissions();
 
   const takePicture = async () => {
-    if(!cameraRef.current) return
-    const data = await cameraRef.current.takePictureAsync()
-    setPhotoData(data)
-    cameraRef.current.pausePreview()
-  }
+    if (!cameraRef.current) return;
+    const data = await cameraRef.current.takePictureAsync();
+    setPhotoData(data);
+    cameraRef.current.pausePreview();
+  };
 
   const retakePicture = () => {
-    setPhotoData(null)
-    if(!cameraRef.current) return
-    cameraRef.current.resumePreview()
-  }
+    setPhotoData(null);
+    if (!cameraRef.current) return;
+    cameraRef.current.resumePreview();
+  };
 
   const saveTag = async () => {
-    setPhotoData(null)
-    if(cameraRef.current) {
-      cameraRef.current.resumePreview()
+    setPhotoData(null);
+    if (cameraRef.current) {
+      cameraRef.current.resumePreview();
     }
     const result = await captureRef(snapBoxRef, {
-      result: 'tmpfile'
-    })
+      result: "data-uri",
+    });
 
-    callback(result)
-  }
+    callback(result);
+  };
 
   const prepareCamRatio = async () => {
-    if(Platform.OS === 'android' && cameraRef.current) {
-      const ratios = await cameraRef.current.getSupportedRatiosAsync()
+    if (Platform.OS === "android" && cameraRef.current) {
+      const ratios = await cameraRef.current.getSupportedRatiosAsync();
 
-      let closestRatio: string = '4:3' // default
-      let closestNumRatio: number = 4/3 // default
-      let closestDistance: number | null = null
+      let closestRatio: string = "4:3"; // default
+      let closestNumRatio: number = 4 / 3; // default
+      let closestDistance: number | null = null;
       for (let i = 0; i < ratios.length; ++i) {
-        const parts = ratios[i].split(':')
-        const numRatio = parseInt(parts[0]) / parseInt(parts[1])
-        const distance = (screenSize.height / screenSize.width) - numRatio
-        if(closestDistance == null) {
-          closestRatio = ratios[i]
-          closestNumRatio = numRatio
-          closestDistance = distance
+        const parts = ratios[i].split(":");
+        const numRatio = parseInt(parts[0]) / parseInt(parts[1]);
+        const distance = screenSize.height / screenSize.width - numRatio;
+        if (closestDistance == null) {
+          closestRatio = ratios[i];
+          closestNumRatio = numRatio;
+          closestDistance = distance;
         } else {
-          if ((distance > -0.01) && distance < closestDistance) {
-            closestRatio = ratios[i]
-            closestNumRatio = numRatio
-            closestDistance = distance
+          if (distance > -0.01 && distance < closestDistance) {
+            closestRatio = ratios[i];
+            closestNumRatio = numRatio;
+            closestDistance = distance;
           }
         }
       }
       const remainder = Math.round(
-        (screenSize.height - closestNumRatio * screenSize.width)
-      )
+        screenSize.height - closestNumRatio * screenSize.width
+      );
 
       // console.log(screenSize)
       // console.log(closestRatio)
       // console.log(remainder)
 
-      setCamVertPadding(remainder / 2)
-      setCameraRatio(closestRatio)
-      setCamRatioPrepared(true)
+      setCamVertPadding(remainder / 2);
+      setCameraRatio(closestRatio);
+      setCamRatioPrepared(true);
     }
-  }
+  };
 
   const setNavigationBar = () => {
-    if(!(Platform.OS==='android')) return
-    NavigationBar.setBehaviorAsync('overlay-swipe')
-    NavigationBar.setVisibilityAsync('hidden')
-  }
+    if (!(Platform.OS === "android")) return;
+    NavigationBar.setBehaviorAsync("overlay-swipe");
+    NavigationBar.setVisibilityAsync("hidden");
+  };
   const setDefaultNavigationBar = () => {
-    if(!(Platform.OS==='android')) return
-    NavigationBar.setBehaviorAsync('inset-touch')
-    NavigationBar.setVisibilityAsync('visible')
-  }
+    if (!(Platform.OS === "android")) return;
+    NavigationBar.setBehaviorAsync("inset-touch");
+    NavigationBar.setVisibilityAsync("visible");
+  };
 
   useFocusEffect(
-	useCallback(() => {
-		setNavigationBar()
-		return () => {
-			setDefaultNavigationBar()
-		}
-	}, [])
-  )
+    useCallback(() => {
+      setNavigationBar();
+      return () => {
+        setDefaultNavigationBar();
+      };
+    }, [])
+  );
 
   useEffect(() => {
-    console.log(type)
-    console.log(cameraType)
-	const ascSubscription = AppState.addEventListener('change', nextAppState => {
-	  // When user comes back into the app set the correct nav bar behavior
-	  if(nextAppState === 'active') {
-		setNavigationBar()
-	  }
-	})
+    console.log(type);
+    console.log(cameraType);
+    const ascSubscription = AppState.addEventListener(
+      "change",
+      (nextAppState) => {
+        // When user comes back into the app set the correct nav bar behavior
+        if (nextAppState === "active") {
+          setNavigationBar();
+        }
+      }
+    );
 
-	requestCamPermissions().then(res => {
-		if(!res.granted) {
-		Alert.alert('Permissions Required!', 'We can only use the camera if you allow it...', [
-			{
-				text: 'Ok',
-				onPress: () => navigation.goBack()
-			}
-		])
-	  }
-	})
+    requestCamPermissions().then((res) => {
+      if (!res.granted) {
+        Alert.alert(
+          "Permissions Required!",
+          "We can only use the camera if you allow it...",
+          [
+            {
+              text: "Ok",
+              onPress: () => navigation.goBack(),
+            },
+          ]
+        );
+      }
+    });
 
-	return () => {
-	  ascSubscription.remove()
-	}
-  }, [])
+    return () => {
+      ascSubscription.remove();
+    };
+  }, []);
 
   const updateScreen = async (e: LayoutChangeEvent) => {
-    const {width, height} = e.nativeEvent.layout
-    setScreenSize({width, height})
-    prepareCamRatio().catch(e => console.log(e))
-    if(Platform.OS==='android') {
-      const behavior= await NavigationBar.getBehaviorAsync().catch(e => console.log(e))
-      if(behavior!=='overlay-swipe') setNavigationBar()
+    const { width, height } = e.nativeEvent.layout;
+    setScreenSize({ width, height });
+    prepareCamRatio().catch((e) => console.log(e));
+    if (Platform.OS === "android") {
+      const behavior = await NavigationBar.getBehaviorAsync().catch((e) =>
+        console.log(e)
+      );
+      if (behavior !== "overlay-swipe") setNavigationBar();
     }
-  }
+  };
 
   const cameraReady = async () => {
-    if(!camRatioPrepared) {
-      await prepareCamRatio().catch(e => console.log(e))
+    if (!camRatioPrepared) {
+      await prepareCamRatio().catch((e) => console.log(e));
     }
-    setIsCameraReady(true)
-  }
+    setIsCameraReady(true);
+  };
 
-  const getScreenDependentStyles = (screenSize: {width: number, height: number}) => { 
-    return StyleSheet.create({
-      dot: {
-        backgroundColor: 'red',
-        width: Math.floor(screenSize.width * 0.04),
-        height: Math.floor(screenSize.width * 0.04),
-        borderRadius: Math.floor(screenSize.width * 0.02),
-        marginTop: 'auto',
-        marginBottom: 'auto',
-      },
-      captureBtn: {
-        backgroundColor: '#f5f5f5',
-        width: Math.floor(screenSize.width * 0.2),
-        height: Math.floor(screenSize.width * 0.2),
-        borderRadius: Math.floor(screenSize.width * 0.1),
-        margin: Math.floor(screenSize.width * 0.1),
-      },
-      prevBtn: {
-        // backgroundColor: 'red',
-        width: Math.floor(screenSize.width / 3),
-        paddingVertical: Math.floor(screenSize.width / 12),
-        alignItems: 'center',
-      },
-      prevBtnText: {
-        fontSize: Math.floor(screenSize.width / 16),
-        color: 'white',
-        marginTop: 'auto',
-        marginBottom: 'auto',
-      }
-    })
-  }
-  const sdStyles = getScreenDependentStyles(screenSize) // Styles depend on screen size
+  const sdStyles = getScreenDependentStyles(screenSize); // Styles depend on screen size
 
-  return (
-	<View style={styles.mainContainer} onLayout={updateScreen}>
-		{ camPermissions?.granted && 
-		<Camera
-		  ref={cameraRef}
-		  style={[styles.camera, {marginTop: camVertPadding, marginBottom: camVertPadding, display: photoData ? 'none' : 'flex'}]}
-		  type={cameraType}
-		  ratio={cameraRatio}
-		  onCameraReady={cameraReady}
-		  onMountError={err => {
-			  console.log('Camera Error: ', err)
-		  }}
-		/>
-	  }
-	  
-	  {
-		photoData ? <>
-		  <View style={[styles.container, {backgroundColor: 'black'}]} ref={snapBoxRef}>
-			<Image source={{ uri: photoData.uri }} style={[styles.camera, {marginTop: camVertPadding, marginBottom: camVertPadding}]}/>
-		  </View>
-		  {isCameraReady && overlay({styles, sdStyles})}
-		  {isCameraReady && renderPreviewControls({styles, sdStyles, saveTag, retakePicture})}
-		</> :
-		<>
-		  {isCameraReady && overlay({styles, sdStyles})}
-		  {isCameraReady && renderCaptureControls({styles, sdStyles, takePicture, cameraRef, isCameraReady, navigation, screenSize})}
-		</>
-	  }
-	  <StatusBar style="auto" hidden/>
-	</View>
-  )
+  if (screenReady) {
+    return (
+      <View style={cameraStyles.mainContainer} onLayout={updateScreen}>
+        {camPermissions?.granted && (
+          <Camera
+            ref={cameraRef}
+            style={[
+              cameraStyles.camera,
+              {
+                marginTop: camVertPadding,
+                marginBottom: camVertPadding,
+                display: photoData ? "none" : "flex",
+              },
+            ]}
+            type={cameraType}
+            ratio={cameraRatio}
+            onCameraReady={cameraReady}
+            onMountError={(err) => {
+              console.log("Camera Error: ", err);
+            }}
+          />
+        )}
+
+        {photoData ? (
+          <>
+            <View
+              style={[cameraStyles.container, { backgroundColor: "black" }]}
+              ref={snapBoxRef}
+            >
+              <Image
+                source={{ uri: photoData.uri }}
+                style={[
+                  cameraStyles.camera,
+                  { marginTop: camVertPadding, marginBottom: camVertPadding },
+                ]}
+              />
+            </View>
+            {isCameraReady && overlay({ screenSize, cameraStyles, sdStyles })}
+            {isCameraReady &&
+              renderPreviewControls({
+                styles: cameraStyles,
+                sdStyles,
+                saveTag,
+                retakePicture,
+              })}
+          </>
+        ) : (
+          <>
+            {isCameraReady && overlay({ screenSize, cameraStyles, sdStyles })}
+            {isCameraReady &&
+              renderCaptureControls({
+                styles: cameraStyles,
+                sdStyles,
+                takePicture,
+                cameraRef,
+                isCameraReady,
+                navigation,
+                screenSize,
+              })}
+          </>
+        )}
+        <StatusBar style="auto" hidden />
+      </View>
+    );
+  }
+  return undefined;
 };
 
-const styles = StyleSheet.create({
-	mainContainer: {
-	...StyleSheet.absoluteFillObject,
-	backgroundColor: 'black',
+export const cameraStyles = StyleSheet.create({
+  mainContainer: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "black",
   },
   container: {
-	...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFillObject,
   },
   camera: {
-	...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFillObject,
   },
   overlay: {
-	...StyleSheet.absoluteFillObject,
-	display: 'flex',
-	alignItems: 'center',
+    ...StyleSheet.absoluteFillObject,
+    display: "flex",
+    alignItems: "center",
   },
   prevControls: {
-	marginTop: 'auto',
-	paddingBottom: 30,
-	display: 'flex',
-	flexDirection: 'row',
-	justifyContent: 'space-evenly',
+    marginTop: "auto",
+    paddingBottom: 30,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
   },
   captureControls: {
-	display: 'flex',
-	alignItems: 'center',
-	marginTop: 'auto',
+    display: "flex",
+    alignItems: "center",
+    marginTop: "auto",
   },
-})
+});
+
+export const getScreenDependentStyles = (screenSize: {
+  width: number;
+  height: number;
+}) => {
+  return StyleSheet.create({
+    dot: {
+      backgroundColor: "red",
+      width: Math.floor(screenSize.width * 0.04),
+      height: Math.floor(screenSize.width * 0.04),
+      borderRadius: Math.floor(screenSize.width * 0.02),
+      marginTop: "auto",
+      marginBottom: "auto",
+    },
+    captureBtn: {
+      backgroundColor: "#f5f5f5",
+      width: Math.floor(screenSize.width * 0.2),
+      height: Math.floor(screenSize.width * 0.2),
+      borderRadius: Math.floor(screenSize.width * 0.1),
+      margin: Math.floor(screenSize.width * 0.1),
+    },
+    prevBtn: {
+      // backgroundColor: 'red',
+      width: Math.floor(screenSize.width / 3),
+      paddingVertical: Math.floor(screenSize.width / 12),
+      alignItems: "center",
+    },
+    prevBtnText: {
+      fontSize: Math.floor(screenSize.width / 16),
+      color: "white",
+      marginTop: "auto",
+      marginBottom: "auto",
+    },
+  });
+};

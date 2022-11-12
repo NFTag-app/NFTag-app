@@ -1,12 +1,12 @@
 import { View, TouchableOpacity, Text } from "react-native"
 
-export const renderTagOverlay = ({styles, sdStyles}) => (
-<View style={styles.overlay}>
-    <View style={sdStyles.dot}/>
-</View>
-)
+// export const renderTagOverlay = ({styles, sdStyles, players}) => (
+// <View style={styles.overlay}>
+//     <View style={sdStyles.dot}/>
+// </View>
+// )
 
-export const renderBlankOverlay = ({styles = null, sdStyles = null}) => undefined
+// export const renderBlankOverlay = ({styles = null, sdStyles = null}) => undefined
 
 export const renderPreviewControls = ({styles, sdStyles, saveTag, retakePicture}) => (
 <View style={styles.container}>
