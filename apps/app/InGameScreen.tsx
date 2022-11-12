@@ -8,10 +8,10 @@ import { TagList } from './components/in-game-screen/tag-list';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'InGameScreen'>;
 
-export const InGameScreen = ({ route, navigation }: Props) => {
+export const InGameScreen = ({ route }: Props) => {
   const target = useRef(null)
 
-  const gameId = route.params.gameId;
+  const gameId = route.params?.gameId;
 
   if (!gameId) {
     return <View style={CommonStyles.container}>
