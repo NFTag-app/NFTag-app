@@ -11,8 +11,7 @@ import CreateGameScreen from "./CreateGameScreen";
 import { GameListScreen } from "./GameListScreen";
 import { HomeScreen } from "./Home";
 import { InGameScreen } from "./InGameScreen";
-import JoinGameScreen from "./JoinGameScreen";
-import RegCameraScreen from "./RegCameraScreen";
+import { JoinGameScreen } from "./JoinGameScreen";
 import { TagCameraScreen } from "./TagCameraScreen";
 import TargetScreen from "./TargetScreen";
 
@@ -70,12 +69,6 @@ export default function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="GameListScreen">
-        <Stack.Screen
-          name="RegCamera"
-          component={RegCameraScreen}
-          options={{ title: "Camera", headerShown: false }}
-        />
-
         <Stack.Screen
           name="GameNavigatorScreen"
           component={GameNavigatorScreen}

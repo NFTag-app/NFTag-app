@@ -1,125 +1,70 @@
-import { View, StyleSheet, Text, Image } from "react-native";
-import { CameraType } from "expo-camera";
-import { NftagCamera } from "./components/camera/NftagCamera";
-import {
-  getScreenDependentStyles,
-  cameraStyles,
-} from "./components/camera/NftagCamera";
-import GameProvider, {
-  useTarget,
-  usePlayer,
-  useGame,
-} from "client-sdk/dist/GameProvider";
-import { useState } from "react";
-import { useInterval } from "./hooks/useInterval";
-import moment from "moment";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { View, Text, Image, StyleSheet } from "react-native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { submitTag, useGame, useUser } from "client-sdk";
 import { InGameStackParamList } from "./RootStackParams";
 import { CommonStyles } from "./styles/CommonStyles";
-import { submitTag, useUser } from "client-sdk";
-//import { renderTagOverlay } from "./components/camera/Overlay";
+import { OverlayStyles } from "./components/overlay-camera/OverlayStyles";
+import { OverlayCamera } from "./components/overlay-camera/OverlayCamera";
+import { CameraType } from "expo-camera";
+import { useTarget } from "client-sdk/dist/GameProvider";
+import { useNavigation } from "@react-navigation/native";
 
-const logo = require("./assets/Icons/1x/Logo_Transparent.png");
-const crosshair = require("./assets/Icons/Crosshair/1x/crosshair.png")
+const crosshair = require("./assets/Icons/Crosshair/1x/crosshair.png");
 
-type Props = NativeStackScreenProps<InGameStackParamList, "TagCameraScreen">;
-export const TagCameraScreen = ({ navigation: { navigate } }) => {
+export const TagCameraScreen = () => {
+  // const navigation =
+  //   useNavigation<
+  //     NativeStackNavigationProp<InGameStackParamList, "TagCameraScreen">
+  //   >(); can't get navigation to work :(
   const game = useGame();
+  const user = useUser();
+  const target = useTarget();
 
   if (!game.id) {
     return (
       <View style={CommonStyles.container}>
-        <Text>MISSING GAME ID</Text>
+        <Text style={{ color: "white", fontSize: 20 }}>MISSING GAME ID</Text>
       </View>
     );
   }
 
-  const [date, setDate] = useState("");
-
-  useInterval(() => {
-    setDate(moment().format("MM-DD-YYYY:x"));
-  }, 73);
-
-  const target = useTarget();
-  const user = useUser();
-
-  const renderOverlay = ({ screenSize, vertPadding }) => {
-    const sdStyles = getScreenDependentStyles(screenSize);
-
+  const captureOverlay = () => {
     return (
-      <View style={cameraStyles.overlay}>
-        <Text
-          style={{
-            position: "absolute",
-            color: "white",
-            fontSize: 15,
-            top: 20 + vertPadding,
-            right: 20,
-          }}
-        >
-          {target?.name || "Undefined Target"}
-        </Text>
-        <Text
-          style={{
-            color: "white",
-            fontSize: 15,
-            position: "absolute",
-            top: 50 + vertPadding,
-            right: 20,
-          }}
-        >
-          {date}
-        </Text>
-        <Text
-          style={{
-            position: "absolute",
-            color: "white",
-            fontSize: 15,
-            top: 80 + vertPadding,
-            right: 20,
-          }}
-        >
-          {user?.uid || "Undefined ID"}
-        </Text>
-        <Image
-          style={{
-            position: "absolute",
-            left: 14,
-            top: 13 + vertPadding,
-            width: 100,
-            height: 50,
-          }}
-          resizeMode="cover"
-          source={logo}
-        />
-
-        <Image
-          style={{
-            width: 64,
-            height: 64,
-            marginTop: 'auto',
-            marginBottom: 'auto',
-          }}
-          resizeMode="cover"
-          source={crosshair}
-        />
-
-        {/* <View style={sdStyles.dot} /> */}
+      <View style={OverlayStyles.wrapper}>
+        <View style={OverlayStyles.flexContainer}>
+          <Image
+            style={{
+              width: 64,
+              height: 64,
+              marginTop: "auto",
+              marginBottom: "auto",
+            }}
+            resizeMode="cover"
+            source={crosshair}
+          />
+        </View>
       </View>
     );
   };
 
+  const saveCallback = async (uri: string, width: number, height: number) => {
+    await submitTag(game, user, target, { uri, width, height }).catch((e) =>
+      console.log(e)
+    );
+    await console.log(uri.slice(0, 100), width, height);
+    //await navigation.navigate("InGameScreen"); CAN'T GET NAVIGATION TO WORK :(
+  };
+
   return (
     <View style={{ ...StyleSheet.absoluteFillObject }}>
-      <NftagCamera<InGameStackParamList, "TagCameraScreen">
-        type={CameraType.back}
-        callback={async (uri, width, height) => {
-          console.log(uri.split('x')[0], width, height)
-          await submitTag(game, user, target, {uri, width, height}).catch((e) => console.log(e));
-          await navigate.back();
-        }}
-        screenReady={!!date && !!user}
-        overlay={renderOverlay}
+      <OverlayCamera<InGameStackParamList, "TagCameraScreen">
+        cameraType={CameraType.back}
+        isNft={true}
+        nftTitle={target?.name || "Undefined Target Name"}
+        saveCallback={saveCallback}
+        captureOverlay={captureOverlay}
+        preCaptureOverlay={() => undefined}
+        screenReady={!!game && !!user && !!target}
       />
     </View>
   );

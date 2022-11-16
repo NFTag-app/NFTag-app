@@ -1,81 +1,82 @@
-import { View, Text, TextInput, StyleSheet, TouchableWithoutFeedback, Keyboard } from "react-native";
-import { CameraType } from "expo-camera";
-import { cameraStyles, NftagCamera } from "./components/camera/NftagCamera";
-import { InGameStackParamList, RootStackParamList } from "./RootStackParams";
 import { joinGame, useUser } from "client-sdk";
 import { UserData } from "client-sdk/dist/types";
-import React, { useState } from "react";
-//import { renderBlankOverlay } from "./components/camera/Overlay";
+import { CameraType } from "expo-camera";
+import { useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableWithoutFeedback,
+  Keyboard,
+  useWindowDimensions,
+  TextInput,
+} from "react-native";
+import { OverlayCamera } from "./components/overlay-camera/OverlayCamera";
+import { OverlayStyles } from "./components/overlay-camera/OverlayStyles";
+import { RootStackParamList } from "./RootStackParams";
 
-const JoinGameScreen = ({navigation: {navigate}}) => {
+export const JoinGameScreen = () => {
   const user: UserData = useUser();
+  const [gameId, setGameId] = useState<string>("");
 
-  const [gameId, setGameId] = useState('');
-
-  const renderOverlay = ({ screenSize, vertPadding, cameraDetails }) => {
+  const dims = useWindowDimensions();
+  const preCaptureOverlay = (vertMargin: number) => {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View style={cameraStyles.overlay}>
-          <View
-            style={{
-              alignItems: "center",
-              marginTop: screenSize.height / 6,
-            }}
-          >
-            <Text
-              style={{
-                color: "white",
-                marginBottom: 10,
-                fontSize: Math.floor(screenSize.width / 16),
-              }}
-            >
-              Game Code
-            </Text>
-            <TextInput
-              keyboardType="numeric"
-              maxLength={6}
-              autoCapitalize="characters"
-              placeholderTextColor={"#FFFFFF88"}
-              style={{
-                textAlign: "center",
-                fontSize: Math.floor(screenSize.width / 10),
-                height: 80,
-                width: screenSize.width / 1.6,
-                borderWidth: 2,
-                borderColor: "white",
-                padding: 10,
-                color: "white",
-              }}
-              onChangeText={setGameId}
-              value={gameId}
-              placeholder="123456"
-            />
+        <View style={OverlayStyles.wrapper}>
+          <View style={OverlayStyles.flexContainer}>
+            <View style={{ alignItems: "center", marginTop: 110 + vertMargin }}>
+              <Text
+                style={{ fontSize: 30, color: "#FFFFFF77", marginBottom: 10 }}
+              >
+                Game Code
+              </Text>
+              <TextInput
+                keyboardType="numeric"
+                maxLength={6}
+                autoCapitalize="characters"
+                placeholderTextColor={"#FFFFFF33"}
+                style={{
+                  textAlign: "center",
+                  fontSize: 48,
+                  borderWidth: 2,
+                  borderColor: "#FFFFFF77",
+                  padding: 10,
+                  color: "#FFFFFF77",
+                }}
+                onChangeText={setGameId}
+                value={gameId}
+                placeholder="000000"
+              />
+            </View>
           </View>
         </View>
       </TouchableWithoutFeedback>
     );
   };
 
-  const join = async (image, width, height) => {
-    await navigate('GameListScreen')
+  const saveCallback = async (uri: string, width: number, height: number) => {
     try {
-      const game = await joinGame(gameId, user, {uri:image, width, height});
-      await navigate('InGameScreen', {params: {game: game.id}})
+      const game = await joinGame(gameId, user, { uri: uri, width, height });
+      // Navigate to game. Cant get it to work :(
     } catch (e) {
-      alert('Oops, something went wrong! Try again.')
-      setGameId('')
+      await alert(
+        "Failed to join game! Check that the game code you entered was correct."
+      );
     }
-  }
+  };
 
   return (
     <View style={{ ...StyleSheet.absoluteFillObject }}>
-      <NftagCamera<RootStackParamList, "JoinGameScreen">
-        type={CameraType.front}
-        callback={join}
-        overlay={renderOverlay}
+      <OverlayCamera<RootStackParamList, "JoinGameScreen">
+        cameraType={CameraType.front}
+        isNft={true}
+        nftTitle={user?.displayName || "Undefined Playe Name"}
+        saveCallback={saveCallback}
+        captureOverlay={() => undefined}
+        preCaptureOverlay={preCaptureOverlay}
+        screenReady={!!user}
       />
     </View>
   );
 };
-
-export default JoinGameScreen;
