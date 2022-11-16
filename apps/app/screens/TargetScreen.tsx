@@ -6,7 +6,7 @@ import {
   Image,
   Text,
 } from "react-native";
-import { CommonStyles } from "./styles/CommonStyles";
+import { CommonStyles } from "../styles/CommonStyles";
 
 const TargetScreen = ({ navigation: { navigate } }) => {
   const dims = useWindowDimensions();
@@ -15,7 +15,7 @@ const TargetScreen = ({ navigation: { navigate } }) => {
   return (
     <View style={{ ...CommonStyles.container }}>
       <ImageBackground
-        source={require("./assets/Icons/1x/loginbg.png")}
+        source={require("../assets/Icons/1x/loginbg.png")}
         resizeMode="cover"
         style={{
           flex: 1,
@@ -54,8 +54,8 @@ const TargetScreen = ({ navigation: { navigate } }) => {
           />
           <Text
             style={{
-                alignSelf: 'flex-start',
-                marginLeft: 20,
+              alignSelf: "flex-start",
+              marginLeft: 20,
               color: "white",
               marginBottom: 20,
               fontSize: Math.floor(dims.width / 16),

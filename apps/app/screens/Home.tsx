@@ -1,5 +1,5 @@
 import { GoogleSignIn, useUser } from "client-sdk";
-import { UserData } from "client-sdk/dist/types";
+// import { UserData } from "client-sdk/dist/types";
 import { StatusBar } from "expo-status-bar";
 import {
   Image,
@@ -7,16 +7,16 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { CommonStyles } from "./styles/CommonStyles";
+import { CommonStyles } from "../styles/CommonStyles";
 
 export const HomeScreen = () => {
-  const user: UserData = useUser();
+  // const user: UserData = useUser();
   const dims = useWindowDimensions();
 
   return (
     <View style={{ ...CommonStyles.container }}>
       <ImageBackground
-        source={require("./assets/Icons/1x/loginbg.png")}
+        source={require("../assets/Icons/1x/loginbg.png")}
         resizeMode="cover"
         style={{
           flex: 1,
@@ -38,7 +38,7 @@ export const HomeScreen = () => {
           }}
         >
           <Image
-            source={require("./assets/Icons/1x/Logo_Transparent.png")}
+            source={require("../assets/Icons/1x/Logo_Transparent.png")}
             style={{ width: 200, height: 200, marginTop: -20 }}
           />
           <GoogleSignIn />

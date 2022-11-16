@@ -27,7 +27,7 @@ const UserProvider: React.FC<{
       (snapshot) => {
         if (!snapshot.exists()) return;
 
-        console.log("data", snapshot.data());
+        //console.log("data", snapshot.data());
 
         const data = snapshot.data();
 

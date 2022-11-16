@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 import { FloatingAction, IActionProps } from "react-native-floating-action";
-import { CommonStyles } from "./styles/CommonStyles";
+import { CommonStyles } from "../styles/CommonStyles";
 
 export const GameListScreen = ({ navigation: { navigate } }) => {
   const games: Game[] = useGames();
@@ -66,7 +66,7 @@ export const GameListScreen = ({ navigation: { navigate } }) => {
       text: "Create Game",
       icon: (
         <Image
-          source={require("./assets/Icons/1x/plus.png")}
+          source={require("../assets/Icons/1x/plus.png")}
           style={{
             width: 50,
             height: 50,
@@ -84,7 +84,7 @@ export const GameListScreen = ({ navigation: { navigate } }) => {
       text: "Join Game",
       icon: (
         <Image
-          source={require("./assets/Icons/1x/plus.png")}
+          source={require("../assets/Icons/1x/plus.png")}
           style={{
             width: 50,
             height: 50,
@@ -103,7 +103,7 @@ export const GameListScreen = ({ navigation: { navigate } }) => {
       text: "Sign Out",
       icon: (
         <Image
-          source={require("./assets/Icons/1x/exclaim.png")}
+          source={require("../assets/Icons/1x/exclaim.png")}
           style={{
             width: 50,
             height: 50,
@@ -123,7 +123,7 @@ export const GameListScreen = ({ navigation: { navigate } }) => {
 
   return (
     <ImageBackground
-      source={require("./assets/Icons/1x/loginbg.png")}
+      source={require("../assets/Icons/1x/loginbg.png")}
       resizeMode="cover"
       style={{
         flex: 1,
@@ -152,7 +152,7 @@ export const GameListScreen = ({ navigation: { navigate } }) => {
       <FloatingAction
         floatingIcon={
           <Image
-            source={require("./assets/Icons/1x/plus.png")}
+            source={require("../assets/Icons/1x/plus.png")}
             style={{
               width: 50,
               height: 50,

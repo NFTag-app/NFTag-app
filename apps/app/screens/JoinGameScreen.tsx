@@ -8,18 +8,18 @@ import {
   Text,
   TouchableWithoutFeedback,
   Keyboard,
-  useWindowDimensions,
+  // useWindowDimensions,
   TextInput,
 } from "react-native";
-import { OverlayCamera } from "./components/overlay-camera/OverlayCamera";
-import { OverlayStyles } from "./components/overlay-camera/OverlayStyles";
-import { RootStackParamList } from "./RootStackParams";
+import { OverlayCamera } from "../components/overlay-camera/OverlayCamera";
+import { OverlayStyles } from "../components/overlay-camera/OverlayStyles";
+import { RootStackParamList } from "../RootStackParams";
 
 export const JoinGameScreen = () => {
   const user: UserData = useUser();
   const [gameId, setGameId] = useState<string>("");
 
-  const dims = useWindowDimensions();
+  // const dims = useWindowDimensions();
   const preCaptureOverlay = (vertMargin: number) => {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>

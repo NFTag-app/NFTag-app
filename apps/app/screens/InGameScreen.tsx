@@ -9,10 +9,10 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { FloatingAction, IActionProps } from "react-native-floating-action";
-import { TagList } from "./components/in-game-screen/tag-list";
-import { InGameStackParamList } from "./RootStackParams";
+import { TagList } from "../components/in-game-screen/tag-list";
+import { InGameStackParamList } from "../RootStackParams";
 
-const icon = require("./assets/adaptive-icon.png");
+const icon = require("../assets/adaptive-icon.png");
 
 type Props = NativeStackScreenProps<InGameStackParamList, "InGameScreen">;
 
@@ -37,7 +37,7 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
   if (!game?.id) {
     return (
       <ImageBackground
-        source={require("./assets/Icons/1x/loginbg.png")}
+        source={require("../assets/Icons/1x/loginbg.png")}
         resizeMode="cover"
         style={{
           flex: 1,
@@ -63,7 +63,7 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
     color: "#25262b",
     icon: (
       <Image
-        source={require("./assets/Icons/1x/exclaim.png")}
+        source={require("../assets/Icons/1x/exclaim.png")}
         style={{
           width: 50,
           height: 50,
@@ -82,7 +82,7 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
     text: "Start Game",
     icon: (
       <Image
-        source={require("./assets/Icons/1x/plus.png")}
+        source={require("../assets/Icons/1x/plus.png")}
         style={{
           width: 50,
           height: 50,
@@ -103,7 +103,7 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
     text: "Share Game",
     icon: (
       <Image
-        source={require("./assets/Icons/1x/plus.png")}
+        source={require("../assets/Icons/1x/plus.png")}
         style={{
           width: 50,
           height: 50,
@@ -131,7 +131,7 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
     text: "View Target",
     icon: (
       <Image
-        source={require("./assets/Icons/1x/plus.png")}
+        source={require("../assets/Icons/1x/plus.png")}
         style={{
           width: 50,
           height: 50,
@@ -165,7 +165,7 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
 
   return (
     <ImageBackground
-      source={require("./assets/Icons/1x/loginbg.png")}
+      source={require("../assets/Icons/1x/loginbg.png")}
       resizeMode="cover"
       style={{
         flex: 1,
@@ -174,11 +174,11 @@ export const InGameScreen = ({ route, navigation: { navigate } }: Props) => {
         alignItems: "center",
       }}
     >
-      <TagList/>
+      <TagList />
       <FloatingAction
         floatingIcon={
           <Image
-            source={require("./assets/Icons/1x/plus.png")}
+            source={require("../assets/Icons/1x/plus.png")}
             style={{
               width: 50,
               height: 50,

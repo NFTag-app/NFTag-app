@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   Share,
 } from "react-native";
-import { CommonStyles } from "./styles/CommonStyles"; //https://www.nftag.app/invite.html?from=owner&game=000000
+import { CommonStyles } from "../styles/CommonStyles"; //https://www.nftag.app/invite.html?from=owner&game=000000
 
 const CreateGameScreen = ({ navigation: { navigate } }) => {
   const owner = useUser();
@@ -20,7 +20,10 @@ const CreateGameScreen = ({ navigation: { navigate } }) => {
   useEffect(() => {
     (async () => {
       if (!gameId) {
-        const id = await createGame(owner.displayName.split(' ')[0] + "'s Game", owner);
+        const id = await createGame(
+          owner.displayName.split(" ")[0] + "'s Game",
+          owner
+        );
         await setGameId(id);
       }
     })();
@@ -52,16 +55,16 @@ const CreateGameScreen = ({ navigation: { navigate } }) => {
       console.log(e);
     }
   };
-  
+
   const backToList = async () => {
-    if(!gameId) return
-    await navigate('GameListScreen')
-  }
+    if (!gameId) return;
+    await navigate("GameListScreen");
+  };
 
   return (
     <View style={{ ...CommonStyles.container }}>
       <ImageBackground
-        source={require("./assets/Icons/1x/loginbg.png")}
+        source={require("../assets/Icons/1x/loginbg.png")}
         resizeMode="cover"
         style={{
           flex: 1,
@@ -84,7 +87,7 @@ const CreateGameScreen = ({ navigation: { navigate } }) => {
           }}
         >
           <Image
-            source={require("./assets/Icons/1x/plus.png")}
+            source={require("../assets/Icons/1x/plus.png")}
             style={{ width: 150, height: 150 }}
           />
           <Text
@@ -124,10 +127,10 @@ const CreateGameScreen = ({ navigation: { navigate } }) => {
             borderRadius: 20,
           }}
         >
-            <Text
+          <Text
             style={{
-              marginLeft: 'auto',
-              marginRight: 'auto',
+              marginLeft: "auto",
+              marginRight: "auto",
               color: "white",
               fontSize: Math.floor(dims.width / 16),
             }}

@@ -7,13 +7,13 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { InGameStackParamList, RootStackParamList } from "./RootStackParams";
 
 import { GameProvider, useUser } from "client-sdk";
-import CreateGameScreen from "./CreateGameScreen";
-import { GameListScreen } from "./GameListScreen";
-import { HomeScreen } from "./Home";
-import { InGameScreen } from "./InGameScreen";
-import { JoinGameScreen } from "./JoinGameScreen";
-import { TagCameraScreen } from "./TagCameraScreen";
-import TargetScreen from "./TargetScreen";
+import CreateGameScreen from "./screens/CreateGameScreen";
+import { GameListScreen } from "./screens/GameListScreen";
+import { HomeScreen } from "./screens/Home";
+import { InGameScreen } from "./screens/InGameScreen";
+import { JoinGameScreen } from "./screens/JoinGameScreen";
+import { TagCameraScreen } from "./screens/TagCameraScreen";
+import TargetScreen from "./screens/TargetScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const InGameStack = createStackNavigator<InGameStackParamList>();

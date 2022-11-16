@@ -1,15 +1,13 @@
 import { View, Text, Image, StyleSheet } from "react-native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { submitTag, useGame, useUser } from "client-sdk";
-import { InGameStackParamList } from "./RootStackParams";
-import { CommonStyles } from "./styles/CommonStyles";
-import { OverlayStyles } from "./components/overlay-camera/OverlayStyles";
-import { OverlayCamera } from "./components/overlay-camera/OverlayCamera";
+import { InGameStackParamList } from "../RootStackParams";
+import { CommonStyles } from "../styles/CommonStyles";
+import { OverlayStyles } from "../components/overlay-camera/OverlayStyles";
+import { OverlayCamera } from "../components/overlay-camera/OverlayCamera";
 import { CameraType } from "expo-camera";
 import { useTarget } from "client-sdk/dist/GameProvider";
-import { useNavigation } from "@react-navigation/native";
 
-const crosshair = require("./assets/Icons/Crosshair/1x/crosshair.png");
+const crosshair = require("../assets/Icons/Crosshair/1x/crosshair.png");
 
 export const TagCameraScreen = () => {
   // const navigation =
