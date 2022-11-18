@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { CommonStyles } from "../styles/CommonStyles";
 
-export const HomeScreen = () => {
+export const LoginScreen = () => {
   // const user: UserData = useUser();
   const dims = useWindowDimensions();
 

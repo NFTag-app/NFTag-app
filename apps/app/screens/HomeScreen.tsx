@@ -14,7 +14,7 @@ import {
 import { FloatingAction, IActionProps } from "react-native-floating-action";
 import { CommonStyles } from "../styles/CommonStyles";
 
-export const GameListScreen = ({ navigation: { navigate } }) => {
+export const HomeScreen = ({ navigation: { navigate } }) => {
   const games: Game[] = useGames();
   const dims = useWindowDimensions();
 

@@ -1,9 +1,9 @@
 export type RootStackParamList = {
-  Home: undefined;
+  LoginScreen: undefined;
+  HomeScreen: undefined;
   JoinGameScreen: undefined;
   CreateGameScreen: undefined;
   RegCamera: undefined;
-  GameListScreen: undefined;
   GameNavigatorScreen: { gameId: string } | undefined;
 };
 

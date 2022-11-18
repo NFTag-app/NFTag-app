@@ -8,8 +8,8 @@ import { InGameStackParamList, RootStackParamList } from "./RootStackParams";
 
 import { GameProvider, useUser } from "client-sdk";
 import CreateGameScreen from "./screens/CreateGameScreen";
-import { GameListScreen } from "./screens/GameListScreen";
-import { HomeScreen } from "./screens/Home";
+import { HomeScreen } from "./screens/HomeScreen";
+import { LoginScreen } from "./screens/LoginScreen";
 import { InGameScreen } from "./screens/InGameScreen";
 import { JoinGameScreen } from "./screens/JoinGameScreen";
 import { TagCameraScreen } from "./screens/TagCameraScreen";
@@ -64,19 +64,19 @@ const GameNavigator = () => {
 export default function Navigation() {
   const user = useUser();
 
-  if (!user) return <HomeScreen />;
+  if (!user) return <LoginScreen />;
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="GameListScreen">
+      <Stack.Navigator initialRouteName="HomeScreen">
         <Stack.Screen
           name="GameNavigatorScreen"
           component={GameNavigatorScreen}
           options={{ title: "Current Game", headerShown: false }}
         />
         <Stack.Screen
-          name="GameListScreen"
-          component={GameListScreen}
+          name="HomeScreen"
+          component={HomeScreen}
           options={{
             headerShadowVisible: true,
             title: "Games",
