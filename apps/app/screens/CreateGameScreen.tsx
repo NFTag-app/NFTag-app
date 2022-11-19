@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { createGame, useUser } from "client-sdk";
 import React, { useEffect, useState } from "react";
 import {
@@ -10,9 +11,11 @@ import {
   TouchableOpacity,
   Share,
 } from "react-native";
+import { RootNavigationProps } from "../RootParams";
 import { CommonStyles } from "../styles/CommonStyles"; //https://www.nftag.app/invite.html?from=owner&game=000000
 
-const CreateGameScreen = ({ navigation: { navigate } }) => {
+const CreateGameScreen = () => {
+  const rootNavigation = useNavigation<RootNavigationProps>();
   const owner = useUser();
   const dims = useWindowDimensions();
   const [gameId, setGameId] = useState("");
@@ -56,9 +59,11 @@ const CreateGameScreen = ({ navigation: { navigate } }) => {
     }
   };
 
-  const backToList = async () => {
+  const goToGame = async () => {
     if (!gameId) return;
-    await navigate("GameListScreen");
+    await rootNavigation.navigate("GameTabs", {
+      gameId: gameId,
+    });
   };
 
   return (
@@ -119,7 +124,7 @@ const CreateGameScreen = ({ navigation: { navigate } }) => {
           </TouchableOpacity>
         </View>
         <TouchableOpacity
-          onPress={backToList}
+          onPress={goToGame}
           style={{
             backgroundColor: "#4a368a",
             paddingVertical: 15,
@@ -135,7 +140,7 @@ const CreateGameScreen = ({ navigation: { navigate } }) => {
               fontSize: Math.floor(dims.width / 16),
             }}
           >
-            Back to List
+            Go to Game
           </Text>
         </TouchableOpacity>
       </ImageBackground>

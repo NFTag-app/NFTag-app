@@ -2,8 +2,9 @@ import { StripeProvider } from "@stripe/stripe-react-native";
 import { UserProvider } from "client-sdk";
 import React from "react";
 import { LogBox } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import Navigation from "./Navigation";
+import { RootStackNavigator } from "./Navigators";
 
 export default function App() {
   LogBox.ignoreLogs([
@@ -17,7 +18,11 @@ export default function App() {
       merchantIdentifier="merchant.nftag.app" // required for Apple Pay
     >
       <UserProvider>
-        <Navigation />
+        <SafeAreaProvider>
+          {/* <Navigation /> */}
+          {/* <RootTabNavigator /> */}
+          <RootStackNavigator />
+        </SafeAreaProvider>
       </UserProvider>
     </StripeProvider>
   );

@@ -11,12 +11,14 @@ export const NftOverlay = ({
   setReady,
   isUpdating,
   title,
-  vertMargin,
+  topMargin,
+  bottomMargin,
 }: {
   setReady: React.Dispatch<React.SetStateAction<boolean>>;
   isUpdating: boolean;
   title: string | undefined;
-  vertMargin: number;
+  topMargin: number;
+  bottomMargin: number;
 }) => {
   const [timeStamp, setTimeStamp] = useState<string>("[Loading Timetamp]");
 
@@ -42,7 +44,7 @@ export const NftOverlay = ({
             position: "absolute",
             color: "white",
             fontSize: 15,
-            top: 20 + vertMargin,
+            top: 20 + topMargin,
             right: 20,
           }}
         >
@@ -53,7 +55,7 @@ export const NftOverlay = ({
             color: "white",
             fontSize: 15,
             position: "absolute",
-            top: 50 + vertMargin,
+            top: 50 + topMargin,
             right: 20,
           }}
         >
@@ -64,7 +66,7 @@ export const NftOverlay = ({
             position: "absolute",
             color: "white",
             fontSize: 15,
-            top: 80 + vertMargin,
+            top: 80 + topMargin,
             right: 20,
           }}
         >
@@ -74,7 +76,7 @@ export const NftOverlay = ({
           style={{
             position: "absolute",
             left: 14,
-            top: 13 + vertMargin,
+            top: 13 + topMargin,
             width: 100,
             height: 50,
           }}

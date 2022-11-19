@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { joinGame, useUser } from "client-sdk";
 import { UserData } from "client-sdk/dist/types";
 import { CameraType } from "expo-camera";
@@ -8,24 +9,23 @@ import {
   Text,
   TouchableWithoutFeedback,
   Keyboard,
-  // useWindowDimensions,
   TextInput,
 } from "react-native";
 import { OverlayCamera } from "../components/overlay-camera/OverlayCamera";
 import { OverlayStyles } from "../components/overlay-camera/OverlayStyles";
-import { RootStackParamList } from "../RootStackParams";
+import { RootNavigationProps } from "../RootParams";
 
-export const JoinGameScreen = () => {
+export const JoinGameScreen = ({ tabHeight }: { tabHeight: number }) => {
+  const rootNavigation = useNavigation<RootNavigationProps>();
   const user: UserData = useUser();
   const [gameId, setGameId] = useState<string>("");
 
-  // const dims = useWindowDimensions();
-  const preCaptureOverlay = (vertMargin: number) => {
+  const preCaptureOverlay = (topMargin: number, bottomMargin: number) => {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={OverlayStyles.wrapper}>
           <View style={OverlayStyles.flexContainer}>
-            <View style={{ alignItems: "center", marginTop: 110 + vertMargin }}>
+            <View style={{ alignItems: "center", marginTop: 110 + topMargin }}>
               <Text
                 style={{ fontSize: 30, color: "#FFFFFF77", marginBottom: 10 }}
               >
@@ -58,7 +58,10 @@ export const JoinGameScreen = () => {
   const saveCallback = async (uri: string, width: number, height: number) => {
     try {
       const game = await joinGame(gameId, user, { uri: uri, width, height });
-      // Navigate to game. Cant get it to work :(
+      await rootNavigation.navigate("GameTabs", {
+        // NAVIGATION STILL ISN'T WORKING FOR SOME REASON... SOMETHING TO DO WITH THE CAMERA?
+        gameId: gameId,
+      });
     } catch (e) {
       await alert(
         "Failed to join game! Check that the game code you entered was correct."
@@ -68,13 +71,14 @@ export const JoinGameScreen = () => {
 
   return (
     <View style={{ ...StyleSheet.absoluteFillObject }}>
-      <OverlayCamera<RootStackParamList, "JoinGameScreen">
+      <OverlayCamera
         cameraType={CameraType.front}
         isNft={true}
         nftTitle={user?.displayName || "Undefined Playe Name"}
         saveCallback={saveCallback}
         captureOverlay={() => undefined}
         preCaptureOverlay={preCaptureOverlay}
+        bottomInset={tabHeight}
         screenReady={!!user}
       />
     </View>

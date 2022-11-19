@@ -2,6 +2,7 @@ import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   View,
+  Text,
   StyleSheet,
   Alert,
   Image,
@@ -17,27 +18,32 @@ import { CaptureControls } from "./CaptureControls";
 import { captureRef } from "react-native-view-shot";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 
-export const OverlayCamera = <
-  TParamList extends ParamListBase,
-  T extends keyof TParamList
->({
+export const OverlayCamera = ({
   cameraType,
   isNft,
   nftTitle,
   saveCallback,
   captureOverlay,
   preCaptureOverlay,
+  bottomInset,
   screenReady,
 }: {
   cameraType: CameraType;
   isNft: boolean;
   nftTitle: string | undefined;
   saveCallback: (uri: string, width: number, height: number) => void;
-  captureOverlay: (vertMargin: number) => JSX.Element | undefined;
-  preCaptureOverlay: (vertMargin: number) => JSX.Element | undefined;
+  captureOverlay: (
+    topMargin: number,
+    bottomMargin: number
+  ) => JSX.Element | undefined;
+  preCaptureOverlay: (
+    topMargin: number,
+    bottomMargin: number
+  ) => JSX.Element | undefined;
+  bottomInset: number;
   screenReady: boolean;
 }) => {
-  const navigation = useNavigation<NativeStackNavigationProp<TParamList, T>>();
+  const navigation = useNavigation();
   const [camPermissions, requestCamPermissions] = Camera.useCameraPermissions();
 
   useEffect(() => {
@@ -57,10 +63,12 @@ export const OverlayCamera = <
     });
   }, []);
 
+  const [screenIsFocused, setScreenIsFocused] = useState(false);
   const camRef = useRef<Camera>(null);
   const snapBoxRef = useRef<View>(null);
   const [camIsReady, setCamIsReady] = useState<boolean>(false);
-  const [vertMargin, setVertMargin] = useState<number>(0);
+  const [topMargin, setTopMargin] = useState<number>(0);
+  const [bottomMargin, setBottomMargin] = useState<number>(0);
   const [camRatio, setCamRatio] = useState<string>("4:3");
   const [camRatioPrepared, setCamRatioPrepared] = useState<boolean>(false);
   const [photoData, setPhotoData] = useState<CameraCapturedPicture | null>(
@@ -75,6 +83,20 @@ export const OverlayCamera = <
     setCamIsReady(true);
   };
 
+  useEffect(() => {
+    navigation.addListener("focus", () => {
+      setScreenIsFocused(true);
+      console.log("hello");
+      console.log(camRatio);
+    });
+    navigation.addListener("blur", () => {
+      setScreenIsFocused(false);
+      console.log("leave");
+      setCamIsReady(false);
+      console.log(camRatio);
+    });
+  }, []);
+
   const dims = useWindowDimensions();
   const prepareCamRatio = async () => {
     if (Platform.OS === "android" && camRef.current) {
@@ -86,7 +108,7 @@ export const OverlayCamera = <
       for (let i = 0; i < supportedRatios.length; ++i) {
         const parts = supportedRatios[i].split(":");
         const numRatio = parseInt(parts[0]) / parseInt(parts[1]);
-        const distance = dims.height / dims.width - numRatio;
+        const distance = (dims.height - bottomInset) / dims.width - numRatio;
         if (closestDistance === undefined) {
           closestRatio = supportedRatios[i];
           closestNumRatio = numRatio;
@@ -97,9 +119,11 @@ export const OverlayCamera = <
           closestDistance = distance;
         }
       }
-      const remainder = dims.height - closestNumRatio * dims.width;
+      const remainder =
+        dims.height - bottomInset - closestNumRatio * dims.width;
 
-      setVertMargin(remainder / 2);
+      setTopMargin(remainder / 2);
+      setBottomMargin(remainder / 2);
       setCamRatio(closestRatio);
       setCamRatioPrepared(true);
     }
@@ -146,15 +170,28 @@ export const OverlayCamera = <
     setPhotoData(null);
   };
 
+  const loadingScreen = (
+    <View
+      style={{
+        ...StyleSheet.absoluteFillObject,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#25262b",
+      }}
+    >
+      <Text style={{ color: "white", fontSize: 24 }}>Loading Camera...</Text>
+    </View>
+  );
   const renderCamera = () => {
-    if (camPermissions?.granted) {
+    if (camPermissions?.granted && !photoData) {
       return (
         <Camera
           ref={camRef}
           style={{
             ...StyleSheet.absoluteFillObject,
-            marginTop: vertMargin,
-            marginBottom: vertMargin,
+            marginTop: topMargin,
+            marginBottom: bottomMargin,
           }}
           type={cameraType}
           ratio={camRatio}
@@ -163,7 +200,7 @@ export const OverlayCamera = <
         />
       );
     }
-    return undefined;
+    return loadingScreen;
   };
   const renderNftOverlay = () => {
     if (isNft) {
@@ -172,7 +209,8 @@ export const OverlayCamera = <
           setReady={setNftOverlayReady}
           isUpdating={!photoData}
           title={nftTitle}
-          vertMargin={vertMargin}
+          topMargin={topMargin}
+          bottomMargin={bottomMargin}
         />
       );
     }
@@ -185,8 +223,8 @@ export const OverlayCamera = <
           source={{ uri: photoData.uri }}
           style={{
             ...StyleSheet.absoluteFillObject,
-            marginTop: vertMargin,
-            marginBottom: vertMargin,
+            marginTop: topMargin,
+            marginBottom: bottomMargin,
           }}
         />
       );
@@ -194,63 +232,77 @@ export const OverlayCamera = <
     return undefined;
   };
   const renderCaptureOverlay = () => {
-    if (camIsReady) {
-      return captureOverlay(vertMargin);
-    }
-    return undefined;
+    return captureOverlay(topMargin, bottomMargin);
   };
   const renderPreCaptureOverlay = () => {
-    if (camIsReady && !photoData) {
-      return preCaptureOverlay(vertMargin);
+    if (!photoData) {
+      return preCaptureOverlay(topMargin, bottomMargin);
     }
     return undefined;
   };
   const renderPreviewControls = () => {
     if (photoData) {
-      return <PreviewControls onSave={save} onRetake={retake} />;
+      return (
+        <PreviewControls
+          onSave={save}
+          onRetake={retake}
+          bottomInset={bottomInset}
+        />
+      );
     }
     return undefined;
   };
   const renderCaptureControls = () => {
-    if (camIsReady && !photoData && (nftOverlayReady || !isNft)) {
+    if (!photoData && (nftOverlayReady || !isNft)) {
       return (
         <CaptureControls
           onTakePicture={takePicture}
           onGoBack={() => navigation.goBack()}
+          bottomInset={bottomInset}
         />
       );
     }
     return undefined;
   };
 
-  if (screenReady) {
+  const renderOverlays = () => {
+    if (camIsReady) {
+      return (
+        <>
+          <View
+            style={{
+              ...StyleSheet.absoluteFillObject,
+              backgroundColor: photoData ? "black" : "transparent",
+            }}
+            ref={snapBoxRef}
+          >
+            {renderCapturedImage()}
+            {renderCaptureOverlay()}
+            {renderNftOverlay()}
+          </View>
+          {renderPreCaptureOverlay()}
+          {renderPreviewControls()}
+          {renderCaptureControls()}
+        </>
+      );
+    }
+    return loadingScreen;
+  };
+
+  if (screenReady && screenIsFocused) {
     return (
       <View style={cameraStyles.mainContainer}>
         {renderCamera()}
-        <View
-          style={{
-            ...StyleSheet.absoluteFillObject,
-            backgroundColor: photoData ? "black" : "transparent",
-          }}
-          ref={snapBoxRef}
-        >
-          {renderCapturedImage()}
-          {renderCaptureOverlay()}
-          {renderNftOverlay()}
-        </View>
-        {renderPreCaptureOverlay()}
-        {renderPreviewControls()}
-        {renderCaptureControls()}
-        <StatusBar style="auto" hidden />
+        {renderOverlays()}
       </View>
     );
   }
-  return null;
+  return loadingScreen;
 };
 
 const cameraStyles = StyleSheet.create({
   mainContainer: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "black",
+    backgroundColor: "#25262b",
   },
 });

@@ -9,13 +9,24 @@ import {
 export const CaptureControls = ({
   onTakePicture,
   onGoBack,
+  bottomInset,
 }: {
   onTakePicture: ((event: GestureResponderEvent) => void) | undefined;
   onGoBack: ((event: GestureResponderEvent) => void) | undefined;
+  bottomInset: number;
 }) => {
+  const captContStylesSD = StyleSheet.create({
+    bottom: {
+      marginTop: "auto",
+      marginBottom: bottomInset > 0 ? 20 : 50,
+      display: "flex",
+      alignItems: "center",
+    },
+  });
+
   return (
     <View style={{ ...StyleSheet.absoluteFillObject }}>
-      <View style={captContStyles.bottom}>
+      <View style={captContStylesSD.bottom}>
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={onTakePicture}
@@ -30,12 +41,6 @@ export const CaptureControls = ({
 };
 
 const captContStyles = StyleSheet.create({
-  bottom: {
-    marginTop: "auto",
-    marginBottom: 50,
-    display: "flex",
-    alignItems: "center",
-  },
   captureButton: {
     backgroundColor: "#f5f5f5",
     width: 80,

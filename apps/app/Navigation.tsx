@@ -1,3 +1,6 @@
+// [OBSOLETE]
+// THIS IS THE OLD NAVIGATION FILE. USE NAVIGATORS.TSX FROM NOW ON.
+
 import { StyleSheet } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
@@ -8,9 +11,9 @@ import { InGameStackParamList, RootStackParamList } from "./RootStackParams";
 
 import { GameProvider, useUser } from "client-sdk";
 import CreateGameScreen from "./screens/CreateGameScreen";
-import { HomeScreen } from "./screens/HomeScreen";
+import { HomeScreen } from "./screens/GameListScreen";
 import { LoginScreen } from "./screens/LoginScreen";
-import { InGameScreen } from "./screens/InGameScreen";
+import { InGameScreen } from "./screens/Feed";
 import { JoinGameScreen } from "./screens/JoinGameScreen";
 import { TagCameraScreen } from "./screens/TagCameraScreen";
 import TargetScreen from "./screens/TargetScreen";

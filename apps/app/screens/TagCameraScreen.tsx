@@ -1,19 +1,17 @@
 import { View, Text, Image, StyleSheet } from "react-native";
 import { submitTag, useGame, useUser } from "client-sdk";
-import { InGameStackParamList } from "../RootStackParams";
 import { CommonStyles } from "../styles/CommonStyles";
 import { OverlayStyles } from "../components/overlay-camera/OverlayStyles";
 import { OverlayCamera } from "../components/overlay-camera/OverlayCamera";
 import { CameraType } from "expo-camera";
 import { useTarget } from "client-sdk/dist/GameProvider";
+import { useNavigation } from "@react-navigation/native";
+import { GameNavigationProps } from "../RootParams";
 
 const crosshair = require("../assets/Icons/Crosshair/1x/crosshair.png");
 
-export const TagCameraScreen = () => {
-  // const navigation =
-  //   useNavigation<
-  //     NativeStackNavigationProp<InGameStackParamList, "TagCameraScreen">
-  //   >(); can't get navigation to work :(
+export const TagCameraScreen = ({ tabHeight }: { tabHeight: number }) => {
+  const gameNavigation = useNavigation<GameNavigationProps>();
   const game = useGame();
   const user = useUser();
   const target = useTarget();
@@ -50,18 +48,20 @@ export const TagCameraScreen = () => {
       console.log(e)
     );
     await console.log(uri.slice(0, 100), width, height);
-    //await navigation.navigate("InGameScreen"); CAN'T GET NAVIGATION TO WORK :(
+    await gameNavigation.navigate("Feed");
+    // NAVIGATION STILL ISN'T WORKING FOR SOME REASON... SOMETHING TO DO WITH THE CAMERA?
   };
 
   return (
     <View style={{ ...StyleSheet.absoluteFillObject }}>
-      <OverlayCamera<InGameStackParamList, "TagCameraScreen">
+      <OverlayCamera
         cameraType={CameraType.back}
         isNft={true}
         nftTitle={target?.name || "Undefined Target Name"}
         saveCallback={saveCallback}
         captureOverlay={captureOverlay}
         preCaptureOverlay={() => undefined}
+        bottomInset={tabHeight}
         screenReady={!!game && !!user && !!target}
       />
     </View>

@@ -1,5 +1,4 @@
-import { GoogleSignIn, useUser } from "client-sdk";
-// import { UserData } from "client-sdk/dist/types";
+import { GoogleSignIn } from "client-sdk";
 import { StatusBar } from "expo-status-bar";
 import {
   Image,
@@ -10,7 +9,6 @@ import {
 import { CommonStyles } from "../styles/CommonStyles";
 
 export const LoginScreen = () => {
-  // const user: UserData = useUser();
   const dims = useWindowDimensions();
 
   return (

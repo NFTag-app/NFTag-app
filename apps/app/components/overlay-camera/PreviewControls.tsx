@@ -10,9 +10,11 @@ import {
 export const PreviewControls = ({
   onSave,
   onRetake,
+  bottomInset,
 }: {
   onSave: ((event: GestureResponderEvent) => void) | undefined;
   onRetake: ((event: GestureResponderEvent) => void) | undefined;
+  bottomInset: number;
 }) => {
   const dims = useWindowDimensions();
   const previewStylesSD = StyleSheet.create({
@@ -24,11 +26,19 @@ export const PreviewControls = ({
       alignItems: "center",
       justifyContent: "center",
     },
+    bottom: {
+      marginTop: "auto",
+      marginBottom: bottomInset > 0 ? 20 : 50,
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-evenly",
+    },
   });
 
   return (
     <View style={{ ...StyleSheet.absoluteFillObject }}>
-      <View style={previewStyles.bottom}>
+      <View style={previewStylesSD.bottom}>
         <TouchableOpacity style={previewStylesSD.button} onPress={onRetake}>
           <Text style={previewStyles.buttonText}>Retake</Text>
         </TouchableOpacity>
@@ -41,14 +51,6 @@ export const PreviewControls = ({
 };
 
 const previewStyles = StyleSheet.create({
-  bottom: {
-    marginTop: "auto",
-    marginBottom: 50,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-evenly",
-  },
   buttonText: {
     fontSize: 30,
     color: "white",
