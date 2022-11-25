@@ -95,7 +95,7 @@ export const TagList = () => {
       const [fullscreen, setFullscreen] = useState(false);
 
       return (
-        <>
+        <View style={{ ...CommonStyles.container }}>
           <TouchableOpacity onPress={() => setFullscreen(true)}>
             <Image
               source={{
@@ -108,7 +108,7 @@ export const TagList = () => {
           </TouchableOpacity>
           <Modal
             visible={fullscreen}
-            transparent={true}
+            // transparent={true}
             onRequestClose={() => setFullscreen(false)}
             onDismiss={() => setFullscreen(false)}
             presentationStyle="fullScreen"
@@ -120,6 +120,7 @@ export const TagList = () => {
           >
             <TouchableOpacity
               style={{
+                backgroundColor: "black",
                 flex: 1,
               }}
               onPress={() => setFullscreen(false)}
@@ -139,7 +140,7 @@ export const TagList = () => {
               />
             </TouchableOpacity>
           </Modal>
-        </>
+        </View>
       );
     };
 
@@ -379,7 +380,7 @@ export const TagList = () => {
     );
   };
 
-  console.log(tagIds)
+  // console.log(tagIds);
 
   return (
     <FlatList

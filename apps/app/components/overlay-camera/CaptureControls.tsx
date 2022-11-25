@@ -10,10 +10,12 @@ export const CaptureControls = ({
   onTakePicture,
   onGoBack,
   bottomInset,
+  backShown,
 }: {
   onTakePicture: ((event: GestureResponderEvent) => void) | undefined;
   onGoBack: ((event: GestureResponderEvent) => void) | undefined;
   bottomInset: number;
+  backShown: boolean;
 }) => {
   const captContStylesSD = StyleSheet.create({
     bottom: {
@@ -24,6 +26,17 @@ export const CaptureControls = ({
     },
   });
 
+  const renderBackButton = () => {
+    if (backShown) {
+      return (
+        <TouchableOpacity onPress={onGoBack} style={captContStyles.backButton}>
+          <Text style={captContStyles.backText}>Back</Text>
+        </TouchableOpacity>
+      );
+    }
+    return undefined;
+  };
+
   return (
     <View style={{ ...StyleSheet.absoluteFillObject }}>
       <View style={captContStylesSD.bottom}>
@@ -32,9 +45,7 @@ export const CaptureControls = ({
           onPress={onTakePicture}
           style={captContStyles.captureButton}
         />
-        <TouchableOpacity onPress={onGoBack} style={captContStyles.backButton}>
-          <Text style={captContStyles.backText}>Back</Text>
-        </TouchableOpacity>
+        {renderBackButton()}
       </View>
     </View>
   );

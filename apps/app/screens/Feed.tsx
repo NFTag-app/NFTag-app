@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { startGame, useGame, useUser } from "client-sdk";
 import { useRef, useState } from "react";
@@ -10,6 +11,7 @@ import {
 } from "react-native";
 import { FloatingAction, IActionProps } from "react-native-floating-action";
 import { TagList } from "../components/in-game-screen/tag-list";
+import { GameNavigationProps } from "../RootParams";
 import { InGameStackParamList } from "../RootStackParams";
 
 const icon = require("../assets/adaptive-icon.png");
@@ -28,6 +30,7 @@ type Action = {
 };
 
 export const Feed = () => {
+  const gameNavigation = useNavigation<GameNavigationProps>();
   const target = useRef(null);
   const game = useGame();
   const user = useUser();
@@ -49,119 +52,98 @@ export const Feed = () => {
     );
   }
 
-  // const userIsGameAdmin = game.owner === user.uid;
-  // const gameIsActive = game.inProgress;
-  // interface IActionPropsExtended extends IActionProps {
-  //   condition: () => boolean;
-  //   action: () => Promise<void>;
-  //   buttonSize: number;
-  //   position: number;
-  // }
+  const userIsGameAdmin = game.owner === user.uid;
+  const gameIsActive = game.inProgress;
+  interface IActionPropsExtended extends IActionProps {
+    condition: () => boolean;
+    action: () => Promise<void>;
+    buttonSize: number;
+    position: number;
+  }
 
-  // const tagAction: IActionPropsExtended = {
-  //   text: "Submit Tag",
-  //   color: "#25262b",
-  //   icon: (
-  //     <Image
-  //       source={require("../assets/Icons/1x/exclaim.png")}
-  //       style={{
-  //         width: 50,
-  //         height: 50,
-  //       }}
-  //     />
-  //   ),
-  //   name: "bt_tag_target",
-  //   buttonSize: 65,
-  //   position: 10,
-  //   margin: 0,
-  //   action: async () => navigate("TagCameraScreen"),
-  //   condition: () => !userIsGameAdmin && gameIsActive,
-  // };
+  const tagAction: IActionPropsExtended = {
+    text: "Submit Tag",
+    color: "#25262b",
+    icon: (
+      <Image
+        source={require("../assets/Icons/1x/exclaim.png")}
+        style={{
+          width: 50,
+          height: 50,
+        }}
+      />
+    ),
+    name: "bt_tag_target",
+    buttonSize: 65,
+    position: 10,
+    margin: 0,
+    action: async () => gameNavigation.navigate("TagScreen"),
+    condition: () => !userIsGameAdmin && gameIsActive,
+  };
 
-  // const startGameAction = {
-  //   text: "Start Game",
-  //   icon: (
-  //     <Image
-  //       source={require("../assets/Icons/1x/plus.png")}
-  //       style={{
-  //         width: 50,
-  //         height: 50,
-  //       }}
-  //     />
-  //   ),
-  //   name: "bt_tag_start",
-  //   color: "#25262b",
-  //   buttonSize: 65,
-  //   position: 10,
-  //   margin: 0,
-  //   action: async () =>
-  //     startGame(game.id, user, true).catch((err) => console.warn(err)),
-  //   condition: () => userIsGameAdmin && !gameIsActive,
-  // };
+  const startGameAction = {
+    text: "Start Game",
+    icon: (
+      <Image
+        source={require("../assets/Icons/1x/plus.png")}
+        style={{
+          width: 50,
+          height: 50,
+        }}
+      />
+    ),
+    name: "bt_tag_start",
+    color: "#25262b",
+    buttonSize: 65,
+    position: 10,
+    margin: 0,
+    action: async () =>
+      startGame(game.id, user, true).catch((err) => console.warn(err)),
+    condition: () => userIsGameAdmin && !gameIsActive,
+  };
 
-  // const shareGameAction = {
-  //   text: "Share Game",
-  //   icon: (
-  //     <Image
-  //       source={require("../assets/Icons/1x/plus.png")}
-  //       style={{
-  //         width: 50,
-  //         height: 50,
-  //         transform: [{ rotate: "45deg" }],
-  //       }}
-  //     />
-  //   ),
-  //   name: "bt_tag_share",
-  //   color: "#25262b",
-  //   buttonSize: 65,
-  //   position: 10,
-  //   margin: 0,
-  //   action: async () =>
-  //     Share.share({
-  //       message:
-  //         "Join my NFTag game and have fun with crypto!\nhttps://www.nftag.app/invite.html?from=" +
-  //         user.displayName.split(" ")[0] +
-  //         "&game=" +
-  //         game.id,
-  //     }),
-  //   condition: () => userIsGameAdmin && !gameIsActive,
-  // };
+  const shareGameAction = {
+    // Move to a tab
+    text: "Share Game",
+    icon: (
+      <Image
+        source={require("../assets/Icons/1x/plus.png")}
+        style={{
+          width: 50,
+          height: 50,
+          transform: [{ rotate: "45deg" }],
+        }}
+      />
+    ),
+    name: "bt_tag_share",
+    color: "#25262b",
+    buttonSize: 65,
+    position: 10,
+    margin: 0,
+    action: async () =>
+      Share.share({
+        message:
+          "Join my NFTag game and have fun with crypto!\nhttps://www.nftag.app/invite.html?from=" +
+          user.displayName.split(" ")[0] +
+          "&game=" +
+          game.id,
+      }),
+    condition: () => userIsGameAdmin && !gameIsActive,
+  };
 
-  // const targetAction = {
-  //   text: "View Target",
-  //   icon: (
-  //     <Image
-  //       source={require("../assets/Icons/1x/plus.png")}
-  //       style={{
-  //         width: 50,
-  //         height: 50,
-  //         transform: [{ rotate: "45deg" }],
-  //       }}
-  //     />
-  //   ),
-  //   name: "bt_target",
-  //   color: "#25262b",
-  //   buttonSize: 65,
-  //   position: 10,
-  //   margin: 0,
-  //   action: async () => navigate("TargetScreen"),
-  //   condition: () => !userIsGameAdmin && gameIsActive,
-  // };
+  const actions: IActionPropsExtended[] = [
+    tagAction.condition() ? tagAction : undefined,
+    shareGameAction.condition() ? shareGameAction : undefined,
+    startGameAction.condition() ? startGameAction : undefined,
+  ].filter((f) => f) as IActionPropsExtended[];
 
-  // const actions: IActionPropsExtended[] = [
-  //   tagAction.condition() ? tagAction : undefined,
-  //   shareGameAction.condition() ? shareGameAction : undefined,
-  //   startGameAction.condition() ? startGameAction : undefined,
-  //   targetAction.condition() ? targetAction : undefined,
-  // ].filter((f) => f) as IActionPropsExtended[];
-
-  // const onPressItem = (item: string) => {
-  //   const action = actions.find((x) => x.name === item);
-  //   console.log("pressed item", action);
-  //   if (action.condition()) {
-  //     return action.action().catch((err) => console.warn(err));
-  //   }
-  // };
+  const onPressItem = (item: string) => {
+    const action = actions.find((x) => x.name === item);
+    console.log("pressed item", action);
+    if (action.condition()) {
+      return action.action().catch((err) => console.warn(err));
+    }
+  };
 
   return (
     <ImageBackground
@@ -175,7 +157,7 @@ export const Feed = () => {
       }}
     >
       <TagList />
-      {/* <FloatingAction
+      <FloatingAction
         floatingIcon={
           <Image
             source={require("../assets/Icons/1x/plus.png")}
@@ -195,7 +177,7 @@ export const Feed = () => {
         onOpen={() => setOpen(true)}
         onClose={() => setOpen(false)}
         position={"right"}
-      /> */}
+      />
     </ImageBackground>
   );
 };

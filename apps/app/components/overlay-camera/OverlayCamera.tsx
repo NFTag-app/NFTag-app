@@ -9,7 +9,6 @@ import {
   Platform,
   useWindowDimensions,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
 import { Camera, CameraCapturedPicture, CameraType } from "expo-camera";
 import { useEffect, useRef, useState } from "react";
 import { NftOverlay } from "./NftOverlay";
@@ -27,6 +26,7 @@ export const OverlayCamera = ({
   preCaptureOverlay,
   bottomInset,
   screenReady,
+  backShown,
 }: {
   cameraType: CameraType;
   isNft: boolean;
@@ -42,6 +42,7 @@ export const OverlayCamera = ({
   ) => JSX.Element | undefined;
   bottomInset: number;
   screenReady: boolean;
+  backShown: boolean;
 }) => {
   const navigation = useNavigation();
   const [camPermissions, requestCamPermissions] = Camera.useCameraPermissions();
@@ -133,7 +134,7 @@ export const OverlayCamera = ({
     if (!camRef.current) return;
     const data = await camRef.current.takePictureAsync();
     await setPhotoData(data);
-    camRef.current.pausePreview();
+    // camRef.current.pausePreview();
   };
   const save = async () => {
     if (snapBoxRef.current && photoData) {
@@ -152,9 +153,9 @@ export const OverlayCamera = ({
         ],
         { format: SaveFormat.PNG, base64: true }
       );
-      if (camRef.current) {
-        await camRef.current.resumePreview();
-      }
+      // if (camRef.current) {
+      //   await camRef.current.resumePreview();
+      // }
       await setPhotoData(null);
       await saveCallback(
         "data:image/png;base64," + scaledRes.base64,
@@ -259,6 +260,7 @@ export const OverlayCamera = ({
           onTakePicture={takePicture}
           onGoBack={() => navigation.goBack()}
           bottomInset={bottomInset}
+          backShown={backShown}
         />
       );
     }

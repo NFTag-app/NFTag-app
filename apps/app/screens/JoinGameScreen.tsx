@@ -59,7 +59,7 @@ export const JoinGameScreen = ({ tabHeight }: { tabHeight: number }) => {
     try {
       const game = await joinGame(gameId, user, { uri: uri, width, height });
       await rootNavigation.navigate("GameTabs", {
-        // NAVIGATION STILL ISN'T WORKING FOR SOME REASON... SOMETHING TO DO WITH THE CAMERA?
+        // NAVIGATION STILL ISN'T WORKING FOR SOME REASON... SOMETHING TO DO WITH joinGame?
         gameId: gameId,
       });
     } catch (e) {
@@ -74,12 +74,13 @@ export const JoinGameScreen = ({ tabHeight }: { tabHeight: number }) => {
       <OverlayCamera
         cameraType={CameraType.front}
         isNft={true}
-        nftTitle={user?.displayName || "Undefined Playe Name"}
+        nftTitle={user?.displayName || "Undefined Player Name"}
         saveCallback={saveCallback}
         captureOverlay={() => undefined}
         preCaptureOverlay={preCaptureOverlay}
         bottomInset={tabHeight}
         screenReady={!!user}
+        backShown={false}
       />
     </View>
   );
