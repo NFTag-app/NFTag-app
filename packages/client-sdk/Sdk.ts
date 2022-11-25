@@ -144,14 +144,16 @@ export const joinGame: JoinGame = async (id, user, image) => {
 
       // add player to game data
       const playersRef = ref(db, `games/${id}/players`);
-      return set(child(playersRef, user.uid), {
+      const player = {
         id: user.uid,
         name: user.displayName,
         image,
         active: false,
         target: "",
         tags: 0,
-      } as Player);
+      };
+      set(child(playersRef, user.uid), player).catch((e) => reject(e));
+      return resolve(snapshot.val());
     });
   });
 };
@@ -263,7 +265,7 @@ export const submitTag: SubmitTag = async (game, user, target, image) => {
 
     const id = v4();
 
-    set(child(tagRef, id), {
+    const tag = {
       id,
       timestamp: new Date().getTime(),
       image,
@@ -273,7 +275,12 @@ export const submitTag: SubmitTag = async (game, user, target, image) => {
         approved: true, // auto approve for now
         timestamp: new Date().getTime(), // auto approve for now
       },
+    };
+
+    set(child(tagRef, id), tag).catch((e) => {
+      return reject(e);
     });
+    return resolve(tag);
   });
 };
 

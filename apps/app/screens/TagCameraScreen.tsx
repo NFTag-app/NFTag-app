@@ -44,22 +44,9 @@ export const TagCameraScreen = ({ tabHeight }: { tabHeight: number }) => {
   };
 
   const saveCallback = async (uri: string, width: number, height: number) => {
-    console.log("SAVING TAG");
     await submitTag(game, user, target, { uri, width, height });
-    // .then(() => {
-    //   console.log("HEYYY");
-    //   console.log(uri.slice(0, 100), width, height);
-    //   gameNavigation.navigate("Feed");
-    // })
-    // .catch((e) => {
-    //   console.log("HEYY");
-    //   gameNavigation.navigate("Feed");
-    //   console.error(e);
-    // });
-    await console.log("HEYYY");
     await console.log(uri.slice(0, 100), width, height);
     await gameNavigation.navigate("Feed");
-    // NAVIGATION STILL ISN'T WORKING FOR SOME REASON... SOMETHING TO DO WITH submitTag?
   };
 
   return (
