@@ -13,6 +13,7 @@ import {
 } from "react-native";
 // import { FloatingAction, IActionProps } from "react-native-floating-action";
 import { RootNavigationProps } from "../components/navigation/NavigationParams";
+import { Constants } from "../components/navigation/Styles";
 import { CommonStyles } from "../styles/CommonStyles";
 
 export const GameListScreen = () => {
@@ -20,38 +21,50 @@ export const GameListScreen = () => {
   const games: Game[] = useGames();
   const dims = useWindowDimensions();
 
-  const renderItem = ({ item, index, separators }) => (
-    <View
-      style={{
-        backgroundColor: "#25262b",
-        borderColor: "#1a1b1e",
-        borderWidth: 2,
-        borderRadius: 8,
-        marginHorizontal: 10,
-      }}
-    >
-      <TouchableOpacity
-        onPress={() =>
-          rootNavigation.navigate("GameRoot", {
-            gameId: item.id,
-          })
-        }
+  const renderItem = ({ item, index, separators }) => {
+    if (item === "START") {
+      return <View style={{ height: 5 }} />; // extra starting space
+    }
+    if (item === "END") {
+      return (
+        <View style={{ height: 5 }} /> // extra ending space
+      );
+    }
+    return (
+      <View
         style={{
-          padding: 20,
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
+          backgroundColor: "#25262b",
+          borderColor: "#1a1b1e",
+          borderWidth: 2,
+          borderRadius: 8,
+          marginHorizontal: 10,
         }}
       >
-        <Text style={{ ...CommonStyles.text, color: "#C1C2C5" }}>
-          {item?.name}
-        </Text>
-        <Text style={{ ...CommonStyles.text, color: "#7d7d7d", fontSize: 15 }}>
-          {item?.players && Object.keys(item.players).length} Players
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
+        <TouchableOpacity
+          onPress={() =>
+            rootNavigation.navigate("GameRoot", {
+              gameId: item.id,
+            })
+          }
+          style={{
+            padding: 20,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text style={{ ...CommonStyles.text, color: "#C1C2C5" }}>
+            {item?.name}
+          </Text>
+          <Text
+            style={{ ...CommonStyles.text, color: "#7d7d7d", fontSize: 15 }}
+          >
+            {item?.players && Object.keys(item.players).length} Players
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   // const onPressItem = (item: string) => {
   //   const action = actions.find((x) => x.name === item);
@@ -143,9 +156,9 @@ export const GameListScreen = () => {
           ...styles.container,
           // backgroundColor: "#001220",
           width: dims.width,
-          paddingVertical: 15,
+          //paddingVertical: 15,
         }}
-        data={games}
+        data={["START", ...games, "END"]}
         renderItem={renderItem}
         ItemSeparatorComponent={() => (
           <View

@@ -120,7 +120,7 @@ export const TagList = () => {
           >
             <TouchableOpacity
               style={{
-                backgroundColor: "black",
+                backgroundColor: "#25262b",
                 flex: 1,
               }}
               onPress={() => setFullscreen(false)}
