@@ -1,5 +1,19 @@
-export const LoadingScreen = () => {
-  return undefined;
-};
+import { ImageBackground, useWindowDimensions } from "react-native";
 
-// Log out and stuff
+export const LoadingScreen = () => {
+  const dims = useWindowDimensions();
+
+  return (
+    <ImageBackground
+      source={require("../assets/Icons/1x/loginbg.png")}
+      resizeMode="cover"
+      style={{
+        backgroundColor: "black",
+        flex: 1,
+        justifyContent: "center",
+        width: dims.width,
+        alignItems: "center",
+      }}
+    />
+  );
+};
