@@ -210,8 +210,6 @@ export const OverlayCamera = ({
           setReady={setNftOverlayReady}
           isUpdating={!photoData}
           title={nftTitle}
-          topMargin={topMargin}
-          bottomMargin={bottomMargin}
         />
       );
     }
@@ -224,8 +222,6 @@ export const OverlayCamera = ({
           source={{ uri: photoData.uri }}
           style={{
             ...StyleSheet.absoluteFillObject,
-            marginTop: topMargin,
-            marginBottom: bottomMargin,
           }}
         />
       );
@@ -270,10 +266,17 @@ export const OverlayCamera = ({
   const renderOverlays = () => {
     if (camIsReady) {
       return (
-        <>
+        <View
+          style={{
+            ...StyleSheet.absoluteFillObject,
+            backgroundColor: photoData ? "#25262b" : "transparent",
+          }}
+        >
           <View
             style={{
               ...StyleSheet.absoluteFillObject,
+              top: topMargin,
+              bottom: bottomMargin,
               backgroundColor: photoData ? "black" : "transparent",
             }}
             ref={snapBoxRef}
@@ -285,7 +288,7 @@ export const OverlayCamera = ({
           {renderPreCaptureOverlay()}
           {renderPreviewControls()}
           {renderCaptureControls()}
-        </>
+        </View>
       );
     }
     return loadingScreen;
@@ -305,6 +308,7 @@ export const OverlayCamera = ({
 const cameraStyles = StyleSheet.create({
   mainContainer: {
     ...StyleSheet.absoluteFillObject,
+    //backgroundColor: "#25262b",
     backgroundColor: "#25262b",
   },
 });
