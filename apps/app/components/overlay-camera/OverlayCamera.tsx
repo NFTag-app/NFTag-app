@@ -87,14 +87,14 @@ export const OverlayCamera = ({
   useEffect(() => {
     navigation.addListener("focus", () => {
       setScreenIsFocused(true);
-      console.log("hello");
-      console.log(camRatio);
+      //console.log("hello");
+      //console.log(camRatio);
     });
     navigation.addListener("blur", () => {
       setScreenIsFocused(false);
-      console.log("leave");
+      //console.log("leave");
       setCamIsReady(false);
-      console.log(camRatio);
+      //console.log(camRatio);
     });
   }, []);
 

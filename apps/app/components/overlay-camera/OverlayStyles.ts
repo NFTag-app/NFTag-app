@@ -9,5 +9,6 @@ export const OverlayStyles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     marginTop: "auto",
+    marginBottom: "auto",
   },
 });

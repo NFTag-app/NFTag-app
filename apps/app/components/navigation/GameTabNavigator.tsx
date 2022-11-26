@@ -87,7 +87,6 @@ const GameTabNavigator = () => {
 
   const renderScreen = () => {
     if (game?.inProgress === undefined || user?.uid === undefined) {
-      console.log("Hey");
       return (
         <>
           <GameTab.Screen

@@ -26,6 +26,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#25262b"
       },
+      "softwareKeyboardLayoutMode": "pan",
       "package": "app.nftag.app",
       "googleServicesFile": "./google-services.json"
     },
