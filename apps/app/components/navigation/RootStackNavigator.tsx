@@ -1,6 +1,6 @@
 import { useUser } from "client-sdk";
 
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import { LoginScreen } from "../../screens/LoginScreen";
@@ -17,7 +17,12 @@ export const RootStackNavigator = () => {
   if (!user) return <LoginScreen />;
 
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      theme={{
+        ...DefaultTheme,
+        colors: { ...DefaultTheme.colors, background: "#25262b" },
+      }}
+    >
       <RootStack.Navigator initialRouteName="HomeRoot">
         <RootStack.Screen
           name="HomeRoot"
