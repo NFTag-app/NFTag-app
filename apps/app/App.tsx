@@ -4,7 +4,7 @@ import React from "react";
 import { LogBox } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { RootStackNavigator } from "./Navigators";
+import { RootStackNavigator } from "./components/navigation/RootStackNavigator";
 
 export default function App() {
   LogBox.ignoreLogs([
@@ -19,8 +19,6 @@ export default function App() {
     >
       <UserProvider>
         <SafeAreaProvider>
-          {/* <Navigation /> */}
-          {/* <RootTabNavigator /> */}
           <RootStackNavigator />
         </SafeAreaProvider>
       </UserProvider>

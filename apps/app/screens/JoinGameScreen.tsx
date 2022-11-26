@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { OverlayCamera } from "../components/overlay-camera/OverlayCamera";
 import { OverlayStyles } from "../components/overlay-camera/OverlayStyles";
-import { RootNavigationProps } from "../RootParams";
+import { RootNavigationProps } from "../components/navigation/NavigationParams";
 
 export const JoinGameScreen = ({ tabHeight }: { tabHeight: number }) => {
   const rootNavigation = useNavigation<RootNavigationProps>();
@@ -58,7 +58,7 @@ export const JoinGameScreen = ({ tabHeight }: { tabHeight: number }) => {
   const saveCallback = async (uri: string, width: number, height: number) => {
     try {
       const game = await joinGame(gameId, user, { uri: uri, width, height });
-      await rootNavigation.navigate("GameTabs", {
+      await rootNavigation.navigate("GameRoot", {
         // NAVIGATION STILL ISN'T WORKING FOR SOME REASON... SOMETHING TO DO WITH joinGame?
         gameId: gameId,
       });

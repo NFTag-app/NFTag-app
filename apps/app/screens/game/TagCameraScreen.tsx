@@ -1,17 +1,17 @@
 import { View, Text, Image, StyleSheet } from "react-native";
 import { submitTag, useGame, useUser } from "client-sdk";
-import { CommonStyles } from "../styles/CommonStyles";
-import { OverlayStyles } from "../components/overlay-camera/OverlayStyles";
-import { OverlayCamera } from "../components/overlay-camera/OverlayCamera";
+import { CommonStyles } from "../../styles/CommonStyles";
+import { OverlayStyles } from "../../components/overlay-camera/OverlayStyles";
+import { OverlayCamera } from "../../components/overlay-camera/OverlayCamera";
 import { CameraType } from "expo-camera";
 import { useTarget } from "client-sdk/dist/GameProvider";
 import { useNavigation } from "@react-navigation/native";
-import { GameNavigationProps } from "../RootParams";
+import { RootNavigationProps } from "../../components/navigation/NavigationParams";
 
-const crosshair = require("../assets/Icons/Crosshair/1x/crosshair.png");
+const crosshair = require("../../assets/Icons/Crosshair/1x/crosshair.png");
 
 export const TagCameraScreen = ({ tabHeight }: { tabHeight: number }) => {
-  const gameNavigation = useNavigation<GameNavigationProps>();
+  const rootNavigation = useNavigation<RootNavigationProps>();
   const game = useGame();
   const user = useUser();
   const target = useTarget();
@@ -46,7 +46,7 @@ export const TagCameraScreen = ({ tabHeight }: { tabHeight: number }) => {
   const saveCallback = async (uri: string, width: number, height: number) => {
     await submitTag(game, user, target, { uri, width, height });
     await console.log(uri.slice(0, 100), width, height);
-    await gameNavigation.navigate("Feed");
+    await rootNavigation.navigate("GameRoot");
   };
 
   return (

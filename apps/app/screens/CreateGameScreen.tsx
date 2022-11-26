@@ -11,10 +11,10 @@ import {
   TouchableOpacity,
   Share,
 } from "react-native";
-import { RootNavigationProps } from "../RootParams";
+import { RootNavigationProps } from "../components/navigation/NavigationParams";
 import { CommonStyles } from "../styles/CommonStyles"; //https://www.nftag.app/invite.html?from=owner&game=000000
 
-const CreateGameScreen = () => {
+export const CreateGameScreen = () => {
   const rootNavigation = useNavigation<RootNavigationProps>();
   const owner = useUser();
   const dims = useWindowDimensions();
@@ -61,7 +61,7 @@ const CreateGameScreen = () => {
 
   const goToGame = async () => {
     if (!gameId) return;
-    await rootNavigation.navigate("GameTabs", {
+    await rootNavigation.navigate("GameRoot", {
       gameId: gameId,
     });
   };
@@ -147,7 +147,5 @@ const CreateGameScreen = () => {
     </View>
   );
 };
-
-export default CreateGameScreen;
 
 const styles = StyleSheet.create({});

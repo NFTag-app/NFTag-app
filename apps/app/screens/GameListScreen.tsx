@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 // import { FloatingAction, IActionProps } from "react-native-floating-action";
-import { RootNavigationProps } from "../RootParams";
+import { RootNavigationProps } from "../components/navigation/NavigationParams";
 import { CommonStyles } from "../styles/CommonStyles";
 
 export const GameListScreen = () => {
@@ -32,7 +32,7 @@ export const GameListScreen = () => {
     >
       <TouchableOpacity
         onPress={() =>
-          rootNavigation.navigate("GameTabs", {
+          rootNavigation.navigate("GameRoot", {
             gameId: item.id,
           })
         }

@@ -8,14 +8,21 @@ export type HomeTabParamList = {
 };
 
 export type GameTabParamList = {
-  Feed: undefined;
+  LoadingScreen1: undefined;
+  LoadingScreen2: undefined;
+  LoadingScreen3: undefined; // we show 3 tabs that do nothing when loading
+  FeedScreen: undefined;
   TagScreen: { tabHeight: number };
   TargetScreen: undefined;
+  ShareGameScreen: { gameId: string } | undefined;
+  GameSettingsScreen: undefined;
 };
 
+//export type
+
 export type RootStackParamList = {
-  HomeTabs: undefined;
-  GameTabs: { gameId: string } | undefined;
+  HomeRoot: undefined;
+  GameRoot: { gameId: string } | undefined;
 };
 
 export type HomeNavigationProps = NativeStackNavigationProp<HomeTabParamList>;
