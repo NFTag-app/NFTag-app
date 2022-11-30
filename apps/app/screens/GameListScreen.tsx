@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { signOut, useGames } from "client-sdk";
+import { createGame, signOut, useGames, useUser } from "client-sdk";
 import { Game } from "client-sdk/dist/types";
 // import { useState } from "react";
 import {
@@ -10,16 +10,20 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   View,
+  Image,
 } from "react-native";
 // import { FloatingAction, IActionProps } from "react-native-floating-action";
 import { RootNavigationProps } from "../components/navigation/NavigationParams";
 import { Constants } from "../components/navigation/Styles";
 import { CommonStyles } from "../styles/CommonStyles";
+import { FloatingAction, IActionProps } from "react-native-floating-action";
+import { useState } from "react";
 
-export const GameListScreen = () => {
+export const GameListScreen = ({ navigation }) => {
   const rootNavigation = useNavigation<RootNavigationProps>();
   const games: Game[] = useGames();
   const dims = useWindowDimensions();
+  const user = useUser();
 
   const renderItem = ({ item, index, separators }) => {
     if (item === "START") {
@@ -43,6 +47,8 @@ export const GameListScreen = () => {
         <TouchableOpacity
           onPress={() =>
             rootNavigation.navigate("GameRoot", {
+              screen: "FeedScreen",
+              params: undefined,
               gameId: item.id,
             })
           }
@@ -66,79 +72,54 @@ export const GameListScreen = () => {
     );
   };
 
-  // const onPressItem = (item: string) => {
-  //   const action = actions.find((x) => x.name === item);
-  //   console.log("pressed item", action);
-  //   if (action.condition()) {
-  //     return action?.action()?.catch((err) => console.warn(err));
-  //   }
-  // };
+  const onPressItem = (item: string) => {
+    const action = actions.find((x) => x.name === item);
+    // console.log("pressed item", action);
+    if (action.condition()) {
+      return action?.action()?.catch((err) => console.warn(err));
+    }
+  };
 
-  // interface IActionPropsExtended extends IActionProps {
-  //   condition: () => boolean;
-  //   action: () => Promise<void>;
-  //   buttonSize: number;
-  // }
+  interface IActionPropsExtended extends IActionProps {
+    condition: () => boolean;
+    action: () => Promise<void>;
+    buttonSize: number;
+  }
 
-  // const actions: IActionPropsExtended[] = [
-  //   {
-  //     text: "Create Game",
-  //     icon: (
-  //       <Image
-  //         source={require("../assets/Icons/1x/plus.png")}
-  //         style={{
-  //           width: 50,
-  //           height: 50,
-  //         }}
-  //       />
-  //     ),
-  //     name: "create_game",
-  //     margin: 0,
-  //     color: "#25262b",
-  //     buttonSize: 65,
-  //     action: async () => {}, //navigator.navigate("CreateGameScreen"),
-  //     condition: () => true,
-  //   },
-  //   {
-  //     text: "Join Game",
-  //     icon: (
-  //       <Image
-  //         source={require("../assets/Icons/1x/plus.png")}
-  //         style={{
-  //           width: 50,
-  //           height: 50,
-  //           transform: [{ rotate: "45deg" }],
-  //         }}
-  //       />
-  //     ),
-  //     name: "join_game",
-  //     margin: 0,
-  //     color: "#25262b",
-  //     buttonSize: 65,
-  //     action: async () => {}, //navigator.navigate("JoinGameScreen"),
-  //     condition: () => true,
-  //   },
-  //   {
-  //     text: "Sign Out",
-  //     icon: (
-  //       <Image
-  //         source={require("../assets/Icons/1x/exclaim.png")}
-  //         style={{
-  //           width: 50,
-  //           height: 50,
-  //         }}
-  //       />
-  //     ),
-  //     name: "sign_out",
-  //     margin: 0,
-  //     color: "#25262b",
-  //     buttonSize: 65,
-  //     action: async () => {}, //signOut,
-  //     condition: () => true,
-  //   },
-  // ];
+  const actions: IActionPropsExtended[] = [
+    {
+      text: "Create Game",
+      icon: (
+        <Image
+          source={require("../assets/Icons/1x/plus.png")}
+          style={{
+            width: 50,
+            height: 50,
+          }}
+        />
+      ),
+      name: "create_game",
+      margin: 0,
+      color: "#25262b",
+      buttonSize: 65,
+      action: async () => {
+        const id = await createGame(
+          user.displayName.split(" ")[0] + "'s Game",
+          user
+        );
+        rootNavigation.navigate("GameRoot", {
+          screen: "ShareGameScreen",
+          params: {
+            gameId: id,
+          },
+          gameId: id,
+        });
+      }, //navigator.navigate("ShareGameScreen"),
+      condition: () => true,
+    },
+  ];
 
-  // const [open, setOpen] = useState(false);
+  const [fabOpen, setFabOpen] = useState(false);
 
   return (
     <ImageBackground
@@ -168,14 +149,14 @@ export const GameListScreen = () => {
           />
         )}
       />
-      {/* <FloatingAction
+      <FloatingAction
         floatingIcon={
           <Image
             source={require("../assets/Icons/1x/plus.png")}
             style={{
               width: 50,
               height: 50,
-              transform: [{ rotate: open ? "45deg" : "0deg" }],
+              transform: [{ rotate: fabOpen ? "45deg" : "0deg" }],
             }}
           />
         }
@@ -184,10 +165,10 @@ export const GameListScreen = () => {
         buttonSize={75}
         actions={actions as unknown as IActionProps[]}
         onPressItem={onPressItem}
-        onOpen={() => setOpen(true)}
-        onClose={() => setOpen(false)}
+        onOpen={() => setFabOpen(true)}
+        onClose={() => setFabOpen(false)}
         position={"right"}
-      /> */}
+      />
     </ImageBackground>
   );
 };

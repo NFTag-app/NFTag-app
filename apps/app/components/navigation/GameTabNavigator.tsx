@@ -14,7 +14,7 @@ import { LoadingScreen } from "../../screens/LoadingScreen";
 
 const GameTab = createBottomTabNavigator<GameTabParamList>();
 
-const GameTabNavigator = () => {
+const GameTabNavigator = (props) => {
   const game = useGame();
   const user = useUser();
 
@@ -25,7 +25,9 @@ const GameTabNavigator = () => {
         return (
           <GameTab.Screen
             name="ShareGameScreen"
-            component={ShareGameScreen}
+            children={(props) => (
+              <ShareGameScreen gameId={game.id} {...props} />
+            )}
             options={{
               title: "Share Game",
               ...GenericOptions.headerOptions,
@@ -135,19 +137,19 @@ const GameTabNavigator = () => {
       </>
     );
   };
-
   return (
-    <GameTab.Navigator initialRouteName="FeedScreen">
+    <GameTab.Navigator initialRouteName="FeedScreen" {...props}>
       {renderScreen()}
     </GameTab.Navigator>
   );
 };
 
-export const GameTabNavigatorRoot = ({ route }) => {
-  const gameId = route.params?.gameId;
+export const GameTabNavigatorRoot = (props) => {
+  const gameId = props.route.params?.gameId;
   return (
     <GameProvider gameId={gameId}>
-      <GameTabNavigator />
+      <GameTabNavigator {...props} />
     </GameProvider>
   );
+  // Tried passing props to GameTabNavigator to fix the problem
 };

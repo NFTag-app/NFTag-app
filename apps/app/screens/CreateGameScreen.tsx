@@ -33,7 +33,6 @@ export const CreateGameScreen = () => {
   }, []);
 
   const share = async () => {
-    console.log(0);
     try {
       const res = await Share.share({
         message:
@@ -62,6 +61,8 @@ export const CreateGameScreen = () => {
   const goToGame = async () => {
     if (!gameId) return;
     await rootNavigation.navigate("GameRoot", {
+      screen: "FeedScreen",
+      params: undefined,
       gameId: gameId,
     });
   };

@@ -34,7 +34,7 @@ export const HomeTabNavigator = () => {
           ...GenericOptions.tabBarOptions,
         }}
       />
-      <HomeTab.Screen
+      {/* <HomeTab.Screen
         name="CreateGame"
         component={CreateGameScreen}
         options={{
@@ -42,7 +42,7 @@ export const HomeTabNavigator = () => {
           ...GenericOptions.headerOptions,
           ...GenericOptions.tabBarOptions,
         }}
-      />
+      /> */}
       <HomeTab.Screen
         name="Settings"
         component={SettingsScreen}

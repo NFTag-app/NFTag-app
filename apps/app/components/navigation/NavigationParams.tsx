@@ -14,7 +14,7 @@ export type GameTabParamList = {
   FeedScreen: undefined;
   TagScreen: { tabHeight: number };
   TargetScreen: undefined;
-  ShareGameScreen: { gameId: string } | undefined;
+  ShareGameScreen: { gameId: string };
   GameSettingsScreen: undefined;
 };
 
@@ -22,7 +22,11 @@ export type GameTabParamList = {
 
 export type RootStackParamList = {
   HomeRoot: undefined;
-  GameRoot: { gameId: string } | undefined;
+  GameRoot: {
+    screen: keyof GameTabParamList | undefined;
+    params: { gameId: string } | undefined;
+    gameId: string;
+  };
 };
 
 export type HomeNavigationProps = NativeStackNavigationProp<HomeTabParamList>;
