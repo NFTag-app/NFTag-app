@@ -1,17 +1,18 @@
 import { useNavigation } from "@react-navigation/native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { startGame, useGame, useUser } from "client-sdk";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Image,
   ImageBackground,
-  Share,
   StyleSheet,
   useWindowDimensions,
+  View,
+  Text,
 } from "react-native";
 import { FloatingAction, IActionProps } from "react-native-floating-action";
 import { TagList } from "../../components/in-game-screen/tag-list";
 import { GameNavigationProps } from "../../components/navigation/NavigationParams";
+import { LoadingScreen } from "../LoadingScreen";
 
 const icon = require("../../assets/adaptive-icon.png");
 
@@ -36,6 +37,66 @@ export const FeedScreen = () => {
   const dims = useWindowDimensions();
   const [open, setOpen] = useState(false);
 
+  const gameHasEnoughPlayers = Object.keys(game.players ?? {}).length > 2;
+  const userIsGameAdmin = game.owner === user.uid;
+  const gameIsStartable =
+    userIsGameAdmin && !game.inProgress && gameHasEnoughPlayers;
+  const gameIsStarted = game.inProgress;
+
+  const AddPlayersToStartGame = () => {
+    if (!gameIsStarted && !gameIsStartable) {
+      return (
+        <LoadingScreen text={`You need at least 2 players to start! Tell them to use the Game Code to join: ${game.id}`}/>
+      );
+    }
+  }
+
+  const CapturedTagsWillShowHere = () => {
+    if (gameIsStarted && Object.keys(game.tags).length < 1) {
+      return (
+        <LoadingScreen text="Captured tags will appear here! Get busy!"/>
+      );
+    }
+  }
+
+  const StartedTagList = () => {
+    if (gameIsStarted && Object.keys(game?.tags).length > 0) {
+      return <TagList />;
+    }
+  };
+
+  //   <SafeAreaView
+  //   style={{
+  //     backgroundColor: "transparent",
+  //     flex: 1,
+  //     alignItems: "center",
+  //     justifyContent: "center",
+  //     flexDirection: "column",
+  //   }}
+  // >
+  //   <Text
+  //     style={{
+  //       color: "white",
+  //       fontSize: 20,
+  //       fontWeight: "500",
+  //     }}
+  //   >
+  //     {item === "NOITEMS"
+  //       ? "Nothing here yet..."
+  //       : "You've reached the end..."}
+  //   </Text>
+  //   <Image
+  //     resizeMode="center"
+  //     source={require("../../assets/Icons/1x/searching.png")}
+  //     style={{
+  //       width: 250,
+  //       height: 250,
+  //       alignSelf: "center",
+  //       backgroundColor: "rgba(0,0,0,0)",
+  //     }}
+  //   />
+  // </SafeAreaView>
+
   if (!game?.id) {
     return (
       <ImageBackground
@@ -51,8 +112,6 @@ export const FeedScreen = () => {
     );
   }
 
-  const userIsGameAdmin = game.owner === user.uid;
-  const gameIsActive = game.inProgress;
   interface IActionPropsExtended extends IActionProps {
     condition: () => boolean;
     action: () => Promise<void>;
@@ -82,7 +141,7 @@ export const FeedScreen = () => {
     // anyone can post anytime for now.
   };
 
-  const startGameAction = {
+  const startGameAction: IActionPropsExtended = {
     text: "Start Game",
     icon: (
       <Image
@@ -98,9 +157,12 @@ export const FeedScreen = () => {
     buttonSize: 65,
     position: 10,
     margin: 0,
-    action: async () =>
-      startGame(game.id, user, true).catch((err) => console.warn(err)),
-    condition: () => userIsGameAdmin && !gameIsActive,
+    action: async () => {
+      await startGame(game.id, user, true).catch((err) =>
+        console.log("FeedScreen.fab.startGame.error", err)
+      );
+    },
+    condition: () => gameIsStartable,
   };
 
   // const shareGameAction = {
@@ -132,17 +194,39 @@ export const FeedScreen = () => {
   //   condition: () => userIsGameAdmin && !gameIsActive,
   // };
 
-  const actions: IActionPropsExtended[] = [
-    yellAction.condition() ? yellAction : undefined,
-    // shareGameAction.condition() ? shareGameAction : undefined,
-    startGameAction.condition() ? startGameAction : undefined,
-  ].filter((f) => f) as IActionPropsExtended[];
+  const backAction: IActionPropsExtended = {
+    text: "Back",
+    position: 100,
+    icon: (
+      <Image
+        source={require("../../assets/Icons/1x/plus.png")}
+        style={{
+          width: 50,
+          height: 50,
+        }} />
+    ),
+    name: "back",
+    margin: 0,
+    color: "#25262b",
+    buttonSize: 65,
+    action: async () => gameNavigation.pop(),
+    condition: () => true,
+  };
 
-  const onPressItem = (item: string) => {
-    const action = actions.find((x) => x.name === item);
-    // console.log("pressed item", action);
-    if (action.condition()) {
-      return action.action().catch((err) => console.warn(err));
+
+  const actions: IActionPropsExtended[] = [/*yellAction, */ startGameAction, backAction].filter(
+    (f) => f.condition()
+  );
+
+  const onPressItem = async (item: string) => {
+    try {
+      const action = actions.find((x) => x.name === item);
+      if (action.condition()) {
+        console.log("FeedScreen.onPressItem.executing", item);
+        return action.action();
+      }
+    } catch (ex) {
+      console.log("FeedScreen.onPressItem.error", item, ex);
     }
   };
 
@@ -157,7 +241,10 @@ export const FeedScreen = () => {
         alignItems: "center",
       }}
     >
-      <TagList />
+      <AddPlayersToStartGame />
+      <CapturedTagsWillShowHere />
+      <StartedTagList />
+
       <FloatingAction
         floatingIcon={
           <Image
@@ -186,6 +273,6 @@ export const FeedScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "red",
+    backgroundColor: "transparent",
   },
 });

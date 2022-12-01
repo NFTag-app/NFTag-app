@@ -3,12 +3,13 @@ import {
   presentPaymentSheet,
 } from "@stripe/stripe-react-native";
 import { SetupParams } from "@stripe/stripe-react-native/lib/typescript/src/types/PaymentSheet";
+import { Unsubscribe } from "firebase/auth";
 import { child, get, getDatabase, ref, set, update } from "firebase/database";
 import {
   addDoc,
   collection,
   doc,
-  DocumentData,
+  DocumentReference,
   DocumentSnapshot,
   getDoc,
   getFirestore,
@@ -24,138 +25,192 @@ import {
   JoinGame,
   ListGames,
   PauseGame,
-  Player,
   RejectTag,
   SetTagState,
   StartGame,
   SubmitTag,
 } from "./types";
 
+//#region utils
+interface Subscription {
+  unsubscribe?: Unsubscribe;
+}
+export const subscribeNextOneSnapshot = async <DocumentData>(
+  docRef: DocumentReference<DocumentData>
+) => {
+  const sub: Subscription = { unsubscribe: undefined };
+  try {
+    return new Promise<DocumentSnapshot<DocumentData>>((resolve, reject) => {
+      sub.unsubscribe = onSnapshot(docRef, resolve, reject);
+    });
+  } finally {
+    const unsub = sub.unsubscribe;
+    if (unsub) {
+      unsub();
+    }
+  }
+};
+export const getDocumentSnapshot = async (
+  collection: string,
+  id: string
+) => {
+  console.log("Sdk.getSnapshotData", "collection", collection, "id", id);
+  const db = getDatabase();
+  const firestore = getFirestore();
+  const ref = doc(firestore, collection, id);
+  const snapshot = await getDoc(ref);
+  return { snapshot: snapshot.data() || undefined, ref, collection, id };
+};
+
+export const getDataRef = (path: string) => {
+  console.log("Sdk.getDataRef", "path", path);
+  const db = getDatabase();
+  return { ref: ref(db, path), db, path };
+};
+
+export const getDataSnapshot = async (path: string) => {
+  console.log("Sdk.getDataSnapshot", "path", path);
+  const { ref } = getDataRef(path);
+  const snapshot = await get(ref);
+  return { snapshot, ref, path };
+};
+
+export const getCollectionRef = async (collectionName: string, path: string) => {
+  console.log("Sdk.getCollectionRef", "collection", collectionName, "path", path);
+  const db = getFirestore();
+  return { db, collection: collection(db, collectionName, path), collectionName, path };
+}
+
+//#endregion
+
+interface PaymentSessionConfig {
+  customer: string;
+  ephemeralKeySecret: string;
+  paymentIntentClientSecret: string;
+}
+
 export const capturePayment = async (uid: string) => {
-  // return new Promise((resolve) => resolve(true));
   // add checkout session to customers checkout_sessions sub-collection
 
-  return new Promise((resolve, reject) => {
-    const db = getFirestore();
-    const docRef = collection(db, "customers", uid, "checkout_sessions");
+  // const { collection } = await getCollectionRef("customers", `${uid}/checkout_sessions`);
+  // const docRef = await addDoc(collection, {
+  //   client: "mobile",
+  //   mode: "payment",
+  //   amount: 499,
+  //   currency: "usd",
+  // });
 
-    addDoc(docRef, {
-      client: "mobile",
-      mode: "payment",
-      amount: 499,
-      currency: "usd",
-    }).then((docRef) => {
-      onSnapshot(docRef, async (doc) => {
-        const { customer, ephemeralKeySecret, paymentIntentClientSecret } =
-          doc.data() as any;
+  // const session = await getDataSnapshot(`customers/${uid}/checkout_sessions/${docRef.id}`);
+  // const sessionConfig = session.snapshot.val() as PaymentSessionConfig;
 
-        if (!customer || !ephemeralKeySecret || !paymentIntentClientSecret)
-          return;
+  // console.log('Sdk.capturePayment.presentingPayment');
+  // const result = await presentPayment(sessionConfig);
+  // console.log('Sdk.capturePayment.returningResult');
+  // return result;
+  return true;
+};
 
-        initPaymentSheet({
-          merchantDisplayName: "NFTag App",
-          customerId: customer,
-          testEnv: true,
-          customerEphemeralKeySecret: ephemeralKeySecret,
-          paymentIntentClientSecret: paymentIntentClientSecret,
-          applePay: {
-            merchantCountryCode: "US",
-          },
-          googlePay: {
-            merchantCountryCode: "US",
-          },
-        } as SetupParams).then(({ error }) => {
-          if (error) return reject(error);
+const presentPayment = async (config: PaymentSessionConfig) => {
+  if (
+    !config.customer ||
+    !config.ephemeralKeySecret ||
+    !config.paymentIntentClientSecret
+  ) {
+    return false;
+  }
 
-          presentPaymentSheet().then(({ error }) => {
-            if (error) return reject(error);
-            return resolve(true);
-          });
-        });
-      });
-    });
-  });
+  const paymentSheetResult = await initPaymentSheet({
+    merchantDisplayName: "NFTag App",
+    customerId: config.customer,
+    testEnv: true,
+    customerEphemeralKeySecret: config.ephemeralKeySecret,
+    paymentIntentClientSecret: config.paymentIntentClientSecret,
+    applePay: {
+      merchantCountryCode: "US",
+    },
+    googlePay: {
+      merchantCountryCode: "US",
+    }
+  } as SetupParams);
+
+  if (paymentSheetResult.error) {
+    throw paymentSheetResult.error;
+  }
+
+  const presetResult = await presentPaymentSheet();
+
+  if (presetResult.error) {
+    throw presetResult.error;
+  }
+  return true;
 };
 
 //#region Games
 
 export const createGame: CreateGame = async (name, owner) => {
-  const db = getDatabase();
-  const firestore = getFirestore();
-  const gameRef = ref(db, `games`);
+  console.log("Sdk.createGame: creating game for", name, owner.uid);
+  const { ref: gameRef } = getDataRef(`games`);
 
   const id = Math.floor(100000 + Math.random() * 900000).toString();
 
   // add game to user data
-  const userRef = doc(firestore, "customers", owner.uid);
-  getDoc(userRef)
-    .then((snapshot: DocumentSnapshot<DocumentData>) => {
-      setDoc(
-        userRef,
-        {
-          games: [...snapshot.data()?.games, id],
-        },
-        { merge: true }
-      );
-    })
-    .catch((error) => {
-      throw error;
-    });
+  const { snapshot, ref } = await getDocumentSnapshot('customers', owner.uid);
+  console.log("Sdk.createGame: userSnapshot.exists", !!snapshot);
 
-  return set(child(gameRef, id), {
+  await setDoc(
+    ref,
+    {
+      games: [...snapshot?.games, id],
+    },
+    { merge: true }
+  );
+
+  await set(child(gameRef, id), {
     id,
     name,
     inProgress: false,
     owner: owner.uid,
     players: {},
     tags: {},
-  } as Game).then(() => {
-    return id;
-  });
+  } as Game);
+
+  return id;
 };
 
 export const joinGame: JoinGame = async (id, user, image) => {
-  return new Promise(async (resolve, reject) => {
-    if ((await capturePayment(user.uid)) !== true)
-      return reject(new Error("Payment failed"));
+  const paymentResult = await capturePayment(user.uid);
+  if (!paymentResult) {
+    throw new Error("Payment failed");
+  }
 
-    const db = getDatabase();
-    const firestore = getFirestore();
+  // ensure game exists
+  const { snapshot: gameSnapshot } = await getDataSnapshot(`games/${id}`);
+  if (!gameSnapshot.exists()) {
+    throw new Error("Game does not exist");
+  }
+  // add game to user data
+  const { snapshot: userSnapshot, ref: userRef } = await getDocumentSnapshot('customers', user.uid);
 
-    // ensure game exists
-    get(ref(db, `games/${id}`)).then((snapshot) => {
-      if (!snapshot.exists()) return reject(new Error("Game does not exist"));
+  await setDoc(
+    userRef,
+    {
+      games: [...userSnapshot?.games, id],
+    },
+    { merge: true }
+  );
 
-      // add game to user data
-      const userRef = doc(firestore, "customers", user.uid);
-      getDoc(userRef)
-        .then((snapshot: DocumentSnapshot<DocumentData>) => {
-          setDoc(
-            userRef,
-            {
-              games: [...snapshot.data()?.games, id],
-            },
-            { merge: true }
-          );
-        })
-        .catch((error) => {
-          return reject(error);
-        });
-
-      // add player to game data
-      const playersRef = ref(db, `games/${id}/players`);
-      const player = {
-        id: user.uid,
-        name: user.displayName,
-        image,
-        active: false,
-        target: "",
-        tags: 0,
-      };
-      set(child(playersRef, user.uid), player).catch((e) => reject(e));
-      return resolve(snapshot.val());
-    });
-  });
+  // add player to game data
+  const { ref: playersRef } = getDataRef(`games/${id}/players`);
+  const player = {
+    id: user.uid,
+    name: user.displayName,
+    image,
+    active: false,
+    target: "",
+    tags: 0,
+  };
+  await set(child(playersRef, user.uid), player);
+  return gameSnapshot.val();
 };
 
 export const startGame: StartGame = async (
@@ -163,142 +218,102 @@ export const startGame: StartGame = async (
   user,
   activatePlayers = true
 ) => {
-  return new Promise((resolve, reject) => {
-    const db = getDatabase();
-    const gameRef = ref(db, `games/${id}`);
-    get(gameRef)
-      .then(async (snapshot) => {
-        if (snapshot.val().owner !== user.uid)
-          return reject(new Error("Only the owner can start the game"));
-        else {
-          await update(gameRef, {
-            inProgress: true,
-            winner: null,
-          });
+  const { snapshot, ref: gameRef } = await getDataSnapshot(`games/${id}`);
 
-          // set all players to active state
-          const playersRef = ref(db, `games/${id}/players`);
-          await get(playersRef).then(async (snapshot) => {
-            const players = snapshot.val();
-
-            console.log("players", players);
-
-            const playerIds = Object.keys(players);
-            const targets = shuffle(playerIds);
-
-            // assign each player their target from the targets map
-            targets.forEach((value, key) => {
-              players[key].target = value;
-              players[key].active = activatePlayers;
-              players[key].tags = 0;
-            });
-
-            await update(ref(db, `games/${id}/players`), players);
-          });
-
-          return resolve(snapshot.val());
-        }
-      })
-      .catch((error) => {
-        return reject(error);
-      });
+  if (snapshot.val().owner !== user.uid) {
+    throw new Error("Only the owner can start the game");
+  }
+  await update(gameRef, {
+    inProgress: true,
+    winner: null,
   });
+
+  // set all players to active state
+  const { snapshot: playerSnapshot, ref: playersRef } = await getDataSnapshot(`games/${id}/players`);
+  const players = playerSnapshot.val();
+
+  console.log("players", players);
+
+  const playerIds = Object.keys(players);
+  const targets = shuffle(playerIds);
+
+  // assign each player their target from the targets map
+  targets.forEach((value, key) => {
+    players[key].target = value;
+    players[key].active = activatePlayers;
+    players[key].tags = 0;
+  });
+
+  await update(playersRef, players);
+  return snapshot.val();
 };
 
 export const pauseGame: PauseGame = async (id, user) => {
-  return new Promise((resolve, reject) => {
-    const db = getDatabase();
-    const gameRef = ref(db, `games/${id}`);
-    get(gameRef)
-      .then((snapshot) => {
-        if (snapshot.val().owner !== user.uid)
-          return reject(new Error("Only the owner can pause the game"));
-        else {
-          update(gameRef, {
-            inProgress: false,
-          });
-          resolve(snapshot.val());
-        }
-      })
-      .catch((error) => {
-        return reject(error);
-      });
+  const { snapshot, ref } = await getDataSnapshot(`games/${id}`);
+
+  if (snapshot.val().owner !== user.uid) {
+    throw new Error("Only the owner can pause the game");
+  }
+
+  await update(ref, {
+    inProgress: false,
   });
+
+  return snapshot.val();
 };
 
 export const listGames: ListGames = async (user) => {
-  return new Promise((resolve, reject) => {
-    const db = getDatabase();
-    const firestore = getFirestore();
+  const { snapshot } = await getDocumentSnapshot("customers", user.uid);
+  const games = snapshot?.games;
+  if (!games) {
+    console.log("Sdk.listGames", "no games for user", user.uid);
+    return [];
+  }
 
-    const userRef = doc(firestore, "customers", user.uid);
-    getDoc(userRef)
-      .then((snapshot: DocumentSnapshot<DocumentData>) => {
-        const games = snapshot.data()?.games;
-        if (!games) return reject(new Error("No games found"));
-
-        const gamePromises = games.map((gameId: string) =>
-          get(ref(db, `games/${gameId}`))
-        );
-        Promise.all(gamePromises)
-          .then((snapshots) => {
-            const games = snapshots.map((snapshot) => snapshot.val());
-            resolve(games);
-          })
-          .catch((error) => {
-            return reject(error);
-          });
-      })
-      .catch((error) => {
-        return reject(error);
-      });
-  });
+  const gamePromises = games.map(async (gameId: string) => (await getDataSnapshot(`games/${gameId}`))?.snapshot);
+  const snapshots = await Promise.all(gamePromises);
+  return snapshots.map((snapshot) => snapshot.val());
 };
 
 //#endregion
 
 //#region Tags
 export const submitTag: SubmitTag = async (game, user, target, image) => {
-  return new Promise((resolve, reject) => {
-    const db = getDatabase();
-    const tagRef = ref(db, `games/${game.id}/tags`);
+  const { ref } = getDataRef(`games/${game.id}/tags`);
 
-    const id = v4();
+  const id = v4();
 
-    const tag = {
-      id,
-      timestamp: new Date().getTime(),
-      image,
-      player: user.uid,
-      target: target.id,
-      approved: {
-        approved: true, // auto approve for now
-        timestamp: new Date().getTime(), // auto approve for now
-      },
-    };
+  const tag = {
+    id,
+    timestamp: new Date().getTime(),
+    image,
+    player: user.uid,
+    target: target.id,
+    approved: {
+      approved: true, // auto approve for now
+      timestamp: new Date().getTime(), // auto approve for now
+    },
+  };
 
-    set(child(tagRef, id), tag).catch((e) => {
-      return reject(e);
-    });
-    return resolve(tag);
-  });
+  await set(child(ref, id), tag);
+  return tag;
 };
 
 export const setTagState: SetTagState = async (game, user, tag, approved) => {
-  return new Promise((resolve, reject) => {
-    if (game.owner !== user.uid)
-      return reject(new Error("Only the owner can approve tags"));
+  if (game.owner !== user.uid) {
+    throw new Error("Only the owner can approve tags");
+  }
 
-    const db = getDatabase();
-    const tagRef = ref(db, `games/${game.id}/tags/${tag.id}`);
+  const { ref } = getDataRef(`games/${game.id}/tags/${tag.id}`);
 
-    update(tagRef, {
-      approved: {
-        approved,
-        timestamp: new Date().getTime(),
-      },
-    });
+  await update(ref, {
+    approved: {
+      approved,
+      timestamp: new Date().getTime(),
+    },
   });
+
+  return tag;
 };
 
 export const approveTag: ApproveTag = async (game, user, tag) =>

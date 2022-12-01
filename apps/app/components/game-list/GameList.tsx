@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { FlatList, View, Text, StyleSheet } from "react-native";
 import { Game } from "client-sdk/dist/types";
 import { useGames } from "client-sdk";
+import { LoadingScreen } from "../../screens/LoadingScreen";
 
 const GameFlatList = ({ parentWidth, styles, games, renderItem }) =>
   parentWidth ? (
@@ -13,7 +14,13 @@ const GameFlatList = ({ parentWidth, styles, games, renderItem }) =>
   ) : undefined;
 
 export const GameList = ({ parentWidth }:{ parentWidth:number }) => {
-  const games: Game[] = useGames();
+  const { games, loaded } = useGames();
+
+  if (!loaded) {
+    return (
+      <LoadingScreen />
+    )
+  }
 
   const renderItem = ({ item, index, separators }) => (
     <View style={{height: 200}}>

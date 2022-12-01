@@ -57,13 +57,20 @@ export const JoinGameScreen = ({ tabHeight }: { tabHeight: number }) => {
 
   const saveCallback = async (uri: string, width: number, height: number) => {
     try {
-      const game = await joinGame(gameId, user, { uri: uri, width, height });
-      await rootNavigation.navigate("GameRoot", {
-        // NAVIGATION STILL ISN'T WORKING FOR SOME REASON... SOMETHING TO DO WITH joinGame?
+      console.log('JoinGameScreen.saveCallback.joiningGame', user.uid, gameId, uri.split('x')[0]);
+      await joinGame(gameId, user, { uri: uri, width, height });
+      console.log('JoinGameScreen.saveCallback.navigatingBack', uri, user.uid, gameId);
+      rootNavigation.popToTop();
+      rootNavigation.navigate("GameRoot", {
+        screen: 'FeedScreen',
+        params: {
+          gameId: gameId
+        },
         gameId: gameId,
       });
     } catch (e) {
-      await alert(
+      console.log('JoinGameScreen.saveCallback.failedToJoinGameOrNav', e);
+      alert(
         "Failed to join game! Check that the game code you entered was correct."
       );
     }

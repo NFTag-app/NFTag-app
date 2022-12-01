@@ -27,9 +27,9 @@ const UserProvider: React.FC<{
       (snapshot) => {
         if (!snapshot.exists()) return;
 
-        //console.log("data", snapshot.data());
-
         const data = snapshot.data();
+
+        console.log("UserProvider.onSnapshot", data);
 
         if (!("games" in data!)) {
           data!["games"] = [];
@@ -40,9 +40,9 @@ const UserProvider: React.FC<{
           ...data,
         } as UserData);
       },
-      console.error
+      (error) => console.log(`UserProvider.onSnapshot.error`, error)
     );
-  }, [ready]);
+  }, [ready], );
 
   useEffect(() => {
     return auth.onAuthStateChanged((user) => {
@@ -55,7 +55,7 @@ const UserProvider: React.FC<{
 
 export const signOut = () => {
   const auth = getAuth();
-  auth.signOut();
+  return auth.signOut();
 };
 
 export default UserProvider;
@@ -63,14 +63,20 @@ export default UserProvider;
 export const useGames = () => {
   const user = useUser();
   const [games, setGames] = useState<Game[]>([]);
+  const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     if (!user) return;
 
-    listGames(user).then((games) => setGames(games));
+    listGames(user)
+      .then((games) => {
+        setGames(games);
+        setLoaded(true);
+      })
+      .catch(error => console.log('failed to list games for user', error));
   }, [user]);
 
-  return games;
+  return { games, loaded };
 };
 
 export const useUser = () => {

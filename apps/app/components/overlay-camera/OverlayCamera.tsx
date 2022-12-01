@@ -31,7 +31,7 @@ export const OverlayCamera = ({
   cameraType: CameraType;
   isNft: boolean;
   nftTitle: string | undefined;
-  saveCallback: (uri: string, width: number, height: number) => void;
+  saveCallback: (uri: string, width: number, height: number) => Promise<void>;
   captureOverlay: (
     topMargin: number,
     bottomMargin: number
@@ -133,35 +133,47 @@ export const OverlayCamera = ({
   const takePicture = async () => {
     if (!camRef.current) return;
     const data = await camRef.current.takePictureAsync();
-    await setPhotoData(data);
+    setPhotoData(data);
     // camRef.current.pausePreview();
   };
   const save = async () => {
-    if (snapBoxRef.current && photoData) {
-      const capUri = await captureRef(snapBoxRef, {
-        result: "data-uri",
-      });
-      const scaledRes = await manipulateAsync(
-        capUri,
-        [
-          {
-            resize: {
-              width: photoData.width / 4,
-              height: photoData.height / 4,
+    try {
+      console.log('OverlayCamera.save');
+      if (snapBoxRef.current && photoData) {
+        const capUri = await captureRef(snapBoxRef, {
+          result: "data-uri",
+        });
+        const scaledRes = await manipulateAsync(
+          capUri,
+          [
+            {
+              resize: {
+                width: photoData.width / 4,
+                height: photoData.height / 4,
+              },
             },
-          },
-        ],
-        { format: SaveFormat.PNG, base64: true }
-      );
-      // if (camRef.current) {
-      //   await camRef.current.resumePreview();
-      // }
-      await setPhotoData(null);
-      await saveCallback(
-        "data:image/png;base64," + scaledRes.base64,
-        scaledRes.width,
-        scaledRes.height
-      );
+          ],
+          { format: SaveFormat.PNG, base64: true }
+        );
+
+        // if (camRef.current) {
+        //   await camRef.current.resumePreview();
+        // }
+        setPhotoData(null);
+
+        console.log('OverlayCamera.save.prepared');
+        await saveCallback(
+          "data:image/png;base64," + scaledRes.base64,
+          scaledRes.width,
+          scaledRes.height
+        );
+        console.log('OverlayCamera.save.callbackComplete');
+      } else {
+        console.log('OverlayCamera.save.notReady');
+      }
+    } catch (ex) {
+      console.log('OverlayCamera.save.error', ex);
+      alert(`Oops! That didn't work. Please try again`);
     }
   };
   const retake = async () => {
