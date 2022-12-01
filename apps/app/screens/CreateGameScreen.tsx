@@ -1,5 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { createGame, useUser } from "client-sdk";
+import { UserData } from "client-sdk/dist/types";
 import React, { useEffect, useState } from "react";
 import {
   ImageBackground,
@@ -14,6 +15,16 @@ import {
 import { RootNavigationProps } from "../components/navigation/NavigationParams";
 import { CommonStyles } from "../styles/CommonStyles"; //https://www.nftag.app/invite.html?from=owner&game=000000
 
+const createGameEffect = async (gameId: string, owner: UserData, setGameId: (gameId: string) => void) => {
+  if (!gameId) {
+    const id = await createGame(
+      owner.displayName.split(" ")[0] + "'s Game",
+      owner
+    );
+    setGameId(id);
+  }
+} 
+
 export const CreateGameScreen = () => {
   const rootNavigation = useNavigation<RootNavigationProps>();
   const owner = useUser();
@@ -21,15 +32,8 @@ export const CreateGameScreen = () => {
   const [gameId, setGameId] = useState("");
 
   useEffect(() => {
-    (async () => {
-      if (!gameId) {
-        const id = await createGame(
-          owner.displayName.split(" ")[0] + "'s Game",
-          owner
-        );
-        await setGameId(id);
-      }
-    })();
+    createGameEffect(gameId, owner, setGameId)
+      .catch(ex => console.log(`CreateGameScreen.createGame.error`, ex.message));
   }, []);
 
   const share = async () => {
