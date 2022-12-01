@@ -1,6 +1,6 @@
 import { ImageBackground, useWindowDimensions, Text } from "react-native";
 
-export const LoadingScreen = () => {
+export const LoadingScreen = ({ text = 'Loading...' }: { text?: string }) => {
   const dims = useWindowDimensions();
 
   return (
@@ -15,7 +15,7 @@ export const LoadingScreen = () => {
         justifyContent: "center",
       }}
     >
-      <Text style={{ color: "white", fontSize: 24 }}>Loading...</Text>
+      <Text style={{ alignSelf: 'center', textAlign: 'center', width: '90%', color: "white", fontSize: 24 }}>{text}</Text>
     </ImageBackground>
   );
 };

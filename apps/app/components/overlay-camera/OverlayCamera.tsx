@@ -197,7 +197,10 @@ export const OverlayCamera = ({
           type={cameraType}
           ratio={camRatio}
           onCameraReady={cameraReady}
-          onMountError={(e) => console.log(e)}
+          onMountError={(e) => {
+            console.log('OverlayCamera.renderCamera.MountError', e);
+            alert('Oops! Error loading camera. Please restart and try again!');
+          }}
         />
       );
     }

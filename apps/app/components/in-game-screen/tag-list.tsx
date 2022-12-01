@@ -73,7 +73,7 @@ export const TagList = () => {
     tagIds.reverse();
   }
 
-  const RenderItem = ({ item, index, separators }) => {
+  const RenderItem = ({ item }) => {
     const tag = tags.find((t) => t.id === item);
     const size = newSize(
       290,

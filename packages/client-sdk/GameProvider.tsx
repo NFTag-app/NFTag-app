@@ -45,7 +45,7 @@ export const usePlayer = () => {
 
   if (!game || !user) return null;
 
-  //console.log("player", game.players[user.uid]);
+  console.log("player", game.players[user.uid]);
 
   return game.players[user.uid];
 };
@@ -74,7 +74,7 @@ export const useTarget = () => {
 
   if (!user || !game || !player) return null;
 
-  //console.log("target", game.players[player.target]);
+  console.log("target", game.players[player.target]);
 
   return game.players[player.target];
 };

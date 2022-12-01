@@ -20,7 +20,7 @@ const GameTabNavigator = (props) => {
 
   const renderOwnerOnlyTabs = () => {
     const renderOwnerOnlyPreStart = () => {
-      console.log(!game?.inProgress);
+      console.log('GameTabNavigator.renderOnlyPreStart.gameInProgress?', !game?.inProgress);
       if (!game?.inProgress) {
         return (
           <GameTab.Screen
