@@ -10,43 +10,35 @@ const UserProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const [user, setUser] = useState<UserData | null>(null);
-  const [ready, setReady] = useState<boolean>(false);
   const auth = getAuth();
   const db = getFirestore();
 
   useEffect(() => {
-    if (!user) return;
-    setReady(true);
-  }, [user]);
-
-  useEffect(() => {
-    if (!ready) return;
-
-    return onSnapshot(
-      doc(collection(db, "customers"), user!.uid),
-      (snapshot) => {
-        if (!snapshot.exists()) return;
-
-        const data = snapshot.data();
-
-        console.log("UserProvider.onSnapshot", data);
-
-        if (!("games" in data!)) {
-          data!["games"] = [];
-        }
-
-        setUser({
-          ...user,
-          ...data,
-        } as UserData);
-      },
-      (error) => console.log(`UserProvider.onSnapshot.error`, error)
-    );
-  }, [ready]);
-
-  useEffect(() => {
     return auth.onAuthStateChanged((user) => {
-      setUser(user as UserData);
+      if (user) {
+        return onSnapshot(
+          doc(collection(db, "customers"), user!.uid),
+          (snapshot) => {
+            if (!snapshot.exists()) return;
+
+            const data = snapshot.data();
+
+            console.log("UserProvider.onSnapshot", data);
+
+            if (!("games" in data!)) {
+              data!["games"] = [];
+            }
+
+            setUser({
+              ...user,
+              ...data,
+            } as UserData);
+          },
+          (error) => console.log(`UserProvider.onSnapshot.error`, error)
+        );
+      } else {
+        setUser(null);
+      }
     });
   }, []);
 
