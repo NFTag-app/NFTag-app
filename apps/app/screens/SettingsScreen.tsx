@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { signOut } from "client-sdk";
+import { signOut, useUser } from "client-sdk";
 import {
   TouchableOpacity,
   Text,
@@ -11,6 +11,7 @@ import {
 
 export const SettingsScreen = () => {
   const dims = useWindowDimensions();
+  const user = useUser();
   //const rootNavigation = useNavigation<RootNavigationProps>();
 
   const _logOut = async () => {
