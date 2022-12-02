@@ -1,10 +1,16 @@
 import { StripeProvider } from "@stripe/stripe-react-native";
 import { UserProvider } from "client-sdk";
 import React from "react";
-import { LogBox, View, StyleSheet } from "react-native";
+import { LogBox } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { RootStackNavigator } from "./components/navigation/RootStackNavigator";
+
+import { decode } from "base-64";
+
+if (typeof atob === "undefined") {
+  global.atob = decode;
+}
 
 export default function App() {
   LogBox.ignoreLogs([

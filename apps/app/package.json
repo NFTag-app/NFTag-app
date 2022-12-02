@@ -19,6 +19,7 @@
 		"@react-navigation/stack": "^6.3.4",
 		"@stripe/stripe-react-native": "0.19.0",
 		"@types/react-native": "^0.70.6",
+		"base-64": "^1.0.0",
 		"client-sdk": "*",
 		"expo": "^47.0.3",
 		"expo-camera": "~13.1.0",
