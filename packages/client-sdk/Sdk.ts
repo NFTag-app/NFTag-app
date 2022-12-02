@@ -318,7 +318,7 @@ export const submitTag: SubmitTag = async (game, user, target, image) => {
 
   const storageRef = getStorageRef(id);
 
-  return (await uploadString(storageRef, image.uri, "data_url").then(
+  return (await uploadString(storageRef, image.uri, "base64").then(
     async (result: UploadResult) => {
       console.log("upload complete");
       const tag = {
