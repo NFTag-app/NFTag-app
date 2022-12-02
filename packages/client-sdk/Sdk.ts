@@ -6,7 +6,6 @@ import { SetupParams } from "@stripe/stripe-react-native/lib/typescript/src/type
 import { Unsubscribe } from "firebase/auth";
 import { child, get, getDatabase, ref, set, update } from "firebase/database";
 import {
-  addDoc,
   collection,
   doc,
   DocumentReference,
@@ -171,7 +170,8 @@ export const createGame: CreateGame = async (name, owner) => {
   await setDoc(
     ref,
     {
-      games: [...snapshot?.games, id],
+      // games: [...snapshot?.games, id],
+      ownedGame: id,
     },
     { merge: true }
   );
@@ -208,7 +208,8 @@ export const joinGame: JoinGame = async (id, user, image) => {
   await setDoc(
     userRef,
     {
-      games: [...userSnapshot?.games, id],
+      // games: [...userSnapshot?.games, id],
+      currentGame: id,
     },
     { merge: true }
   );
