@@ -15,6 +15,13 @@ import {
   onSnapshot,
   setDoc,
 } from "firebase/firestore";
+import {
+  getDownloadURL,
+  getStorage,
+  ref as sRef,
+  UploadResult,
+  uploadString,
+} from "firebase/storage";
 import { v4 } from "uuid";
 import { shuffle } from "./shuffle";
 import {
@@ -28,6 +35,7 @@ import {
   SetTagState,
   StartGame,
   SubmitTag,
+  Tag,
 } from "./types";
 
 //#region utils
@@ -62,6 +70,11 @@ export const getDataRef = (path: string) => {
   console.log("Sdk.getDataRef", "path", path);
   const db = getDatabase();
   return { ref: ref(db, path), db, path };
+};
+
+export const getStorageRef = (path: string) => {
+  const storage = getStorage();
+  return sRef(storage, path);
 };
 
 export const getDataSnapshot = async (path: string) => {
@@ -303,20 +316,30 @@ export const submitTag: SubmitTag = async (game, user, target, image) => {
 
   const id = v4();
 
-  const tag = {
-    id,
-    timestamp: new Date().getTime(),
-    image,
-    player: user.uid,
-    target: target.id,
-    approved: {
-      approved: true, // auto approve for now
-      timestamp: new Date().getTime(), // auto approve for now
-    },
-  };
+  const storageRef = getStorageRef(id);
 
-  await set(child(ref, id), tag);
-  return tag;
+  return (await uploadString(storageRef, image.uri, "data_url").then(
+    async (result: UploadResult) => {
+      console.log("upload complete");
+      const tag = {
+        id,
+        timestamp: new Date().getTime(),
+        image: {
+          ...image,
+          uri: await getDownloadURL(result.ref),
+        },
+        player: user.uid,
+        target: target.id,
+        approved: {
+          approved: true, // auto approve for now
+          timestamp: new Date().getTime(), // auto approve for now
+        },
+      };
+
+      await set(child(ref, id), tag);
+      return { tag };
+    }
+  )) as Tag;
 };
 
 export const setTagState: SetTagState = async (game, user, tag, approved) => {
