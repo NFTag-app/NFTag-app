@@ -26,15 +26,16 @@ export type RootStackParamList = {
   Login: undefined;
   GameRoot: {
     screen: keyof GameTabParamList | undefined;
-    params: { gameId: string } | undefined;
     gameId: string;
   };
   OwnedGameRoot: {
     screen: keyof OwnedGameTabParamList | undefined;
-    params: { gameId: string } | undefined;
     gameId: string;
   };
-  HomeRoot: undefined;
+  HomeRoot: {
+    screen: keyof HomeTabParamList | undefined;
+    gameId: string;
+  };
 };
 
 export type HomeNavigationProps = NativeStackNavigationProp<HomeTabParamList>;

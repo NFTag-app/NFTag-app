@@ -42,7 +42,7 @@ const UserProvider: React.FC<{
       },
       (error) => console.log(`UserProvider.onSnapshot.error`, error)
     );
-  }, [ready], );
+  }, [ready]);
 
   useEffect(() => {
     return auth.onAuthStateChanged((user) => {
@@ -73,7 +73,7 @@ export const useGames = () => {
         setGames(games);
         setLoaded(true);
       })
-      .catch(error => console.log('failed to list games for user', error));
+      .catch((error) => console.log("failed to list games for user", error));
   }, [user]);
 
   return { games, loaded };

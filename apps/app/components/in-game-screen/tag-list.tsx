@@ -42,7 +42,7 @@ const LikeButton = () => {
     <TouchableOpacity
       onPress={() => setLiked(!liked)}
       style={{
-        backgroundColor: liked ? "#1a1b1e" : "#25262b",
+        backgroundColor: "#25262b",
         borderRadius: 8,
         padding: 10,
         marginLeft: 5,
@@ -57,7 +57,40 @@ const LikeButton = () => {
   );
 };
 
-export const TagList = () => {
+const VerifyIcon = ({ checked }) => {
+  return (
+    <View
+      style={{
+        backgroundColor: "#25262b",
+        borderRadius: 8,
+        padding: 10,
+        marginRight: 5,
+      }}
+    >
+      <FontAwesome
+        name="check"
+        size={24}
+        color={checked ? "#0377fc" : "#7d7d7d"}
+      />
+    </View>
+  );
+};
+const VerifyButton = () => {
+  const [checked, setChecked] = useState(false);
+
+  return (
+    <TouchableOpacity
+      onPress={() => setChecked(!checked)}
+      style={{
+        backgroundColor: "#25262b",
+      }}
+    >
+      <VerifyIcon checked={checked} />
+    </TouchableOpacity>
+  );
+};
+
+export const TagList = ({ isAdmin }: { isAdmin: boolean }) => {
   const tags = useTags();
   const dims = useWindowDimensions();
   const players = usePlayers();
@@ -221,13 +254,6 @@ export const TagList = () => {
             }}
           >
             <LikeButton />
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "flex-end",
-              }}
-            ></View>
           </View>
         </View>
       );
@@ -274,110 +300,100 @@ export const TagList = () => {
       const targetName = players![tag.target].name;
       const targetImage = players![tag.target].name;
 
-      return (
-        <View
-          style={{
-            ...CommonStyles.container,
-            width: dims.width * 0.9,
-            height: 350,
-            backgroundColor: "#25262b",
-            borderColor: "#1a1b1e",
-            borderWidth: 1,
-            borderRadius: 10,
-            justifyContent: "flex-start",
-          }}
-        >
+      if (isAdmin || tag.approved) {
+        return (
           <View
             style={{
-              flexDirection: "row",
-              borderBottomWidth: 1,
+              ...CommonStyles.container,
               width: dims.width * 0.9,
-              height: 60,
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingHorizontal: 15,
-              borderBottomColor: "#7d7d7d",
-            }}
-          >
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "flex-start",
-              }}
-            >
-              <Image
-                source={{
-                  uri: players[tag.player].image.uri,
-                }}
-                style={{
-                  width: 40,
-                  height: 40,
-                  marginRight: 10,
-                  borderRadius: 20,
-                  borderWidth: 1,
-                  borderColor: "#7d7d7d",
-                }}
-              />
-              <Text
-                style={{
-                  color: "#C1C2C5",
-                  fontWeight: "600",
-                  fontSize: 18,
-                  paddingVertical: 20,
-                }}
-              >
-                {players[tag.player].name}
-              </Text>
-            </View>
-            <Text
-              style={{
-                fontSize: 10,
-                color: "#7d7d7d",
-              }}
-            >
-              {new Date(tag.timestamp).toLocaleString()}
-            </Text>
-          </View>
-          <View
-            style={{
-              width: dims.width * 0.9,
-              height: 240,
-              overflow: "hidden",
-            }}
-          >
-            <ImageFullscreen />
-          </View>
-          <View
-            style={{
-              height: 50,
-              width: dims.width * 0.9,
-              flexDirection: "row",
-              alignItems: "center",
+              height: 350,
+              backgroundColor: "#25262b",
+              borderColor: "#1a1b1e",
+              borderWidth: 1,
+              borderRadius: 10,
               justifyContent: "flex-start",
             }}
           >
-            <LikeButton />
             <View
               style={{
                 flexDirection: "row",
+                borderBottomWidth: 1,
+                width: dims.width * 0.9,
+                height: 60,
                 alignItems: "center",
-                justifyContent: "flex-end",
+                justifyContent: "space-between",
+                paddingHorizontal: 15,
+                borderBottomColor: "#7d7d7d",
               }}
             >
-              {/* <ApprovalButton />
-              <ApprovalButton /> */}
-              {/* <RejectionButton /> */}
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                }}
+              >
+                <Image
+                  source={{
+                    uri: players[tag.player].image.uri,
+                  }}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    marginRight: 10,
+                    borderRadius: 20,
+                    borderWidth: 1,
+                    borderColor: "#7d7d7d",
+                  }}
+                />
+                <Text
+                  style={{
+                    color: "#C1C2C5",
+                    fontWeight: "600",
+                    fontSize: 18,
+                    paddingVertical: 20,
+                  }}
+                >
+                  {players[tag.player].name}
+                </Text>
+              </View>
+              <Text
+                style={{
+                  fontSize: 10,
+                  color: "#7d7d7d",
+                }}
+              >
+                {new Date(tag.timestamp).toLocaleString()}
+              </Text>
+            </View>
+            <View
+              style={{
+                width: dims.width * 0.9,
+                height: 240,
+                overflow: "hidden",
+              }}
+            >
+              <ImageFullscreen />
+            </View>
+            <View
+              style={{
+                height: 50,
+                width: dims.width * 0.9,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <LikeButton />
+              {isAdmin && <VerifyButton />}
+              {!isAdmin && <VerifyIcon checked={true} />}
             </View>
           </View>
-        </View>
-      );
+        );
+      }
     }
-    return (
-      <View style={CommonStyles.container}>
-        <Text>Error</Text>
-      </View>
-    );
+
+    return undefined;
   };
 
   // console.log(tagIds);

@@ -10,6 +10,8 @@ import { HomeTabNavigator } from "./HomeTabNavigator";
 import { GameTabNavigator } from "./GameTabNavigator";
 import { OwnedGameTabNavigator } from "./OwnedGameTabNavigator";
 import { GenericOptions } from "./Styles";
+import { LoadingScreen } from "../../screens/LoadingScreen";
+import { useState } from "react";
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
@@ -33,6 +35,10 @@ export const RootStackNavigator = () => {
     return <LoginScreen />;
   }
 
+  // if (user?.uid && !user?.loggedIn) {
+  //   return <LoadingScreen text="Yelling at the server..." />; // Could have just said "loading" but this seems cooler?
+  // }
+
   return (
     <NavigationContainer
       theme={{
@@ -53,7 +59,7 @@ export const RootStackNavigator = () => {
             component={OwnedGameTabNavigator}
             options={{ headerShown: false }}
           />
-        ) : user?.email ? (
+        ) : user?.uid ? (
           <RootStack.Screen
             name="HomeRoot"
             component={HomeTabNavigator}

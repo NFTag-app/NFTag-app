@@ -66,13 +66,13 @@ export const JoinGameScreen = ({ tabHeight }: { tabHeight: number }) => {
       await joinGame(gameId, user, { uri: uri, width, height });
       await console.log(
         "JoinGameScreen.saveCallback.navigatingBack",
-        uri,
+        uri.split("x")[0],
         user.uid,
         gameId
       );
+      //await rootNavigation.popToTop();
       await rootNavigation.navigate("GameRoot", {
         screen: "FeedScreen",
-        params: undefined,
         gameId: gameId,
       });
     } catch (e) {
@@ -92,6 +92,7 @@ export const JoinGameScreen = ({ tabHeight }: { tabHeight: number }) => {
         saveCallback={saveCallback}
         captureOverlay={() => undefined}
         preCaptureOverlay={preCaptureOverlay}
+        loadingScreenText={"Loading..."}
         bottomInset={tabHeight}
         screenReady={!!user}
         backShown={false}

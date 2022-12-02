@@ -25,9 +25,6 @@ export const CreateGameScreen = () => {
       );
       await rootNavigation.navigate("OwnedGameRoot", {
         screen: "ShareGameScreen",
-        params: {
-          gameId: id,
-        },
         gameId: id,
       });
     } catch (ex) {

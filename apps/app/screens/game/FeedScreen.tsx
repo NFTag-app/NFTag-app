@@ -37,7 +37,7 @@ export const FeedScreen = () => {
   const dims = useWindowDimensions();
   const [open, setOpen] = useState(false);
 
-  const gameHasEnoughPlayers = Object.keys(game?.players ?? {}).length > 2;
+  const gameHasEnoughPlayers = Object.keys(game?.players ?? {}).length >= 2;
   const userIsGameAdmin = game?.owner === user?.uid;
   const gameIsStartable = !game?.inProgress && gameHasEnoughPlayers;
   const gameIsStarted = game?.inProgress;
@@ -52,6 +52,12 @@ export const FeedScreen = () => {
     }
   };
 
+  const ReadyToStart = () => {
+    if (!gameIsStarted && gameIsStartable && userIsGameAdmin) {
+      return <LoadingScreen text={"Start the game when ready!"} />;
+    }
+  };
+
   const WaitingForGameToStart = () => {
     if (!gameIsStarted && !userIsGameAdmin) {
       return <LoadingScreen text={"Waiting for the game to start"} />;
@@ -59,15 +65,17 @@ export const FeedScreen = () => {
   };
 
   const CapturedTagsWillShowHere = () => {
-    if (gameIsStarted && Object.keys(game.tags).length < 1) {
+    if (gameIsStarted && !game?.tags) {
       return <LoadingScreen text="Captured tags will appear here! Get busy!" />;
     }
+    return undefined;
   };
 
   const StartedTagList = () => {
-    if (gameIsStarted && Object.keys(game?.tags).length > 0) {
-      return <TagList />;
+    if (gameIsStarted && !!game?.tags) {
+      return <TagList isAdmin={userIsGameAdmin} />;
     }
+    return undefined;
   };
 
   //   <SafeAreaView
@@ -228,6 +236,7 @@ export const FeedScreen = () => {
     >
       <AddPlayersToStartGame />
       <WaitingForGameToStart />
+      <ReadyToStart />
       <CapturedTagsWillShowHere />
       <StartedTagList />
 
