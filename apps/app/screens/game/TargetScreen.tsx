@@ -56,7 +56,7 @@ export const TargetScreen = ({ navigation: { navigate } }) => {
               fontSize: Math.floor(dims.width / 16),
             }}
           >
-            Kills: {target.tags}
+            Tags: {target.tags}
           </Text>
         </View>
       </>
