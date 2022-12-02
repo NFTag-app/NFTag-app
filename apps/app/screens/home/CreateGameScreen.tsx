@@ -23,7 +23,7 @@ export const CreateGameScreen = () => {
         user.displayName.split(" ")[0] + "'s Game",
         user
       );
-      rootNavigation.navigate("OwnedGameRoot", {
+      await rootNavigation.navigate("OwnedGameRoot", {
         screen: "ShareGameScreen",
         params: {
           gameId: id,

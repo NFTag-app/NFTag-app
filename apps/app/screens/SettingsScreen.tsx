@@ -7,16 +7,16 @@ import {
   ImageBackground,
   StyleSheet,
 } from "react-native";
-import { RootNavigationProps } from "../components/navigation/NavigationParams";
+//import { RootNavigationProps } from "../components/navigation/NavigationParams";
 
 export const SettingsScreen = () => {
   const dims = useWindowDimensions();
-  const rootNavigation = useNavigation<RootNavigationProps>();
+  //const rootNavigation = useNavigation<RootNavigationProps>();
 
   const _logOut = async () => {
     try {
       await signOut();
-      rootNavigation.navigate("Login");
+      //rootNavigation.navigate("Login");
     } catch (ex) {
       console.log("GameListScreen.fab.signOut.error", ex);
       alert(`Oops! That didn't work! Try again(?)!`);

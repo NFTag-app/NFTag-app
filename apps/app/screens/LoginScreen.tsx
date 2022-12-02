@@ -25,14 +25,13 @@ export const LoginScreen = () => {
       >
         <View
           style={{
-            marginTop: -50,
             borderRadius: 8,
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "flex-start",
             width: dims.width * 0.8,
-            height: dims.height * 0.35,
             backgroundColor: "#25262b",
+            padding: 50,
           }}
         >
           <Image

@@ -57,19 +57,26 @@ export const JoinGameScreen = ({ tabHeight }: { tabHeight: number }) => {
 
   const saveCallback = async (uri: string, width: number, height: number) => {
     try {
-      console.log('JoinGameScreen.saveCallback.joiningGame', user.uid, gameId, uri.split('x')[0]);
+      console.log(
+        "JoinGameScreen.saveCallback.joiningGame",
+        user.uid,
+        gameId,
+        uri.split("x")[0]
+      );
       await joinGame(gameId, user, { uri: uri, width, height });
-      console.log('JoinGameScreen.saveCallback.navigatingBack', uri, user.uid, gameId);
-      rootNavigation.popToTop();
-      rootNavigation.navigate("GameRoot", {
-        screen: 'FeedScreen',
-        params: {
-          gameId: gameId
-        },
+      await console.log(
+        "JoinGameScreen.saveCallback.navigatingBack",
+        uri,
+        user.uid,
+        gameId
+      );
+      await rootNavigation.navigate("GameRoot", {
+        screen: "FeedScreen",
+        params: undefined,
         gameId: gameId,
       });
     } catch (e) {
-      console.log('JoinGameScreen.saveCallback.failedToJoinGameOrNav', e);
+      console.log("JoinGameScreen.saveCallback.failedToJoinGameOrNav", e);
       alert(
         "Failed to join game! Check that the game code you entered was correct."
       );

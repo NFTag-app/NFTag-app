@@ -56,7 +56,7 @@ export const GameTabNavigator = () => {
   // };
 
   return (
-    <GameProvider gameId={user.currentGame}>
+    <GameProvider gameId={user?.currentGame}>
       <GameTab.Navigator initialRouteName="FeedScreen">
         <GameTab.Screen
           name="FeedScreen"

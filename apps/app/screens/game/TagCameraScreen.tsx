@@ -7,6 +7,7 @@ import { CameraType } from "expo-camera";
 import { useTarget } from "client-sdk/dist/GameProvider";
 import { useNavigation } from "@react-navigation/native";
 import { RootNavigationProps } from "../../components/navigation/NavigationParams";
+import { LoadingScreen } from "../LoadingScreen";
 
 const crosshair = require("../../assets/Icons/Crosshair/1x/crosshair.png");
 
@@ -57,6 +58,7 @@ export const TagCameraScreen = ({ tabHeight }: { tabHeight: number }) => {
         nftTitle={target?.name || "Undefined Target Name"}
         saveCallback={saveCallback}
         captureOverlay={captureOverlay}
+        loadingScreenText={"Waiting for the game to start"}
         preCaptureOverlay={() => undefined}
         bottomInset={tabHeight}
         screenReady={!!game && !!user && !!target}

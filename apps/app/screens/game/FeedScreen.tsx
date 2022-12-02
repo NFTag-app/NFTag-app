@@ -39,17 +39,22 @@ export const FeedScreen = () => {
 
   const gameHasEnoughPlayers = Object.keys(game?.players ?? {}).length > 2;
   const userIsGameAdmin = game?.owner === user?.uid;
-  const gameIsStartable =
-    userIsGameAdmin && !game?.inProgress && gameHasEnoughPlayers;
+  const gameIsStartable = !game?.inProgress && gameHasEnoughPlayers;
   const gameIsStarted = game?.inProgress;
 
   const AddPlayersToStartGame = () => {
-    if (!gameIsStarted && !gameIsStartable) {
+    if (!gameIsStarted && !gameIsStartable && userIsGameAdmin) {
       return (
         <LoadingScreen
           text={`You need at least 2 players to start the game!`}
         />
       );
+    }
+  };
+
+  const WaitingForGameToStart = () => {
+    if (!gameIsStarted && !userIsGameAdmin) {
+      return <LoadingScreen text={"Waiting for the game to start"} />;
     }
   };
 
@@ -108,7 +113,7 @@ export const FeedScreen = () => {
           width: dims.width,
           alignItems: "center",
         }}
-      ></ImageBackground>
+      />
     );
   }
 
@@ -162,7 +167,7 @@ export const FeedScreen = () => {
         console.log("FeedScreen.fab.startGame.error", err)
       );
     },
-    condition: () => gameIsStartable,
+    condition: () => gameIsStartable && userIsGameAdmin,
   };
 
   // const shareGameAction = {
@@ -222,6 +227,7 @@ export const FeedScreen = () => {
       }}
     >
       <AddPlayersToStartGame />
+      <WaitingForGameToStart />
       <CapturedTagsWillShowHere />
       <StartedTagList />
 

@@ -6,24 +6,19 @@ import {
   Image,
   Text,
 } from "react-native";
+import { LoadingScreen } from "../LoadingScreen";
 import { CommonStyles } from "../../styles/CommonStyles";
 
 export const TargetScreen = ({ navigation: { navigate } }) => {
   const dims = useWindowDimensions();
   const target = useTarget();
 
-  return (
-    <View style={{ ...CommonStyles.container }}>
-      <ImageBackground
-        source={require("../../assets/Icons/1x/loginbg.png")}
-        resizeMode="cover"
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          width: dims.width,
-          alignItems: "center",
-        }}
-      >
+  const RenderContent = () => {
+    if (!target?.id) {
+      return <LoadingScreen text={"Waiting for the game to start"} />;
+    }
+    return (
+      <>
         <Text
           style={{
             color: "white",
@@ -64,6 +59,23 @@ export const TargetScreen = ({ navigation: { navigate } }) => {
             Kills: {target.tags}
           </Text>
         </View>
+      </>
+    );
+  };
+
+  return (
+    <View style={{ ...CommonStyles.container }}>
+      <ImageBackground
+        source={require("../../assets/Icons/1x/loginbg.png")}
+        resizeMode="cover"
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          width: dims.width,
+          alignItems: "center",
+        }}
+      >
+        <RenderContent />
       </ImageBackground>
     </View>
   );

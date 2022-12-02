@@ -16,8 +16,24 @@ const RootStack = createStackNavigator<RootStackParamList>();
 export const RootStackNavigator = () => {
   const user = useUser();
 
+  const RenderStackScreens = () => {
+    if (user.currentGame) {
+      return (
+        <RootStack.Screen
+          name="GameRoot"
+          component={GameTabNavigator}
+          options={{ headerShown: false }}
+        />
+      );
+    }
+    return undefined;
+  };
+
+  if (!user?.uid) {
+    return <LoginScreen />;
+  }
+
   return (
-    // this is how reactnavigation.org suggests doing login flow
     <NavigationContainer
       theme={{
         ...DefaultTheme,
@@ -25,7 +41,7 @@ export const RootStackNavigator = () => {
       }}
     >
       <RootStack.Navigator initialRouteName="Login">
-        {user?.currentGame ? (
+        {/* {user?.currentGame ? (
           <RootStack.Screen
             name="GameRoot"
             component={GameTabNavigator}
@@ -52,6 +68,25 @@ export const RootStackNavigator = () => {
               ...GenericOptions.headerOptions,
               ...GenericOptions.tabBarOptions,
             }}
+          />
+        )} */}
+        {user?.currentGame ? (
+          <RootStack.Screen
+            name="GameRoot"
+            component={GameTabNavigator}
+            options={{ headerShown: false }}
+          />
+        ) : user?.ownedGame ? (
+          <RootStack.Screen
+            name="OwnedGameRoot"
+            component={OwnedGameTabNavigator}
+            options={{ headerShown: false }}
+          />
+        ) : (
+          <RootStack.Screen
+            name="HomeRoot"
+            component={HomeTabNavigator}
+            options={{ headerShown: false }}
           />
         )}
       </RootStack.Navigator>

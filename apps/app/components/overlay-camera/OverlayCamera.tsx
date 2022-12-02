@@ -17,6 +17,23 @@ import { CaptureControls } from "./CaptureControls";
 import { captureRef } from "react-native-view-shot";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 
+const CameraLoadingScreen = ({ text = "Loading Camera..." }) => {
+  return (
+    <View
+      style={{
+        ...StyleSheet.absoluteFillObject,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#25262b",
+      }}
+    >
+      <Text style={{ color: "white", fontSize: 18 }}>~TagCam</Text>
+      <Text style={{ color: "white", fontSize: 24 }}>{text}</Text>
+    </View>
+  );
+};
+
 export const OverlayCamera = ({
   cameraType,
   isNft,
@@ -24,6 +41,7 @@ export const OverlayCamera = ({
   saveCallback,
   captureOverlay,
   preCaptureOverlay,
+  loadingScreenText,
   bottomInset,
   screenReady,
   backShown,
@@ -40,6 +58,7 @@ export const OverlayCamera = ({
     topMargin: number,
     bottomMargin: number
   ) => JSX.Element | undefined;
+  loadingScreenText: string | undefined;
   bottomInset: number;
   screenReady: boolean;
   backShown: boolean;
@@ -82,6 +101,7 @@ export const OverlayCamera = ({
       await prepareCamRatio().catch((e) => console.log(e));
     }
     setCamIsReady(true);
+    console.log("Camera is ready");
   };
 
   useEffect(() => {
@@ -138,7 +158,7 @@ export const OverlayCamera = ({
   };
   const save = async () => {
     try {
-      console.log('OverlayCamera.save');
+      console.log("OverlayCamera.save");
       if (snapBoxRef.current && photoData) {
         const capUri = await captureRef(snapBoxRef, {
           result: "data-uri",
@@ -161,18 +181,18 @@ export const OverlayCamera = ({
         // }
         setPhotoData(null);
 
-        console.log('OverlayCamera.save.prepared');
+        console.log("OverlayCamera.save.prepared");
         await saveCallback(
           "data:image/png;base64," + scaledRes.base64,
           scaledRes.width,
           scaledRes.height
         );
-        console.log('OverlayCamera.save.callbackComplete');
+        console.log("OverlayCamera.save.callbackComplete");
       } else {
-        console.log('OverlayCamera.save.notReady');
+        console.log("OverlayCamera.save.notReady");
       }
     } catch (ex) {
-      console.log('OverlayCamera.save.error', ex);
+      console.log("OverlayCamera.save.error", ex);
       alert(`Oops! That didn't work. Please try again`);
     }
   };
@@ -183,19 +203,6 @@ export const OverlayCamera = ({
     setPhotoData(null);
   };
 
-  const loadingScreen = (
-    <View
-      style={{
-        ...StyleSheet.absoluteFillObject,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#25262b",
-      }}
-    >
-      <Text style={{ color: "white", fontSize: 24 }}>Loading Camera...</Text>
-    </View>
-  );
   const renderCamera = () => {
     if (camPermissions?.granted && !photoData) {
       return (
@@ -210,13 +217,13 @@ export const OverlayCamera = ({
           ratio={camRatio}
           onCameraReady={cameraReady}
           onMountError={(e) => {
-            console.log('OverlayCamera.renderCamera.MountError', e);
-            alert('Oops! Error loading camera. Please restart and try again!');
+            console.log("OverlayCamera.renderCamera.MountError", e);
+            alert("Oops! Error loading camera. Please restart and try again!");
           }}
         />
       );
     }
-    return loadingScreen;
+    return <CameraLoadingScreen />;
   };
   const renderNftOverlay = () => {
     if (isNft) {
@@ -306,7 +313,7 @@ export const OverlayCamera = ({
         </View>
       );
     }
-    return loadingScreen;
+    return <CameraLoadingScreen />;
   };
 
   if (screenReady && screenIsFocused) {
@@ -317,7 +324,7 @@ export const OverlayCamera = ({
       </View>
     );
   }
-  return loadingScreen;
+  return <CameraLoadingScreen text={loadingScreenText} />;
 };
 
 const cameraStyles = StyleSheet.create({
