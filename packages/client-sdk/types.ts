@@ -46,7 +46,9 @@ export interface Player {
 export interface UserData extends User {
   stripeId: string;
   stripeLink: string;
-  games: string[];
+  currentGame: string;
+  ownedGame: string;
+  //games: string[];
 }
 
 export type CreateGame = (name: string, owner: UserData) => Promise<string>;

@@ -50,10 +50,7 @@ export const subscribeNextOneSnapshot = async <DocumentData>(
     }
   }
 };
-export const getDocumentSnapshot = async (
-  collection: string,
-  id: string
-) => {
+export const getDocumentSnapshot = async (collection: string, id: string) => {
   console.log("Sdk.getSnapshotData", "collection", collection, "id", id);
   const db = getDatabase();
   const firestore = getFirestore();
@@ -75,11 +72,25 @@ export const getDataSnapshot = async (path: string) => {
   return { snapshot, ref, path };
 };
 
-export const getCollectionRef = async (collectionName: string, path: string) => {
-  console.log("Sdk.getCollectionRef", "collection", collectionName, "path", path);
+export const getCollectionRef = async (
+  collectionName: string,
+  path: string
+) => {
+  console.log(
+    "Sdk.getCollectionRef",
+    "collection",
+    collectionName,
+    "path",
+    path
+  );
   const db = getFirestore();
-  return { db, collection: collection(db, collectionName, path), collectionName, path };
-}
+  return {
+    db,
+    collection: collection(db, collectionName, path),
+    collectionName,
+    path,
+  };
+};
 
 //#endregion
 
@@ -130,7 +141,7 @@ const presentPayment = async (config: PaymentSessionConfig) => {
     },
     googlePay: {
       merchantCountryCode: "US",
-    }
+    },
   } as SetupParams);
 
   if (paymentSheetResult.error) {
@@ -154,7 +165,7 @@ export const createGame: CreateGame = async (name, owner) => {
   const id = Math.floor(100000 + Math.random() * 900000).toString();
 
   // add game to user data
-  const { snapshot, ref } = await getDocumentSnapshot('customers', owner.uid);
+  const { snapshot, ref } = await getDocumentSnapshot("customers", owner.uid);
   console.log("Sdk.createGame: userSnapshot.exists", !!snapshot);
 
   await setDoc(
@@ -189,7 +200,10 @@ export const joinGame: JoinGame = async (id, user, image) => {
     throw new Error("Game does not exist");
   }
   // add game to user data
-  const { snapshot: userSnapshot, ref: userRef } = await getDocumentSnapshot('customers', user.uid);
+  const { snapshot: userSnapshot, ref: userRef } = await getDocumentSnapshot(
+    "customers",
+    user.uid
+  );
 
   await setDoc(
     userRef,
@@ -229,7 +243,9 @@ export const startGame: StartGame = async (
   });
 
   // set all players to active state
-  const { snapshot: playerSnapshot, ref: playersRef } = await getDataSnapshot(`games/${id}/players`);
+  const { snapshot: playerSnapshot, ref: playersRef } = await getDataSnapshot(
+    `games/${id}/players`
+  );
   const players = playerSnapshot.val();
 
   console.log("players", players);
@@ -270,7 +286,10 @@ export const listGames: ListGames = async (user) => {
     return [];
   }
 
-  const gamePromises = games.map(async (gameId: string) => (await getDataSnapshot(`games/${gameId}`))?.snapshot);
+  const gamePromises = games.map(
+    async (gameId: string) =>
+      (await getDataSnapshot(`games/${gameId}`))?.snapshot
+  );
   const snapshots = await Promise.all(gamePromises);
   return snapshots.map((snapshot) => snapshot.val());
 };

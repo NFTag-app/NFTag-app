@@ -37,27 +37,27 @@ export const FeedScreen = () => {
   const dims = useWindowDimensions();
   const [open, setOpen] = useState(false);
 
-  const gameHasEnoughPlayers = Object.keys(game.players ?? {}).length > 2;
-  const userIsGameAdmin = game.owner === user.uid;
+  const gameHasEnoughPlayers = Object.keys(game?.players ?? {}).length > 2;
+  const userIsGameAdmin = game?.owner === user.uid;
   const gameIsStartable =
-    userIsGameAdmin && !game.inProgress && gameHasEnoughPlayers;
-  const gameIsStarted = game.inProgress;
+    userIsGameAdmin && !game?.inProgress && gameHasEnoughPlayers;
+  const gameIsStarted = game?.inProgress;
 
   const AddPlayersToStartGame = () => {
     if (!gameIsStarted && !gameIsStartable) {
       return (
-        <LoadingScreen text={`You need at least 2 players to start! Tell them to use the Game Code to join: ${game.id}`}/>
+        <LoadingScreen
+          text={`You need at least 2 players to start the game!`}
+        />
       );
     }
-  }
+  };
 
   const CapturedTagsWillShowHere = () => {
     if (gameIsStarted && Object.keys(game.tags).length < 1) {
-      return (
-        <LoadingScreen text="Captured tags will appear here! Get busy!"/>
-      );
+      return <LoadingScreen text="Captured tags will appear here! Get busy!" />;
     }
-  }
+  };
 
   const StartedTagList = () => {
     if (gameIsStarted && Object.keys(game?.tags).length > 0) {
@@ -194,27 +194,7 @@ export const FeedScreen = () => {
   //   condition: () => userIsGameAdmin && !gameIsActive,
   // };
 
-  const backAction: IActionPropsExtended = {
-    text: "Back",
-    position: 100,
-    icon: (
-      <Image
-        source={require("../../assets/Icons/1x/plus.png")}
-        style={{
-          width: 50,
-          height: 50,
-        }} />
-    ),
-    name: "back",
-    margin: 0,
-    color: "#25262b",
-    buttonSize: 65,
-    action: async () => gameNavigation.pop(),
-    condition: () => true,
-  };
-
-
-  const actions: IActionPropsExtended[] = [/*yellAction, */ startGameAction, backAction].filter(
+  const actions: IActionPropsExtended[] = [yellAction, startGameAction].filter(
     (f) => f.condition()
   );
 

@@ -1,23 +1,23 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { GameListScreen } from "../../screens/GameListScreen";
 import { JoinGameScreen } from "../../screens/JoinGameScreen";
-import { CreateGameScreen } from "../../screens/CreateGameScreen";
 import { SettingsScreen } from "../../screens/SettingsScreen";
 
 import { Constants, ComponentStyles, GenericOptions } from "./Styles";
 import { HomeTabParamList } from "./NavigationParams";
+import { HomeScreen } from "../../screens/home/HomeScreen";
+import { CreateGameScreen } from "../../screens/home/CreateGameScreen";
 
 const HomeTab = createBottomTabNavigator<HomeTabParamList>();
 
 export const HomeTabNavigator = () => {
   return (
-    <HomeTab.Navigator initialRouteName="GameList">
+    <HomeTab.Navigator initialRouteName="HomeScreen">
       <HomeTab.Screen
-        name="GameList"
-        component={GameListScreen}
+        name="HomeScreen"
+        component={HomeScreen}
         options={{
-          title: "Game List",
+          title: "Home",
           ...GenericOptions.headerOptions,
           ...GenericOptions.tabBarOptions,
         }}
@@ -26,7 +26,7 @@ export const HomeTabNavigator = () => {
         name="JoinGame"
         children={(props) => (
           <JoinGameScreen tabHeight={Constants.tabHeight} {...props} />
-        )} // This is how we pass props to a component
+        )}
         options={{
           headerShown: false,
           title: "Join Game",
@@ -34,7 +34,7 @@ export const HomeTabNavigator = () => {
           ...GenericOptions.tabBarOptions,
         }}
       />
-      {/* <HomeTab.Screen
+      <HomeTab.Screen
         name="CreateGame"
         component={CreateGameScreen}
         options={{
@@ -42,7 +42,7 @@ export const HomeTabNavigator = () => {
           ...GenericOptions.headerOptions,
           ...GenericOptions.tabBarOptions,
         }}
-      /> */}
+      />
       <HomeTab.Screen
         name="Settings"
         component={SettingsScreen}
