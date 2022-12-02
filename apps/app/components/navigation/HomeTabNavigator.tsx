@@ -7,6 +7,7 @@ import { Constants, ComponentStyles, GenericOptions } from "./Styles";
 import { HomeTabParamList } from "./NavigationParams";
 import { HomeScreen } from "../../screens/home/HomeScreen";
 import { CreateGameScreen } from "../../screens/home/CreateGameScreen";
+import IonIcons from "@expo/vector-icons/Ionicons";
 
 const HomeTab = createBottomTabNavigator<HomeTabParamList>();
 
@@ -18,6 +19,17 @@ export const HomeTabNavigator = () => {
         component={HomeScreen}
         options={{
           title: "Home",
+          tabBarIcon: ({
+            focused,
+            color,
+            size,
+          }: {
+            focused: boolean;
+            color: string;
+            size: number;
+          }) => {
+            return <IonIcons name="home" size={size} color={color} />;
+          },
           ...GenericOptions.headerOptions,
           ...GenericOptions.tabBarOptions,
         }}
@@ -30,6 +42,19 @@ export const HomeTabNavigator = () => {
         options={{
           headerShown: false,
           title: "Join Game",
+          tabBarIcon: ({
+            focused,
+            color,
+            size,
+          }: {
+            focused: boolean;
+            color: string;
+            size: number;
+          }) => {
+            return (
+              <IonIcons name="game-controller" size={size} color={color} />
+            );
+          },
           ...GenericOptions.headerOptions,
           ...GenericOptions.tabBarOptions,
         }}
@@ -39,6 +64,17 @@ export const HomeTabNavigator = () => {
         component={CreateGameScreen}
         options={{
           title: "Create Game",
+          tabBarIcon: ({
+            focused,
+            color,
+            size,
+          }: {
+            focused: boolean;
+            color: string;
+            size: number;
+          }) => {
+            return <IonIcons name="add-circle" size={size} color={color} />;
+          },
           ...GenericOptions.headerOptions,
           ...GenericOptions.tabBarOptions,
         }}
@@ -48,6 +84,17 @@ export const HomeTabNavigator = () => {
         component={SettingsScreen}
         options={{
           title: "Settings",
+          tabBarIcon: ({
+            focused,
+            color,
+            size,
+          }: {
+            focused: boolean;
+            color: string;
+            size: number;
+          }) => {
+            return <IonIcons name="settings" size={size} color={color} />;
+          },
           ...GenericOptions.headerOptions,
           ...GenericOptions.tabBarOptions,
         }}

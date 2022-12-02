@@ -9,6 +9,7 @@ import { Constants, ComponentStyles, GenericOptions } from "./Styles";
 import { OwnedGameTabParamList } from "./NavigationParams";
 import { ShareGameScreen } from "../../screens/game/ShareGameScreen";
 import { LoadingScreen } from "../../screens/LoadingScreen";
+import IonIcons from "@expo/vector-icons/Ionicons";
 
 const GameTab = createBottomTabNavigator<OwnedGameTabParamList>();
 
@@ -23,6 +24,17 @@ export const OwnedGameTabNavigator = (props) => {
           component={FeedScreen}
           options={{
             title: "Feed",
+            tabBarIcon: ({
+              focused,
+              color,
+              size,
+            }: {
+              focused: boolean;
+              color: string;
+              size: number;
+            }) => {
+              return <IonIcons name="list" size={size} color={color} />;
+            },
             ...GenericOptions.headerOptions,
             ...GenericOptions.tabBarOptions,
           }}
@@ -34,6 +46,17 @@ export const OwnedGameTabNavigator = (props) => {
           )}
           options={{
             title: "Share Game",
+            tabBarIcon: ({
+              focused,
+              color,
+              size,
+            }: {
+              focused: boolean;
+              color: string;
+              size: number;
+            }) => {
+              return <IonIcons name="share-social" size={size} color={color} />;
+            },
             ...GenericOptions.headerOptions,
             ...GenericOptions.tabBarOptions,
           }}
@@ -43,6 +66,17 @@ export const OwnedGameTabNavigator = (props) => {
           component={GameSettingsScreen}
           options={{
             title: "Settings",
+            tabBarIcon: ({
+              focused,
+              color,
+              size,
+            }: {
+              focused: boolean;
+              color: string;
+              size: number;
+            }) => {
+              return <IonIcons name="settings" size={size} color={color} />;
+            },
             ...GenericOptions.headerOptions,
             ...GenericOptions.tabBarOptions,
           }}
