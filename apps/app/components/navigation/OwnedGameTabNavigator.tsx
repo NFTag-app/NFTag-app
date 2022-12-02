@@ -16,7 +16,7 @@ export const OwnedGameTabNavigator = (props) => {
   const user = useUser();
 
   return (
-    <GameProvider gameId={user.ownedGame}>
+    <GameProvider gameId={user?.ownedGame}>
       <GameTab.Navigator initialRouteName="FeedScreen" {...props}>
         <GameTab.Screen
           name="FeedScreen"
@@ -30,7 +30,7 @@ export const OwnedGameTabNavigator = (props) => {
         <GameTab.Screen
           name="ShareGameScreen"
           children={(props) => (
-            <ShareGameScreen gameId={user.ownedGame} {...props} />
+            <ShareGameScreen gameId={user?.ownedGame} {...props} />
           )}
           options={{
             title: "Share Game",

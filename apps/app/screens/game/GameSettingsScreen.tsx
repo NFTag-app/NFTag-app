@@ -16,7 +16,7 @@ export const GameSettingsScreen = () => {
   const _logOut = async () => {
     try {
       await signOut();
-      rootNavigation.navigate("Login");
+      await rootNavigation.navigate("Login");
     } catch (ex) {
       console.log("GameListScreen.fab.signOut.error", ex);
       alert(`Oops! That didn't work! Try again(?)!`);

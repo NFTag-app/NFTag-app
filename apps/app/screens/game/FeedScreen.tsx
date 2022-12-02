@@ -38,7 +38,7 @@ export const FeedScreen = () => {
   const [open, setOpen] = useState(false);
 
   const gameHasEnoughPlayers = Object.keys(game?.players ?? {}).length > 2;
-  const userIsGameAdmin = game?.owner === user.uid;
+  const userIsGameAdmin = game?.owner === user?.uid;
   const gameIsStartable =
     userIsGameAdmin && !game?.inProgress && gameHasEnoughPlayers;
   const gameIsStarted = game?.inProgress;

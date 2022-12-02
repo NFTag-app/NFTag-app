@@ -37,7 +37,7 @@ export const RootStackNavigator = () => {
             component={OwnedGameTabNavigator}
             options={{ headerShown: false }}
           />
-        ) : user?.uid ? (
+        ) : user?.email ? (
           <RootStack.Screen
             name="HomeRoot"
             component={HomeTabNavigator}

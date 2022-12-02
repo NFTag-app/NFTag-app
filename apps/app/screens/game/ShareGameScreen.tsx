@@ -105,7 +105,7 @@ export const ShareGameScreen = ({ gameId }: { gameId: string }) => {
             </Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={goToGame}
           style={{
             backgroundColor: "#4a368a",
@@ -124,7 +124,7 @@ export const ShareGameScreen = ({ gameId }: { gameId: string }) => {
           >
             Go to Game
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </ImageBackground>
     </View>
   );
